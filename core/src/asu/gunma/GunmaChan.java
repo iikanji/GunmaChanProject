@@ -9,6 +9,7 @@ public class GunmaChan extends Game {
 	public static int HEIGHT = 1024;
 	public static final String TITLE = "Gunma-chan Game";
 
+
 	@Override
 	public void create() {
 		setScreen(new MainMenu());

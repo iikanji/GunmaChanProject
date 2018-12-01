@@ -1,5 +1,6 @@
 package asu.gunma.ui.screen;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -15,7 +16,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import asu.gunma.speech.SpeechInputHandler;
+
+
+
 import javax.xml.soap.Text;
+
+//import asu.gunma.speech.SpeechInputHandler;
 
 public class MainMenu implements Screen {
 
@@ -120,6 +127,15 @@ public class MainMenu implements Screen {
         buttonGameThird.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+
+
+                SpeechInputHandler speech = new SpeechInputHandler();
+
+                try {
+                    speech.run();
+                } catch(Exception e) {
+                    System.out.println(e);
+                }
 
             }
         });

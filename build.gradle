@@ -6,13 +6,12 @@ buildscript {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://speech.googleapis.com" }
         jcenter()
         google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
-        
-
     }
 }
 
@@ -28,6 +27,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+        sourceCompatibility = '1.6'
     }
 
     repositories {
@@ -36,6 +36,7 @@ allprojects {
         google()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "https://speech.googleapis.com" }
     }
 }
 
@@ -48,6 +49,7 @@ project(":desktop") {
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+       // implementation "com.google.cloud:google-cloud-speech:0.56.0-beta"
         
     }
 }
@@ -71,7 +73,8 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
         natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-        
+
+
     }
 }
 
@@ -82,6 +85,11 @@ project(":core") {
     dependencies {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        implementation "com.google.cloud:google-cloud-speech:0.56.0-beta"
+        implementation "com.android.support:multidex:1.0.3"
+        //implementation "com.google.cloud:google-cloud-speech:0.56.0-beta"
+        //implementation project('android');
+
         
     }
 }
