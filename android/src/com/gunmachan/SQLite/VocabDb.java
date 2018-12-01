@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.BaseColumns;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gunmachan.SQLite.StaticContextFactory.getAppContext;
+import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
 /**
  * VocabDb class
@@ -26,114 +26,130 @@ import static com.gunmachan.SQLite.StaticContextFactory.getAppContext;
  */
 public final class VocabDb {
     private SqlHelper vDbHelper;
-    private SQLiteDatabase database;
 
     /**
      * Constructor that always keeps the same table active given the application context.
+     *
      * @param context
      */
     public VocabDb(Context context) {
-        vDbHelper = SqlHelper.getsInstance(StaticContextFactory.getAppContext());
-        database = vDbHelper.getWritableDatabase();
+        vDbHelper = getsInstance(context);
     }
 
     /**
      * Inserts tuple into table and returns the corresponding row id.
      *
-     * @param jpn
-     * @param eng
+     * @param vWord
      * @return newRowId
      */
-    public long dbInsertRecords(String jpn, String eng) {
+    public long dbInsertVocab(VocabWord vWord) {
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DbContract.VocabEntry.COLUMN_JPN, jpn);
-        contentValues.put(DbContract.VocabEntry.COLUMN_ENG, eng);
+        contentValues.put(vWord.COLUMN_JPN, vWord.getJpnSpelling());
+        contentValues.put(vWord.COLUMN_ENG, vWord.getEngSpelling());
         long newRowId =
-                database.insert(DbContract.VocabEntry.TABLE_NAME, null, contentValues);
+                db.insert(vWord.TABLE_NAME, null, contentValues);
+        db.close();
         return newRowId;
     }
 
     /**
      * Selects tuple into table and makes a query that is returned as a Cursor.
      * Checks if Cursor is null and closes the dbRead instance.
+     *
      * @return dbCursor
      */
-    public Cursor dbSelectRecords() {
-        SQLiteDatabase dbRead = vDbHelper.getReadableDatabase();
-        String[] projection = {
-                BaseColumns._ID,
-                DbContract.VocabEntry.COLUMN_JPN,
-                DbContract.VocabEntry.COLUMN_ENG
-        };
+    public VocabWord getVocabWord(long id) {
+        SQLiteDatabase db = vDbHelper.getReadableDatabase();
+        Cursor cursor = db.query(VocabWord.TABLE_NAME,
+                new String[]{VocabWord.COLUMN_ID, VocabWord.COLUMN_JPN, VocabWord.COLUMN_ENG},
+                VocabWord.COLUMN_ID + "=?",
+                new String[]{String.valueOf(id)}, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
 
-        String selection = DbContract.VocabEntry.COLUMN_JPN + " ?";
-        String[] selectionArgs = {"Vocab"};
+        VocabWord vocabWord = new VocabWord(
+                cursor.getInt(cursor.getColumnIndex(VocabWord.COLUMN_ID)),
+                cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_JPN)),
+                cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)));
 
-        String sortOrder =
-                DbContract.VocabEntry.COLUMN_ENG + " DESC";
-
-        Cursor dbCursor = dbRead.query(
-                DbContract.VocabEntry.TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
-        if (dbCursor != null) {
-            dbCursor.moveToFirst();
-        }
-        dbRead.close();
-        return dbCursor;
-
+        cursor.close();
+        return vocabWord;
     }
+
     /**
      * Returns a list that contains every item from the table.
      * Queries the table using dbSelectRecords and retrieves the index from the ID column.
+     *
      * @return itemIds
      */
-    public List viewDb() {
-        List<Long> itemIds = new ArrayList<Long>();
-            Cursor cursor = dbSelectRecords();
-            while (cursor.moveToNext()) {
-                long itemId = cursor.getLong(
-                        cursor.getColumnIndexOrThrow(DbContract.VocabEntry._ID));
-                itemIds.add(itemId);
-            }
+    public List<VocabWord> viewDb() {
+        List<VocabWord> vocabItems = new ArrayList<VocabWord>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + VocabWord.TABLE_NAME + " ORDER BY " +
+                VocabWord.COLUMN_ENG + " DESC";
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            do {
+                VocabWord vocabWord = new VocabWord();
+                vocabWord.setId(cursor.getInt(cursor.getColumnIndex(VocabWord.COLUMN_ID)));
+                vocabWord.setJpnSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_JPN)));
+                vocabWord.setEngSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)));
+
+                vocabItems.add(vocabWord);
+            } while (cursor.moveToNext());
+        }
+
         cursor.close();
-        return itemIds;
+        // close db connection
+        db.close();
+
+        // return vocab list
+        return vocabItems;
+    }
+
+    public int getVocabCount() {
+        String countQuery = "SELECT  * FROM " + VocabWord.TABLE_NAME;
+        SQLiteDatabase db = vDbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int count = cursor.getCount();
+        cursor.close();
+
+        // return count
+        return count;
     }
 
     /**
      * Returns the index values for the rows of the table that were updated
      * given an update query.
      *
-     * @param jpn
-     * @param eng
+     * @param vWord
      * @return indexes for updated tuples in db.
      */
-    public int dbUpdateRecords(String jpn, String eng) {
+    public int dbUpdateVocab(VocabWord vWord) {
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(DbContract.VocabEntry.COLUMN_JPN, jpn);
-        contentValues.put(DbContract.VocabEntry.COLUMN_ENG, eng);
+        contentValues.put(VocabWord.COLUMN_JPN, vWord.getJpnSpelling());
+        contentValues.put(VocabWord.COLUMN_ENG, vWord.getEngSpelling());
 
         //unfinished
-        return 0;
+        return db.update(VocabWord.TABLE_NAME, contentValues, VocabWord.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(vWord.getId())});
     }
+
     /**
      * Selects a row in the table and uses the delete function to remove the
      * selected row from the table.
-     * @param query
-     * @return deletedReows
+     *
+     * @param vWord
      */
-    public int dbDeleteRecords(String query) {
-        SQLiteDatabase dbRead = vDbHelper.getReadableDatabase();
-        String selection = DbContract.VocabEntry.COLUMN_JPN + query;
-        String[] selectionArgs = {"Vocab"};
-        int deletedRows = dbRead.delete(DbContract.VocabEntry.TABLE_NAME, selection, selectionArgs);
-        dbRead.close();
-        return deletedRows;
+    public void dbDeleteVocab(VocabWord vWord) {
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
+        db.delete(VocabWord.TABLE_NAME, VocabWord.COLUMN_ID + " = ?",
+                new String[]{String.valueOf(vWord.getId())});
+        db.close();
     }
 
     /**
@@ -144,10 +160,12 @@ public final class VocabDb {
      * is caught and the stacktrace is printed.
      * If the table is not properly formatted with the correct number of
      * columns, then the extra columns are skipped and a log message is displayed.
+     *
      * @param fileName
+     * @param manager
      */
-    public void importCSV(String fileName) {
-        AssetManager manager = getAppContext().getAssets();
+    public void importCSV(String fileName, AssetManager manager) {
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
         InputStream inStream = null;
         try {
             inStream = manager.open(fileName);
@@ -156,7 +174,7 @@ public final class VocabDb {
         }
         BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
         String line = "";
-        database.beginTransaction();
+        db.beginTransaction();
         try {
             while ((line = buffer.readLine()) != null) {
                 String[] columns = line.split(",");
@@ -165,15 +183,15 @@ public final class VocabDb {
                     continue;
                 }
                 ContentValues contentValues = new ContentValues(2);
-                contentValues.put(DbContract.VocabEntry._ID, columns[0].trim());
-                contentValues.put(DbContract.VocabEntry.COLUMN_JPN, columns[1].trim());
-                contentValues.put(DbContract.VocabEntry.COLUMN_ENG, columns[2].trim());
-                database.insert(DbContract.VocabEntry.TABLE_NAME, null, contentValues);
+                contentValues.put(VocabWord.COLUMN_ID, columns[0].trim());
+                contentValues.put(VocabWord.COLUMN_JPN, columns[1].trim());
+                contentValues.put(VocabWord.COLUMN_ENG, columns[2].trim());
+                db.insert(VocabWord.TABLE_NAME, null, contentValues);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        database.setTransactionSuccessful();
-        database.endTransaction();
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }

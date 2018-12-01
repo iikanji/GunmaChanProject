@@ -33,6 +33,9 @@ android {
         versionName "1.0"
         multiDexEnabled true
     }
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:multidex:1.0.3'
+    }
     buildTypes {
         release {
             minifyEnabled false
