@@ -1,11 +1,15 @@
 package asu.gunma.ui.screen;
 
+import asu.gunma.GunmaChan;
+
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -15,15 +19,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import javax.xml.soap.Text;
+public class TitleScreen implements Screen {
 
-public class MainMenu implements Screen {
+    // This is needed to change screens later on
+    private Game game;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
     private TextureAtlas atlas;
     private Skin skin;
     private Table table;
+
+    private int testInt = 0;
 
     /*
         We will need 5 different buttons for this menu:
@@ -37,14 +44,23 @@ public class MainMenu implements Screen {
      */
     private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonGameSecond, buttonGameThird;
 
+    private SpriteBatch batch;
+    private Texture texture;
+
     private BitmapFont font;
     private Label heading;
 
+    public TitleScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
         Gdx.gl.glClearColor(.8f, 1, 1, 1);
         stage = new Stage();
+
+        batch = new SpriteBatch();
+        texture = new Texture("title_gunma.png");
 
         Gdx.input.setInputProcessor(stage);
 
@@ -68,25 +84,17 @@ public class MainMenu implements Screen {
         textButtonStyle.font = font;
 
         // IMPORTANT: needs localization support
-        buttonTutorial = new TextButton("Video Tutorials", textButtonStyle);
-        buttonFlashcard = new TextButton("Flashcards", textButtonStyle);
-        buttonGameFirst = new TextButton("Game #1", textButtonStyle);
-        buttonGameSecond = new TextButton("Game #2", textButtonStyle);
-        buttonGameThird = new TextButton("Game #3", textButtonStyle);
+        buttonTutorial = new TextButton("Play", textButtonStyle);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
         //
 
-        heading = new Label("Select Type:", headingStyle);
+        heading = new Label("Gunma-chan Takes a Hike", headingStyle);
         heading.setFontScale(3);
         //
 
         // Actually, should probably custom class this process
         buttonTutorial.pad(20);
-        buttonFlashcard.pad(20);
-        buttonGameFirst.pad(20);
-        buttonGameSecond.pad(20);
-        buttonGameThird.pad(20);
 
         /*
             If you want to test functions with UI instead of with console,
@@ -96,31 +104,8 @@ public class MainMenu implements Screen {
         buttonTutorial.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-        buttonFlashcard.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-        buttonGameFirst.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-        buttonGameSecond.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-
-            }
-        });
-        buttonGameThird.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-
+                System.out.println("Going from TitleScreen to MainMenuScreen");
+                game.setScreen(new MainMenuScreen(game));
             }
         });
 
@@ -128,16 +113,9 @@ public class MainMenu implements Screen {
         table.row();
         table.add(buttonTutorial);
         table.row();
-        table.add(buttonFlashcard);
-        table.row();
-        table.add(buttonGameFirst);
-        table.row();
-        table.add(buttonGameSecond);
-        table.row();
-        table.add(buttonGameThird);
 
         // Remove this later
-        table.debug();
+        //table.debug();
 
         stage.addActor(table);
 
@@ -151,8 +129,9 @@ public class MainMenu implements Screen {
         stage.draw();
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
-        //batch.begin();
-
+        batch.begin();
+        batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 400, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
+        batch.end();
     }
 
     @Override

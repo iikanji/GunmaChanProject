@@ -1,17 +1,19 @@
 package asu.gunma;
 
 import com.badlogic.gdx.Game;
-import asu.gunma.ui.screen.MainMenu;
+import com.badlogic.gdx.Screen;
+
+import asu.gunma.ui.screen.TitleScreen;
 
 public class GunmaChan extends Game {
 	// Temporary values
-	public static int WIDTH = 600;
-	public static int HEIGHT = 1024;
+	public static int WIDTH = 1024;
+	public static int HEIGHT = 600;
 	public static final String TITLE = "Gunma-chan Game";
 
 	@Override
 	public void create() {
-		setScreen(new MainMenu());
+		this.setScreen(new TitleScreen(this));
 	}
 
 	@Override
