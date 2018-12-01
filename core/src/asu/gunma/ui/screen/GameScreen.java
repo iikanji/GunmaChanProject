@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import asu.gunma.speech.SpeechInputHandler;
+
 
 public class GameScreen implements Screen {
 
@@ -109,6 +111,13 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // I have it in reverse order like this because it makes more sense
                 // but I can't think of a good variable name for it to not be backwards
+                SpeechInputHandler speech = new SpeechInputHandler();
+                try {
+                    speech.run();
+                } catch(Exception e) {
+                    System.out.println(e);
+                }
+
                 if (!recordState) {
                     recordState = true;
                     // Add code involved with starting record here

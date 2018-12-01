@@ -6,6 +6,7 @@ buildscript {
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://speech.googleapis.com" }
         jcenter()
         google()
     }
@@ -26,6 +27,7 @@ allprojects {
         gdxVersion = '1.9.8'
         roboVMVersion = '2.3.5'
         box2DLightsVersion = '1.4'
+        sourceCompatibility = '1.6'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
     }
@@ -34,6 +36,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
+        maven { url "https://speech.googleapis.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
     }
@@ -82,6 +85,8 @@ project(":core") {
     dependencies {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        implementation "com.google.cloud:google-cloud-speech:0.56.0-beta"
+        implementation "com.android.support:multidex:1.0.3"
         
     }
 }

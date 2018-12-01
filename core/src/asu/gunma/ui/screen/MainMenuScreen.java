@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+
 public class MainMenuScreen implements Screen {
 
     private Game game;
@@ -66,7 +67,7 @@ public class MainMenuScreen implements Screen {
         //skin = new Skin(atlas);
 
         table = new Table();
-        table.setBounds(200, 200, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         font = new BitmapFont(); // needs a font file still
         font.setColor(Color.BLACK); // Does nothing at the moment

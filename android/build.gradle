@@ -15,13 +15,23 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/INDEX.LIST'
     }
     defaultConfig {
         applicationId "com.gunmachan.game"
         minSdkVersion 14
-        targetSdkVersion 28
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {

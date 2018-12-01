@@ -21,6 +21,11 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import android.support.v4.app.ActivityCompat;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
+import android.Manifest;
+import asu.gunma.speech.SpeechInputHandler;
+import android.util.Log;
+
+
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -29,17 +34,30 @@ import asu.gunma.GunmaChan;
 
 public class AndroidLauncher extends AndroidApplication {
 
+	@Override
+	public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults){
+		switch(permsRequestCode){
+			case 200:
+				boolean RecordingAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
+				boolean InternetAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
+				break;
+		}
+	}
+
 	Button buttonStart, buttonStop;
 	String AudioSavePathInDevice = null;
 	MediaRecorder mediaRecorder;
-	public static final int RequestPermissionCode = 1;
 	MediaPlayer mediaPlayer;
 
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setContentView(R.layout.activity_main);
-			AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-			initialize(new GunmaChan(), config);
-		}
+	String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET" };
+	int permsRequestCode = 200;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+		initialize(new GunmaChan(), config);
+		requestPermissions(perms, permsRequestCode);
+	}
 }
