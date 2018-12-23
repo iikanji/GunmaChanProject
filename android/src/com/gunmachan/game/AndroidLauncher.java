@@ -4,7 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 
 
-import android.media.MediaPlayer;
+import android.media.MediaPlayer
 import android.media.MediaRecorder;
 
 import android.os.Environment;
