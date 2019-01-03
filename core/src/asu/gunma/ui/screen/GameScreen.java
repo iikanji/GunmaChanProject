@@ -16,12 +16,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import asu.gunma.speech.SpeechInputHandler;
+import com.badlogic.gdx.utils.Timer;
+import com.google.api.services.speech.v1beta1.Speech;
+
+import java.util.logging.Handler;
+
+import asu.gunma.speech.ActionResolver;
 
 
 public class GameScreen implements Screen {
 
     private Game game;
+    public ActionResolver speechGDX;
 
     // Game logic variables
     private int score;
@@ -56,7 +62,10 @@ public class GameScreen implements Screen {
     private Texture frenemySprite;
     private Texture background;
 
-    public GameScreen(Game game) {
+
+    public GameScreen(Game game, ActionResolver speechGDX) {
+
+        this.speechGDX = speechGDX;
         this.game = game;
     }
 
@@ -111,24 +120,22 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // I have it in reverse order like this because it makes more sense
                 // but I can't think of a good variable name for it to not be backwards
-                SpeechInputHandler speech = new SpeechInputHandler();
+
                 try {
-                    speech.run();
+                    speechGDX.startRecognition();
+
+                    //add delay
+                    /*Timer.schedule(new Timer.Task(){
+                        @Override
+                        public void run() {
+                            word = speechGDX.getWord();
+                        }
+                    }, 5);*/
+
                 } catch(Exception e) {
                     System.out.println(e);
                 }
 
-                if (!recordState) {
-                    recordState = true;
-                    // Add code involved with starting record here
-                    System.out.println("Microphone on");
-
-                } else {
-                    recordState = false;
-                    // Add code involved with stopping record here
-                    System.out.println("Microphone off");
-
-                }
             }
         });
 
@@ -147,9 +154,9 @@ public class GameScreen implements Screen {
         batch.begin();
         batch.draw(background, 0, 0);
         batch.draw(gunmaSprite, 90, 60, gunmaSprite.getWidth()*3, gunmaSprite.getHeight()*3);
-        batch.draw(frenemySprite, 730, 60, frenemySprite.getWidth()/11, frenemySprite.getHeight()/11);
+        //batch.draw(frenemySprite, 730, 60, frenemySprite.getWidth()/11, frenemySprite.getHeight()/11);
 
-        font.draw(batch, "Word: " + word, 400, 380);
+        font.draw(batch, "Word: " + speechGDX.getWord(), 400, 380);
         font.draw(batch, "Score: " + score, 0, 595);
         batch.end();
 

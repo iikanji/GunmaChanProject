@@ -17,10 +17,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import asu.gunma.speech.ActionResolver;
+
 
 public class MainMenuScreen implements Screen {
 
     private Game game;
+    public ActionResolver speechGDX;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -48,8 +51,9 @@ public class MainMenuScreen implements Screen {
     private BitmapFont font;
     private Label heading;
 
-    public MainMenuScreen(Game game) {
+    public MainMenuScreen(Game game, ActionResolver speechGDX) {
         this.game = game;
+        this.speechGDX = speechGDX;
     }
 
     @Override
@@ -123,7 +127,7 @@ public class MainMenuScreen implements Screen {
         buttonGameFirst.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, speechGDX));
             }
         });
         buttonGameSecond.addListener(new ClickListener() {

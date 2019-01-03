@@ -1,7 +1,5 @@
 package asu.gunma.ui.screen;
 
-import asu.gunma.GunmaChan;
-
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -19,10 +17,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+import asu.gunma.speech.ActionResolver;
+
 public class TitleScreen implements Screen {
 
     // This is needed to change screens later on
     private Game game;
+    public ActionResolver speechGDX;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -50,8 +51,10 @@ public class TitleScreen implements Screen {
     private BitmapFont font;
     private Label heading;
 
-    public TitleScreen(Game game) {
+    public TitleScreen(Game game, ActionResolver speechGDX) {
+
         this.game = game;
+        this.speechGDX = speechGDX;
     }
 
     @Override
@@ -105,7 +108,7 @@ public class TitleScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Going from TitleScreen to MainMenuScreen");
-                game.setScreen(new MainMenuScreen(game));
+                game.setScreen(new MainMenuScreen(game, speechGDX));
             }
         });
 

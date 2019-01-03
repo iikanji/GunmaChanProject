@@ -1,8 +1,10 @@
 package asu.gunma;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Screen;
 
+import javax.swing.Action;
+
+import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.TitleScreen;
 
 public class GunmaChan extends Game {
@@ -10,10 +12,16 @@ public class GunmaChan extends Game {
 	public static int WIDTH = 1024;
 	public static int HEIGHT = 600;
 	public static final String TITLE = "Gunma-chan Game";
+	public ActionResolver speechGDX;
+
+	public GunmaChan() {}
+	public GunmaChan(ActionResolver speechGDX) {
+		this.speechGDX = speechGDX;
+	}
 
 	@Override
 	public void create() {
-		this.setScreen(new TitleScreen(this));
+		this.setScreen(new TitleScreen(this, speechGDX));
 	}
 
 	@Override
