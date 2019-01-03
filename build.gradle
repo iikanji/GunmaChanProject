@@ -36,6 +36,7 @@ allprojects {
         mavenLocal()
         mavenCentral()
         google()
+        jcenter()
         maven { url "https://speech.googleapis.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
