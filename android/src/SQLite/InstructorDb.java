@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import com.badlogic.gdx.assets.AssetManager;
+import android.content.res.AssetManager;
 
 import asu.gunma.DbContainers.Instructor;
 
@@ -172,20 +172,14 @@ public class InstructorDb {
      *
      * @param fileName
      */
-    public void importCSV(String fileName) {
-        AssetManager assetManager = new com.badlogic.gdx.assets.AssetManager();
+    public void importCSV(String fileName, AssetManager assetManager) {
         SQLiteDatabase db = iDbHelper.getWritableDatabase();
-        InputStream inStream = null;
-        try {
-            inStream = assetManager.get(fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
-        String line = "";
+        BufferedReader reader = null;
         db.beginTransaction();
         try {
-            while ((line = buffer.readLine()) != null) {
+            reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(",");
                 if (columns.length != 3) {
                     Log.d("CSVParser", "Skipping Bad CSV Row");

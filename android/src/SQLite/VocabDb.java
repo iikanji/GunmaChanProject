@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import com.badlogic.gdx.assets.AssetManager;
 
 import android.os.Environment;
 import android.util.Log;
+import android.content.res.AssetManager;
+
+import com.gunmachan.game.AndroidLauncher;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -173,22 +175,17 @@ public final class VocabDb {
      * columns, then the extra columns are skipped and a log message is displayed.
      *
      * @param fileName
+     * @param assetManager
      * */
-    public void importCSV(String fileName) {
-        AssetManager assetManager = new AssetManager();
+    public void importCSV(String fileName, AssetManager assetManager) {
         SQLiteDatabase db = vDbHelper.getWritableDatabase();
 
-        InputStream inStream = null;
-        try {
-            inStream = assetManager.get(fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
-        String line = "";
+        BufferedReader reader = null;
         db.beginTransaction();
         try {
-            while ((line = buffer.readLine()) != null) {
+            reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(",");
                 if (columns.length != 3) {
                     Log.d("CSVParser", "Skipping Bad CSV Row");
@@ -200,7 +197,7 @@ public final class VocabDb {
                 contentValues.put(VocabWord.COLUMN_ENG, columns[2].trim());
                 db.insert(VocabWord.TABLE_NAME, null, contentValues);
             }
-        } catch (IOException e) {
+        } catch(IOException e){
             e.printStackTrace();
         }
         db.setTransactionSuccessful();

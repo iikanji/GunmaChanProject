@@ -59,7 +59,10 @@ public class AndroidLauncher extends AndroidApplication {
 			requestPermissions(perms, permsRequestCode);
 		}
 		androidDB = newDb();
+
+
 		test(androidDB);
+
 	}
 
 	@Override
@@ -71,6 +74,7 @@ public class AndroidLauncher extends AndroidApplication {
 		int vocabIndex = 0;
 		String jSpell = "ゼロ";
 		String eSpell = "Zero";
+
 		VocabWord vocabWord = new VocabWord(vocabIndex, jSpell, eSpell);
 		//VocabWord gameWord = dbInterface.getGameVocabWord();
 		//dbInterface.setGameVocabWord(vocabWord);
@@ -81,6 +85,7 @@ public class AndroidLauncher extends AndroidApplication {
 			Log.d("DATABASE", element.getJpnSpelling());
 			Log.d("DATABASE", element.getEngSpelling());
 		}
+
 		for(VocabWord element : dbWords){
 			try {
 				vDB.dbDeleteVocab(element);
@@ -88,11 +93,13 @@ public class AndroidLauncher extends AndroidApplication {
 				System.out.println("ENTRY IS NULL");
 			}
 		}
+
 		try {
-			vDB.importCSV("testCSV.csv");
+			vDB.importCSV("testCSV.csv", getAssets());
 		} catch(Exception e){
 			System.out.println("FILE NOT FOUND!");
 		}
+
 		List<VocabWord> currentDb = vDB.viewDb();
 		for(VocabWord element : currentDb){
 			System.out.println("JPN: " + element.getJpnSpelling());

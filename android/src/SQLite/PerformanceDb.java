@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
+import android.content.res.AssetManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.FileWriter;
 
-import com.badlogic.gdx.assets.AssetManager;
 
 import asu.gunma.DbContainers.StudentMetric;
 
@@ -175,21 +175,16 @@ public class PerformanceDb {
      * columns, then the extra columns are skipped and a log message is displayed.
      *
      * @param fileName
+     * @param assetManager
      */
-    public void importCSV(String fileName) {
-        AssetManager assetManager = new AssetManager();
+    public void importCSV(String fileName, AssetManager assetManager) {
         SQLiteDatabase db = pDbHelper.getWritableDatabase();
-        InputStream inStream = null;
-        try {
-            inStream = assetManager.get(fileName);
-        }  catch (Exception e) {
-            e.printStackTrace();
-        }
-        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
-        String line = "";
+        BufferedReader reader = null;
         db.beginTransaction();
         try {
-            while ((line = buffer.readLine()) != null) {
+            reader = new BufferedReader(new InputStreamReader(assetManager.open(fileName)));
+            String line = "";
+            while ((line = reader.readLine()) != null) {
                 String[] columns = line.split(",");
                 if (columns.length != 3) {
                     Log.d("CSVParser", "Skipping Bad CSV Row");
