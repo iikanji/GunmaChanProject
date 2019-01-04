@@ -1,6 +1,6 @@
-package com.gunmachan.SQLite;
+package SQLite;
 
-import android.provider.BaseColumns;
+import asu.gunma.DatabaseInterface.DbInterface;
 
 /**
  * The VocabWord class establishes a container that is used to define the
@@ -10,7 +10,7 @@ import android.provider.BaseColumns;
  * @version 1.0
  * @date 10-22-18
  */
-public class VocabWord {
+public class VocabWord implements DbInterface {
     public static final String TABLE_NAME = "Vocab";
 
     public static final String COLUMN_ID = "id";

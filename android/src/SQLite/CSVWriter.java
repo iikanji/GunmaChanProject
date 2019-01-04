@@ -1,4 +1,4 @@
-package com.gunmachan.SQLite;
+package SQLite;
 
 /*
  * The code copied from http://opencsv.sourceforge.net/

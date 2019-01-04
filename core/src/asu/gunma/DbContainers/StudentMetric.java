@@ -1,4 +1,4 @@
-package com.gunmachan.SQLite;
+package SQLite;
 
 /**
  * The VocabWord class establishes a container that is used to define the

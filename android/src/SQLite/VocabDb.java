@@ -1,4 +1,4 @@
-package com.gunmachan.SQLite;
+package SQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gunmachan.SQLite.SqlHelper.getsInstance;
+import static SQLite.SqlHelper.getsInstance;
 
 /**
  * VocabDb class
