@@ -3,32 +3,20 @@ package com.gunmachan.game;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-
-
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.view.View;
-
-import android.widget.Button;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.pm.PackageManager;
 import android.util.Log;
-
 import com.badlogic.gdx.Gdx;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
 import com.gunmachan.SQLite.*;
-
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
 
