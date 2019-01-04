@@ -1,6 +1,4 @@
-package SQLite;
-
-import asu.gunma.DatabaseInterface.DbInterface;
+package asu.gunma.DbContainers;
 
 /**
  * The VocabWord class establishes a container that is used to define the
@@ -10,12 +8,13 @@ import asu.gunma.DatabaseInterface.DbInterface;
  * @version 1.0
  * @date 10-22-18
  */
-public class VocabWord implements DbInterface {
+public class VocabWord {
     public static final String TABLE_NAME = "Vocab";
 
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_JPN = "JPN_Spelling";
     public static final String COLUMN_ENG = "ENG_Spelling";
+    public static final String COLUMN_MODULE = "";
 
     public static final String SQLITE_CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +

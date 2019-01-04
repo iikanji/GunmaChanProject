@@ -1,62 +1,19 @@
 package asu.gunma.speech;
 
-import com.google.api.gax.longrunning.OperationFuture;
-import com.google.api.gax.rpc.ApiStreamObserver;
-import com.google.api.gax.rpc.BidiStreamingCallable;
-import com.google.api.gax.rpc.ClientStream;
-import com.google.api.gax.rpc.ResponseObserver;
-import com.google.api.gax.rpc.StreamController;
-import com.google.cloud.speech.v1.LongRunningRecognizeMetadata;
-import com.google.cloud.speech.v1.LongRunningRecognizeResponse;
-import com.google.cloud.speech.v1.RecognitionAudio;
-import com.google.cloud.speech.v1.RecognitionConfig;
-import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding;
-import com.google.cloud.speech.v1.RecognizeResponse;
-import com.google.cloud.speech.v1.SpeechClient;
-import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
-import com.google.cloud.speech.v1.SpeechRecognitionResult;
-import com.google.cloud.speech.v1.StreamingRecognitionConfig;
-import com.google.cloud.speech.v1.StreamingRecognitionResult;
-import com.google.cloud.speech.v1.StreamingRecognizeRequest;
-import com.google.cloud.speech.v1.StreamingRecognizeResponse;
-import com.google.cloud.speech.v1.WordInfo;
-import com.google.common.util.concurrent.SettableFuture;
-import com.google.protobuf.ByteString;
-import com.google.cloud.speech.v1p1beta1.SpeechSettings;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.nio.ByteBuffer;
 import com.badlogic.gdx.audio.AudioRecorder;
 import com.badlogic.gdx.audio.AudioDevice;
 import com.badlogic.gdx.Gdx;
-import com.google.api.gax.core.CredentialsProvider;
-import com.google.api.gax.core.FixedCredentialsProvider;
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import java.io.FileInputStream;
 
 
-
-import java.io.IOException;
-import java.util.Random;
-
-
-
-import com.badlogic.gdx.audio.AudioRecorder;
-import com.badlogic.gdx.audio.AudioDevice;
-
-import com.badlogic.gdx.Gdx;
-
-import com.badlogic.gdx.Game;
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.StudentMetric;
+import asu.gunma.DbContainers.VocabWord;
 
 public class SpeechInputHandler {
 
-    public void run() throws Exception {
 
+    public void run() throws Exception {
+        DbCallback dbCallback = new DbCallback();
         //Records data
         System.out.println();
         System.out.println("Record: Start");
@@ -106,5 +63,18 @@ public class SpeechInputHandler {
         } catch(Exception e) {
             System.out.println(e);
         }*/
+
+
+        //inputWord = new VocabWord();
+        //studentMetric = studentMetric();
+        //if english word
+        //  set inputWord.setEngSpelling = google word
+        //if japanese word
+        //  set inputWord.setJpnSpelling = google word
+        //search for word.
+        //  WRITE FUNCTION FOR SEARCHING WORDS IF ENG SPELLING = NULL
+        //  OR IF JPN SPELLING = NULL
+
+
     }
 }

@@ -7,34 +7,29 @@ import android.os.Bundle;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 
-import android.os.Environment;
-import android.view.View;
-
 import android.widget.Button;
-import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Random;
 import java.util.List;
+import java.io.File;
 
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-
-import android.support.v4.app.ActivityCompat;
 import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
-import android.Manifest;
-import asu.gunma.speech.SpeechInputHandler;
 import android.util.Log;
-import com.gunmachan.SQLite.*;
+import SQLite.*;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.assets.AssetManager;
 
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.GunmaChan;
 
 public class AndroidLauncher extends AndroidApplication {
+	public AssetManager assetManager;
 	public VocabDb androidDB;
+	protected DbInterface dbInterface;
 
 	@Override
 	public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults){
@@ -70,7 +65,6 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	public void onResume() {
 		super.onResume();
-
 	}
 
 	public void test(VocabDb vDB) {
@@ -78,11 +72,31 @@ public class AndroidLauncher extends AndroidApplication {
 		String jSpell = "ゼロ";
 		String eSpell = "Zero";
 		VocabWord vocabWord = new VocabWord(vocabIndex, jSpell, eSpell);
+		//VocabWord gameWord = dbInterface.getGameVocabWord();
+		//dbInterface.setGameVocabWord(vocabWord);
+
 		vDB.dbInsertVocab(vocabWord);
 		List<VocabWord> dbWords = vDB.viewDb();
 		for (VocabWord element : dbWords) {
 			Log.d("DATABASE", element.getJpnSpelling());
 			Log.d("DATABASE", element.getEngSpelling());
+		}
+		for(VocabWord element : dbWords){
+			try {
+				vDB.dbDeleteVocab(element);
+			} catch(Exception e){
+				System.out.println("ENTRY IS NULL");
+			}
+		}
+		try {
+			vDB.importCSV("testCSV.csv");
+		} catch(Exception e){
+			System.out.println("FILE NOT FOUND!");
+		}
+		List<VocabWord> currentDb = vDB.viewDb();
+		for(VocabWord element : currentDb){
+			System.out.println("JPN: " + element.getJpnSpelling());
+			System.out.println("ENG: " + element.getEngSpelling());
 		}
 	}
 

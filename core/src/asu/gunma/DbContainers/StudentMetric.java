@@ -1,4 +1,4 @@
-package SQLite;
+package asu.gunma.DbContainers;
 
 /**
  * The VocabWord class establishes a container that is used to define the
