@@ -16,11 +16,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import asu.gunma.DatabaseInterface.*;
 
 import asu.gunma.speech.ActionResolver;
 
     public class GameScreen implements Screen {
-
+        DbCallback dbCallback = new DbCallback();
         private Game game;
         public ActionResolver speechGDX;
 
@@ -136,6 +137,16 @@ import asu.gunma.speech.ActionResolver;
 
             // Remove this later
             table.debug();
+
+            //inputWord = new VocabWord();
+            //studentMetric = studentMetric();
+            //if english word
+            //  set inputWord.setEngSpelling = google word
+            //if japanese word
+            //  set inputWord.setJpnSpelling = google word
+            //search for word.
+            //  WRITE FUNCTION FOR SEARCHING WORDS IF ENG SPELLING = NULL
+            //  OR IF JPN SPELLING = NULL
 
             stage.addActor(buttonRecord);
 
