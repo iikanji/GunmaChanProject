@@ -2,18 +2,24 @@ package com.gunmachan.SQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.ContactsContract;
+import com.badlogic.gdx.assets.AssetManager;
+
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 
 import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
@@ -25,7 +31,7 @@ import static com.gunmachan.SQLite.SqlHelper.getsInstance;
  * @date 10-22-18
  */
 public final class VocabDb {
-    private SqlHelper vDbHelper;
+    protected SqlHelper vDbHelper;
 
     /**
      * Constructor that always keeps the same table active given the application context.
@@ -152,6 +158,11 @@ public final class VocabDb {
         db.close();
     }
 
+    //
+    // SEARCH FUNCTION BASED ON WHETHER ENG = NULL OR JPN = NULL
+    //
+
+
     /**
      * Uses an asset manager to open the locally stored CSV and completes
      * a database transaction that parses the comma separated items into
@@ -162,14 +173,15 @@ public final class VocabDb {
      * columns, then the extra columns are skipped and a log message is displayed.
      *
      * @param fileName
-     * @param manager
-     */
-    public void importCSV(String fileName, AssetManager manager) {
+     * */
+    public void importCSV(String fileName) {
+        AssetManager assetManager = new AssetManager();
         SQLiteDatabase db = vDbHelper.getWritableDatabase();
+
         InputStream inStream = null;
         try {
-            inStream = manager.open(fileName);
-        } catch (IOException e) {
+            inStream = assetManager.get(fileName);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
@@ -193,5 +205,39 @@ public final class VocabDb {
         }
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    public void exportDB() {
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+        if (!exportDir.exists())
+        {
+            exportDir.mkdirs();
+        }
+
+        File file = new File(exportDir, "VocabList.csv");
+        try
+        {
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = vDbHelper.getReadableDatabase();
+            Cursor curCSV = db.rawQuery("SELECT * FROM " + VocabWord.TABLE_NAME,null);
+            csvWrite.writeNext(curCSV.getColumnNames());
+            while(curCSV.moveToNext())
+            {
+                //Which column you want to export
+                String arrStr[] = new String[]{curCSV.getString(1),curCSV.getString(2)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+        }
+        catch(Exception sqlEx)
+        {
+            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    public SqlHelper getvDbHelper() {
+        return vDbHelper;
     }
 }

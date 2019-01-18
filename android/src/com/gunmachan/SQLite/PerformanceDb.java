@@ -2,7 +2,6 @@ package com.gunmachan.SQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
@@ -17,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.FileWriter;
 
+import com.badlogic.gdx.assets.AssetManager;
+
+import asu.gunma.DbContainers.StudentMetric;
+
 import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
 /**
@@ -28,7 +31,7 @@ import static com.gunmachan.SQLite.SqlHelper.getsInstance;
  */
 public class PerformanceDb {
 
-    private SqlHelper pDbHelper;
+    protected SqlHelper pDbHelper;
 
     /**
      * Constructor that always keeps the same table active given the application context.
@@ -172,14 +175,14 @@ public class PerformanceDb {
      * columns, then the extra columns are skipped and a log message is displayed.
      *
      * @param fileName
-     * @param manager
      */
-    public void importCSV(String fileName, AssetManager manager) {
+    public void importCSV(String fileName) {
+        AssetManager assetManager = new AssetManager();
         SQLiteDatabase db = pDbHelper.getWritableDatabase();
         InputStream inStream = null;
         try {
-            inStream = manager.open(fileName);
-        } catch (IOException e) {
+            inStream = assetManager.get(fileName);
+        }  catch (Exception e) {
             e.printStackTrace();
         }
         BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
@@ -225,7 +228,7 @@ public class PerformanceDb {
             while(curCSV.moveToNext())
             {
                 //Which column you want to export
-                String arrStr[] ={curCSV.getString(1),curCSV.getString(2),
+                String arrStr[] = new String[]{curCSV.getString(1),curCSV.getString(2),
                         curCSV.getString(3), curCSV.getString(4)};
                 csvWrite.writeNext(arrStr);
             }

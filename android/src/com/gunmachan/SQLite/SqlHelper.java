@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 import android.util.Log;
 
+import asu.gunma.DbContainers.VocabWord;
+
 /**
  * SQLHelper extends the SQLiteOpenHelper class which contains useful API
  * to implement the CRUD operations of the database (CREATE, READ, UPDATE

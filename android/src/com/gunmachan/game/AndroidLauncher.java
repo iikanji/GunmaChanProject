@@ -19,6 +19,10 @@ import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
+import com.badlogic.gdx.assets.AssetManager;
+
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 
     public class AndroidLauncher extends AndroidApplication {
 
@@ -27,6 +31,9 @@ import asu.gunma.speech.ActionResolver;
         String AudioSavePathInDevice = null;
         MediaRecorder mediaRecorder;
         MediaPlayer mediaPlayer;*/
+        public AssetManager assetManager;
+        public VocabDb androidDB;
+        protected DbInterface dbInterface;
         public View view;
         public static final int REQUEST_SPEECH = 0;
         public SpeechRecognizer speechRecognizer;
@@ -92,8 +99,8 @@ import asu.gunma.speech.ActionResolver;
                 {
                     requestPermissions(perms, permsRequestCode);
                 }
-                //androidDB = newDb();
-                //test(androidDB);
+                androidDB = newDb();
+                test(androidDB);
 
         }
 
@@ -127,20 +134,41 @@ import asu.gunma.speech.ActionResolver;
             String jSpell = "ゼロ";
             String eSpell = "Zero";
             VocabWord vocabWord = new VocabWord(vocabIndex, jSpell, eSpell);
+            //VocabWord gameWord = dbInterface.getGameVocabWord();
+            //dbInterface.setGameVocabWord(vocabWord);
+
             vDB.dbInsertVocab(vocabWord);
             List<VocabWord> dbWords = vDB.viewDb();
             for (VocabWord element : dbWords) {
                 Log.d("DATABASE", element.getJpnSpelling());
                 Log.d("DATABASE", element.getEngSpelling());
             }
+            for(VocabWord element : dbWords){
+                try {
+                    vDB.dbDeleteVocab(element);
+                } catch(Exception e){
+                    System.out.println("ENTRY IS NULL");
+                }
+            }
+            try {
+                vDB.importCSV("testCSV.csv");
+            } catch(Exception e){
+                System.out.println("FILE NOT FOUND!");
+            }
+            List<VocabWord> currentDb = vDB.viewDb();
+            for(VocabWord element : currentDb){
+                System.out.println("JPN: " + element.getJpnSpelling());
+                System.out.println("ENG: " + element.getEngSpelling());
+            }
         }
 
-      /*  public VocabDb newDb() {
-            VocabDb testDb = new VocabDb(com.gunmachan.game.AndroidLauncher.this);
+        public VocabDb newDb() {
+            VocabDb testDb = new VocabDb(AndroidLauncher.this);
             return testDb;
-        }*/
+        }
         @Override
         protected void onDestroy() {
+            androidDB.getvDbHelper().close();
             super.onDestroy();
         }
 
