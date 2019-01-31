@@ -16,6 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.audio.Music;
+
 import asu.gunma.DatabaseInterface.*;
 
 import asu.gunma.speech.ActionResolver;
@@ -23,7 +25,9 @@ import asu.gunma.speech.ActionResolver;
     public class GameScreen implements Screen {
         DbCallback dbCallback = new DbCallback();
         private Game game;
+        private Music gameMusic;
         public ActionResolver speechGDX;
+        private Screen previousScreen;
 
         // Game logic variables
         private int score;
@@ -49,6 +53,8 @@ import asu.gunma.speech.ActionResolver;
             before the final release.
          */
         private TextButton buttonRecord;
+        private TextButton pauseButton;
+        private TextButton backButton;
 
         private BitmapFont font;
         private Label heading;
@@ -58,15 +64,20 @@ import asu.gunma.speech.ActionResolver;
         private Texture frenemySprite;
         private Texture background;
 
+        boolean musicOnOff = true;
 
-        public GameScreen(Game game, ActionResolver speechGDX) {
+
+        public GameScreen(Game game, ActionResolver speechGDX, Screen previous) {
 
             this.speechGDX = speechGDX;
             this.game = game;
+            this.previousScreen = previous;
         }
 
         @Override
         public void show() {
+            gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
+            gameMusic.play();
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
@@ -103,8 +114,15 @@ import asu.gunma.speech.ActionResolver;
 
             // IMPORTANT: needs localization support
             buttonRecord = new TextButton("Microphone", textButtonStyle);
+            //buttonRecord.setPosition(x, y);
+
+            backButton = new TextButton("Back", textButtonStyle);
+            backButton.setPosition(Gdx.graphics.getWidth()-70, Gdx.graphics.getHeight()-32);
 
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
+
+            pauseButton = new TextButton("Pause", textButtonStyle);
+            pauseButton.setPosition(0, 100);
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -116,7 +134,6 @@ import asu.gunma.speech.ActionResolver;
                 public void clicked(InputEvent event, float x, float y) {
                     // I have it in reverse order like this because it makes more sense
                     // but I can't think of a good variable name for it to not be backwards
-
                     try {
                         speechGDX.startRecognition();
 
@@ -148,9 +165,38 @@ import asu.gunma.speech.ActionResolver;
             //  WRITE FUNCTION FOR SEARCHING WORDS IF ENG SPELLING = NULL
             //  OR IF JPN SPELLING = NULL
 
-            stage.addActor(buttonRecord);
 
+            pauseButton.addListener(new ClickListener() {
+
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if(musicOnOff) {
+                        gameMusic.pause();
+                        musicOnOff = false;
+                    }
+                    else if(!musicOnOff){
+                        gameMusic.play();
+                        musicOnOff = true;
+                    }
+                }
+            });
+
+            backButton.addListener(new ClickListener() {
+                public void clicked(InputEvent event, float x, float y) {
+                    gameMusic.pause();
+                    musicOnOff = false;
+                    dispose(); // dispose of current GameScreen
+                    previousScreen.dispose();
+                    game.setScreen(new MainMenuScreen(game, speechGDX));
+                }
+            });
+
+            stage.addActor(buttonRecord);
+            stage.addActor(pauseButton);
+            stage.addActor(backButton);
         }
+
+
 
         @Override
         public void render(float delta) {
@@ -192,6 +238,13 @@ import asu.gunma.speech.ActionResolver;
 
         @Override
         public void dispose() {
+            font.dispose();
+            background.dispose();
+            frenemySprite.dispose();
+            gunmaSprite.dispose();
+            batch.dispose();
+            stage.dispose();
+            gameMusic.dispose();
 
         }
 

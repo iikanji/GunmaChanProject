@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.audio.Music;
 
 
     public class TitleScreen implements Screen {
@@ -25,7 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
         // This is needed to change screens later on
         private Game game;
         public ActionResolver speechGDX;
-
+        private Music music;
         // Using these are unnecessary but will make our lives easier.
         private Stage stage;
         private TextureAtlas atlas;
@@ -52,10 +53,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
         private BitmapFont font;
         private Label heading;
 
-        public TitleScreen(Game game, ActionResolver speechGDX) {
+        public TitleScreen(Game game, ActionResolver speechGDX, Music music) {
 
             this.game = game;
             this.speechGDX = speechGDX;
+            this.music = music;
+
         }
 
         @Override
@@ -109,7 +112,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     System.out.println("Going from TitleScreen to MainMenuScreen");
-                    game.setScreen(new MainMenuScreen(game, speechGDX));
+                    game.setScreen(new MainMenuScreen(game, speechGDX, music));
                 }
             });
 

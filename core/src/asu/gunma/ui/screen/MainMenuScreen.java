@@ -16,7 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.audio.Music;
 
+import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
 
 
@@ -24,6 +26,7 @@ import asu.gunma.speech.ActionResolver;
 
         private Game game;
         public ActionResolver speechGDX;
+        public Music music;
 
         // Using these are unnecessary but will make our lives easier.
         private Stage stage;
@@ -51,9 +54,18 @@ import asu.gunma.speech.ActionResolver;
         private BitmapFont font;
         private Label heading;
 
-        public MainMenuScreen(Game game, ActionResolver speechGDX) {
+        public MainMenuScreen(Game game, ActionResolver speechGDX, Music music) {
             this.game = game;
             this.speechGDX = speechGDX;
+            this.music = music;
+        }
+
+        public MainMenuScreen(Game game, ActionResolver speechGDX){
+            this.game = game;
+            this.speechGDX = speechGDX;
+            music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
+            music.setLooping(true);
+            music.play();
         }
 
         @Override
@@ -127,7 +139,9 @@ import asu.gunma.speech.ActionResolver;
             buttonGameFirst.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    game.setScreen(new GameScreen(game, speechGDX));
+                    music.pause();
+                    game.setScreen(new GameScreen(game, speechGDX, game.getScreen()));
+
                 }
             });
             buttonGameSecond.addListener(new ClickListener() {
@@ -198,7 +212,11 @@ import asu.gunma.speech.ActionResolver;
 
         @Override
         public void dispose() {
-
+            font.dispose();
+            texture.dispose();
+            batch.dispose();
+            stage.dispose();
+            music.dispose();
         }
 
     }

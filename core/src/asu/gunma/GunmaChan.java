@@ -1,16 +1,21 @@
 package asu.gunma;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.GameScreen;
 import asu.gunma.ui.screen.TitleScreen;
 
 public class GunmaChan extends Game {
-		// Temporary values
-		public static int WIDTH = 1024;
-		public static int HEIGHT = 600;
-		public static final String TITLE = "Gunma-chan Game";
-		public ActionResolver speechGDX;
+	// Temporary values
+	public static int WIDTH = 1024;
+	public static int HEIGHT = 600;
+	public static final String TITLE = "Gunma-chan Game";
+	private Music background_music;
+	public ActionResolver speechGDX;
 
 		public GunmaChan() {}
 		public GunmaChan(ActionResolver speechGDX) {
@@ -19,7 +24,11 @@ public class GunmaChan extends Game {
 
 		@Override
 		public void create() {
-			this.setScreen(new TitleScreen(this, speechGDX));
+			background_music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
+			background_music.setLooping(true);
+			background_music.play();
+			this.setScreen(new TitleScreen(this, speechGDX, background_music));
+
 		}
 
 		@Override
