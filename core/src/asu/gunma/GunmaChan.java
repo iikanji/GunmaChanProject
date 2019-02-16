@@ -2,12 +2,10 @@ package asu.gunma;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 
 import asu.gunma.speech.ActionResolver;
-import asu.gunma.ui.screen.GameScreen;
-import asu.gunma.ui.screen.TitleScreen;
+import asu.gunma.ui.screen.menu.TitleScreen;
 
 public class GunmaChan extends Game {
 	// Temporary values
