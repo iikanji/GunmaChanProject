@@ -16,9 +16,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import asu.gunma.speech.SpeechInputHandler;
 
-
-public class MainMenuScreen implements Screen {
+public class OptionMenu implements Screen {
 
     private Game game;
 
@@ -30,25 +30,20 @@ public class MainMenuScreen implements Screen {
 
     private int testInt = 0;
 
-    /*
-        We will need 5 different buttons for this menu:
-          1. Video Tutorials
-          2. Flashcards
-          3. Game #1
-          4. Game #2
-          5. Game #3
-        This is based on the Project Proposal, I'd like to change this
-        before the final release.
-     */
-    private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonOptionMenu;
+    private TextButton buttonAlphabet, buttonColor, buttonCustom;
 
     private SpriteBatch batch;
     private Texture texture;
 
     private BitmapFont font;
-    private Label heading;
+    private Label alphabetHeading;
+    private Label colorHeading;
+    private Label customHeading;
 
-    public MainMenuScreen(Game game) {this.game = game;}
+
+    public OptionMenu(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -60,10 +55,6 @@ public class MainMenuScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        // Defining the regions of sprite image we're going to create
-        //atlas = new TextureAtlas("ui/button.pack"); // ???
-        //skin = new Skin(atlas);
-
         table = new Table();
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -72,74 +63,62 @@ public class MainMenuScreen implements Screen {
         font.getData().setScale(2);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
+
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        //textButtonStyle.up = skin.getDrawable("button.up");
-        //textButtonStyle.down = skin.getDrawable("button.down");
         textButtonStyle.pressedOffsetX = 1;
         textButtonStyle.pressedOffsetY = -1;
         textButtonStyle.font = font;
-
         // IMPORTANT: needs localization support
-        buttonTutorial = new TextButton("Video Tutorials", textButtonStyle);
-        buttonFlashcard = new TextButton("Flashcards", textButtonStyle);
-        buttonGameFirst = new TextButton("Game #1", textButtonStyle);
-        buttonOptionMenu = new TextButton("Options", textButtonStyle);
+        buttonAlphabet = new TextButton("Video Tutorials", textButtonStyle);
+        buttonColor = new TextButton("Flashcards", textButtonStyle);
+        buttonCustom = new TextButton("Game #1", textButtonStyle);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
         //
 
-        heading = new Label("Select Type:", headingStyle);
-        heading.setFontScale(3);
+        alphabetHeading = new Label("Alphabet", headingStyle);
+        alphabetHeading.setFontScale(3);
+        colorHeading = new Label("Colors", headingStyle);
+        colorHeading.setFontScale(3);
+        customHeading = new Label("Custom Set", headingStyle);
+        customHeading.setFontScale(3);
         //
 
         // Actually, should probably custom class this process
-        buttonTutorial.pad(20);
-        buttonFlashcard.pad(20);
-        buttonGameFirst.pad(20);
-        buttonOptionMenu.pad(20);
+        buttonAlphabet.pad(20);
+        buttonColor.pad(20);
+        buttonCustom.pad(20);
 
         /*
             If you want to test functions with UI instead of with console,
             add it into one of these Listeners. Each of them correspond to
             one of the buttons on the screen in top-down order.
          */
-        buttonTutorial.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                testInt++;
-                System.out.println(testInt);
-            }
-        });
-        buttonFlashcard.addListener(new ClickListener() {
+
+        buttonAlphabet.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
 
             }
         });
-        buttonGameFirst.addListener(new ClickListener() {
+        buttonColor.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+
             }
         });
-        buttonOptionMenu.addListener(new ClickListener() {
+        buttonCustom.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Going from MainMenuScreen to OptionMenu");
-                game.setScreen(new OptionMenu(game));
             }
         });
 
 
-        table.add(heading);
+        table.add(alphabetHeading);
         table.row();
-        table.add(buttonTutorial);
+        table.add(colorHeading);
         table.row();
-        table.add(buttonFlashcard);
-        table.row();
-        table.add(buttonGameFirst);
-        table.row();
-        table.add(buttonOptionMenu);
+        table.add(customHeading);
         table.row();
 
 

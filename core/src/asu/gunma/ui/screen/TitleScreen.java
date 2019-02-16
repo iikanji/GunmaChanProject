@@ -42,7 +42,7 @@ public class TitleScreen implements Screen {
         This is based on the Project Proposal, I'd like to change this
         before the final release.
      */
-    private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonGameSecond, buttonGameThird;
+    private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst;
 
     private SpriteBatch batch;
     private Texture texture;
