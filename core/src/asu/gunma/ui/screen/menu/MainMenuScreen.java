@@ -1,4 +1,4 @@
-package asu.gunma.ui.screen;
+package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -18,21 +18,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
 
-import asu.gunma.DatabaseInterface.*;
-
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.game.GameScreen;
 
-    public class GameScreen implements Screen {
-        DbCallback dbCallback = new DbCallback();
+public class MainMenuScreen implements Screen {
+
         private Game game;
-        private Music gameMusic;
         public ActionResolver speechGDX;
-        private Screen previousScreen;
-
-        // Game logic variables
-        private int score;
-        private String word;
-        private boolean recordState;
+        public Music music;
 
         // Using these are unnecessary but will make our lives easier.
         private Stage stage;
@@ -52,41 +45,35 @@ import asu.gunma.speech.ActionResolver;
             This is based on the Project Proposal, I'd like to change this
             before the final release.
          */
-        private TextButton buttonRecord;
-        private TextButton pauseButton;
-        private TextButton backButton;
+        private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonGameSecond, buttonGameThird;
+
+        private SpriteBatch batch;
+        private Texture texture;
 
         private BitmapFont font;
         private Label heading;
 
-        private SpriteBatch batch;
-        private Texture gunmaSprite;
-        private Texture frenemySprite;
-        private Texture background;
-
-        boolean musicOnOff = true;
-
-
-        public GameScreen(Game game, ActionResolver speechGDX, Screen previous) {
-
-            this.speechGDX = speechGDX;
+        public MainMenuScreen(Game game, ActionResolver speechGDX, Music music) {
             this.game = game;
-            this.previousScreen = previous;
+            this.speechGDX = speechGDX;
+            this.music = music;
+        }
+
+        public MainMenuScreen(Game game, ActionResolver speechGDX){
+            this.game = game;
+            this.speechGDX = speechGDX;
+            music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
+            music.setLooping(true);
+            music.play();
         }
 
         @Override
         public void show() {
-            gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
-            gameMusic.play();
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
             batch = new SpriteBatch();
-            gunmaSprite = new Texture("sprite_gunma.png");
-            frenemySprite = new Texture("sprite_frenemy1.png");
-            background = new Texture("BG_temp.png");
-
-            font = new BitmapFont();
+            texture = new Texture("title_gunma.png");
 
             Gdx.input.setInputProcessor(stage);
 
@@ -97,9 +84,7 @@ import asu.gunma.speech.ActionResolver;
             table = new Table();
             table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-            /*
             font = new BitmapFont(); // needs a font file still
-            */
             font.setColor(Color.BLACK); // Does nothing at the moment
             font.getData().setScale(2);
             font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -110,93 +95,86 @@ import asu.gunma.speech.ActionResolver;
             textButtonStyle.pressedOffsetX = 1;
             textButtonStyle.pressedOffsetY = -1;
             textButtonStyle.font = font;
-            textButtonStyle.fontColor = Color.BLACK;
 
             // IMPORTANT: needs localization support
-            buttonRecord = new TextButton("Microphone", textButtonStyle);
-            //buttonRecord.setPosition(x, y);
-
-            backButton = new TextButton("Back", textButtonStyle);
-            backButton.setPosition(Gdx.graphics.getWidth()-70, Gdx.graphics.getHeight()-32);
+            buttonTutorial = new TextButton("Video Tutorials", textButtonStyle);
+            buttonFlashcard = new TextButton("Flashcards", textButtonStyle);
+            buttonGameFirst = new TextButton("Game #1", textButtonStyle);
+            buttonGameSecond = new TextButton("Game #2", textButtonStyle);
+            buttonGameThird = new TextButton("Game #3", textButtonStyle);
 
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
+            //
 
-            pauseButton = new TextButton("Pause", textButtonStyle);
-            pauseButton.setPosition(0, 100);
+            heading = new Label("Select Type:", headingStyle);
+            heading.setFontScale(3);
+            //
+
+            // Actually, should probably custom class this process
+            buttonTutorial.pad(20);
+            buttonFlashcard.pad(20);
+            buttonGameFirst.pad(20);
+            buttonGameSecond.pad(20);
+            buttonGameThird.pad(20);
 
             /*
                 If you want to test functions with UI instead of with console,
                 add it into one of these Listeners. Each of them correspond to
                 one of the buttons on the screen in top-down order.
              */
-            buttonRecord.addListener(new ClickListener() {
+            buttonTutorial.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    // I have it in reverse order like this because it makes more sense
-                    // but I can't think of a good variable name for it to not be backwards
-                    try {
-                        speechGDX.startRecognition();
-
-                        //add delay
-                        /*Timer.schedule(new Timer.Task(){
-                            @Override
-                            public void run() {
-                                word = speechGDX.getWord();
-                            }
-                        }, 5);*/
-
-                    } catch(Exception e) {
-                        System.out.println(e);
-                    }
+                    testInt++;
+                    System.out.println(testInt);
+                }
+            });
+            buttonFlashcard.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    music.pause();
+                    game.setScreen(new FlashcardScreen(game, speechGDX, game.getScreen()));
+                }
+            });
+            buttonGameFirst.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    music.pause();
+                    game.setScreen(new GameScreen(game, speechGDX, game.getScreen()));
 
                 }
             });
+            buttonGameSecond.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+
+                }
+            });
+            buttonGameThird.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+
+                }
+            });
+
+            table.add(heading);
+            table.row();
+            table.add(buttonTutorial);
+            table.row();
+            table.add(buttonFlashcard);
+            table.row();
+            table.add(buttonGameFirst);
+            table.row();
+            table.add(buttonGameSecond);
+            table.row();
+            table.add(buttonGameThird);
 
             // Remove this later
             table.debug();
 
-            //inputWord = new VocabWord();
-            //studentMetric = studentMetric();
-            //if english word
-            //  set inputWord.setEngSpelling = google word
-            //if japanese word
-            //  set inputWord.setJpnSpelling = google word
-            //search for word.
-            //  WRITE FUNCTION FOR SEARCHING WORDS IF ENG SPELLING = NULL
-            //  OR IF JPN SPELLING = NULL
+            stage.addActor(table);
 
-
-            pauseButton.addListener(new ClickListener() {
-
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    if(musicOnOff) {
-                        gameMusic.pause();
-                        musicOnOff = false;
-                    }
-                    else if(!musicOnOff){
-                        gameMusic.play();
-                        musicOnOff = true;
-                    }
-                }
-            });
-
-            backButton.addListener(new ClickListener() {
-                public void clicked(InputEvent event, float x, float y) {
-                    gameMusic.pause();
-                    musicOnOff = false;
-                    dispose(); // dispose of current GameScreen
-                    previousScreen.dispose();
-                    game.setScreen(new MainMenuScreen(game, speechGDX));
-                }
-            });
-
-            stage.addActor(buttonRecord);
-            stage.addActor(pauseButton);
-            stage.addActor(backButton);
         }
-
-
 
         @Override
         public void render(float delta) {
@@ -204,16 +182,12 @@ import asu.gunma.speech.ActionResolver;
 
             // SpriteBatch is resource intensive, try to use it for only brief moments
             batch.begin();
-            batch.draw(background, 0, 0);
-            batch.draw(gunmaSprite, 90, 60, gunmaSprite.getWidth()*3, gunmaSprite.getHeight()*3);
-            //batch.draw(frenemySprite, 730, 60, frenemySprite.getWidth()/11, frenemySprite.getHeight()/11);
-
-            font.draw(batch, "Word: " + speechGDX.getWord(), 400, 380);
-            font.draw(batch, "Score: " + score, 0, 595);
+            batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 400, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
             batch.end();
 
             stage.act(delta); // optional to pass delta value
             stage.draw();
+
         }
 
         @Override
@@ -239,15 +213,11 @@ import asu.gunma.speech.ActionResolver;
         @Override
         public void dispose() {
             font.dispose();
-            background.dispose();
-            frenemySprite.dispose();
-            gunmaSprite.dispose();
+            texture.dispose();
             batch.dispose();
             stage.dispose();
-            gameMusic.dispose();
-
+            music.dispose();
         }
 
     }
-
 

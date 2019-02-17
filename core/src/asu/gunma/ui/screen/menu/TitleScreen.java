@@ -1,6 +1,7 @@
-package asu.gunma.ui.screen;
+package asu.gunma.ui.screen.menu;
 
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.menu.MainMenuScreen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
