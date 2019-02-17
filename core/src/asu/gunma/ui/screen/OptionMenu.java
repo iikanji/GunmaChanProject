@@ -30,7 +30,7 @@ public class OptionMenu implements Screen {
 
     private int testInt = 0;
 
-    private TextButton buttonAlphabet, buttonColor, buttonCustom;
+    private TextButton buttonAlphabet, buttonColor, buttonCustom1,buttonCustom2,buttonCustom3,buttonCustom4,buttonCustom5,buttonCustom6,buttonCustom7,buttonCustom8,buttonCustom9,buttonCustom10;
 
     private SpriteBatch batch;
     private Texture texture;
@@ -38,7 +38,7 @@ public class OptionMenu implements Screen {
     private BitmapFont font;
     private Label alphabetHeading;
     private Label colorHeading;
-    private Label customHeading;
+    private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
 
 
     public OptionMenu(Game game) {
@@ -63,31 +63,65 @@ public class OptionMenu implements Screen {
         font.getData().setScale(2);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.pressedOffsetX = 1;
         textButtonStyle.pressedOffsetY = -1;
         textButtonStyle.font = font;
+
         // IMPORTANT: needs localization support
-        buttonAlphabet = new TextButton("Video Tutorials", textButtonStyle);
-        buttonColor = new TextButton("Flashcards", textButtonStyle);
-        buttonCustom = new TextButton("Game #1", textButtonStyle);
+        buttonAlphabet = new TextButton("Alphabet", textButtonStyle);
+        buttonColor = new TextButton("Colors", textButtonStyle);
+        buttonCustom1 = new TextButton("Custom 1", textButtonStyle);
+        buttonCustom2 = new TextButton("Custom 2", textButtonStyle);
+        buttonCustom3 = new TextButton("Custom 3", textButtonStyle);
+        buttonCustom4 = new TextButton("Custom 4", textButtonStyle);
+        buttonCustom5 = new TextButton("Custom 5", textButtonStyle);
+        buttonCustom6 = new TextButton("Custom 6", textButtonStyle);
+        buttonCustom7 = new TextButton("Custom 7", textButtonStyle);
+        buttonCustom8 = new TextButton("Custom 8", textButtonStyle);
+        buttonCustom9 = new TextButton("Custom 9", textButtonStyle);
+        buttonCustom10 = new TextButton("Custom 10", textButtonStyle);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
-        //
 
         alphabetHeading = new Label("Alphabet", headingStyle);
-        alphabetHeading.setFontScale(3);
+        alphabetHeading.setFontScale(2);
         colorHeading = new Label("Colors", headingStyle);
-        colorHeading.setFontScale(3);
-        customHeading = new Label("Custom Set", headingStyle);
-        customHeading.setFontScale(3);
-        //
+        colorHeading.setFontScale(2);
+        custom1Heading = new Label("Custom Set 1", headingStyle);
+        custom1Heading.setFontScale(2);
+        custom2Heading = new Label("Custom Set 2", headingStyle);
+        custom2Heading.setFontScale(2);
+        custom3Heading = new Label("Custom Set 3", headingStyle);
+        custom3Heading.setFontScale(2);
+        custom4Heading = new Label("Custom Set 4", headingStyle);
+        custom4Heading.setFontScale(2);
+        custom5Heading = new Label("Custom Set 5", headingStyle);
+        custom5Heading.setFontScale(2);
+        custom6Heading = new Label("Custom Set 6", headingStyle);
+        custom6Heading.setFontScale(2);
+        custom7Heading = new Label("Custom Set 7", headingStyle);
+        custom7Heading.setFontScale(2);
+        custom8Heading = new Label("Custom Set 8", headingStyle);
+        custom8Heading.setFontScale(2);
+        custom9Heading = new Label("Custom Set 9", headingStyle);
+        custom9Heading.setFontScale(2);
+        custom10Heading = new Label("Custom Set 10", headingStyle);
+        custom10Heading.setFontScale(2);
 
         // Actually, should probably custom class this process
         buttonAlphabet.pad(20);
         buttonColor.pad(20);
-        buttonCustom.pad(20);
+        buttonCustom1.pad(20);
+        buttonCustom2.pad(20);
+        buttonCustom3.pad(20);
+        buttonCustom4.pad(20);
+        buttonCustom5.pad(20);
+        buttonCustom6.pad(20);
+        buttonCustom7.pad(20);
+        buttonCustom8.pad(20);
+        buttonCustom9.pad(20);
+        buttonCustom10.pad(20);
 
         /*
             If you want to test functions with UI instead of with console,
@@ -107,18 +141,80 @@ public class OptionMenu implements Screen {
 
             }
         });
-        buttonCustom.addListener(new ClickListener() {
+        buttonCustom1.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom2.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom3.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom4.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom5.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom6.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom7.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom8.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom9.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+            }
+        });
+        buttonCustom10.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
             }
         });
 
-
         table.add(alphabetHeading);
         table.row();
         table.add(colorHeading);
         table.row();
-        table.add(customHeading);
+        table.add(custom1Heading);
+        table.row();
+        table.add(custom2Heading);
+        table.row();
+        table.add(custom3Heading);
+        table.row();
+        table.add(custom4Heading);
+        table.row();
+        table.add(custom5Heading);
+        table.row();
+        table.add(custom6Heading);
+        table.row();
+        table.add(custom7Heading);
+        table.row();
+        table.add(custom8Heading);
+        table.row();
+        table.add(custom9Heading);
+        table.row();
+        table.add(custom10Heading);
         table.row();
 
 
