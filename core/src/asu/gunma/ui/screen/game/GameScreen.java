@@ -296,4 +296,98 @@ public class GameScreen implements Screen {
             this.enemyPosition = Gdx.graphics.getWidth();
             // However you want to change the current vocab would go here
         }
+    //takes arr of phonetic similar words, and the speech recognition word as input
+    //Return score//
+    public int grade(String arr[], String s2) {
+
+        int max = 0;
+        int temp = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+
+            temp = generateScore(arr[i].toLowerCase(), s2.toLowerCase());
+
+            if (temp > max) {
+                max = temp;
+                if(max == 100){
+                    return 100;
+                }
+            }
+        }
+
+        return max;
+
+    }
+
+    //Help the grade system produce an accurate score.
+    public int generateScore(String s1, String s2) {
+
+        s1 = s1.toLowerCase();
+        s2 = s2.toLowerCase();
+
+
+        char[][] arr = new char[s1.length() + 1][s2.length() + 1];
+
+        for (int i = 0; i < s1.length() + 1; i++) {
+            for (int j = 0; j < s2.length() + 1; j++) {
+                arr[i][j] = '0';
+            }
+        }
+
+
+        arr[0][0] = '#';
+
+        for (int i = 1; i < s1.length() + 1; i++) {
+            arr[i][0] = s1.charAt(i - 1);
+        }
+        for (int i = 1; i < s2.length() + 1; i++) {
+            arr[0][i] = s2.charAt(i - 1);
+        }
+
+        for (int i = 1; i < s1.length() + 1; i++) {
+            for (int j = 1; j < s2.length() + 1; j++) {
+                if (arr[0][j] == arr[i][0]) {
+                    arr[i][j] = '1';
+                }
+            }
+        }
+
+        String diagonal = "";
+
+        //s1 > s2
+        if (s1.length() >= s2.length()) {
+            for (int i = 1; i < s1.length() + 1; i++) {
+                if (i > s2.length()) {
+                    diagonal = diagonal + arr[i][s2.length()];
+                } else {
+                    diagonal = diagonal + arr[i][i];
+                }
+            }
+        }
+
+        if (s1.length() < s2.length()) {
+            for (int i = 1; i < s2.length() + 1; i++) {
+                if (i > s1.length()) {
+                    diagonal = diagonal + arr[s1.length()][i];
+                } else {
+                    diagonal = diagonal + arr[i][i];
+                }
+            }
+        }
+
+        int penalty = 100 / diagonal.length();
+        int score = 100;
+
+        for (int i = 0; i < diagonal.length(); i++) {
+            if (diagonal.charAt(i) == '0') {
+                score = score - penalty;
+            }
+        }
+
+        if (score < 0) {
+            score = 0;
+        }
+        return score;
+
+    }
 }
