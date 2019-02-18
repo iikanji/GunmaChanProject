@@ -187,6 +187,13 @@ public class GameScreen implements Screen {
                 }
             });
 
+            String cWords = dbListWords.get(listCounter).getCorrectWords();
+            String[] correctWordList = cWords.split("\\s*,\\s*");
+
+            /*for(int i = 0; i < correctWordList.length; i++){
+                System.out.println(correctWordList[i]);
+            }*/
+
             //if(listCounter == dbListWords.size()){
             //  displayWord = "You Won! Going to next level...";
             //  new gamescreen
@@ -255,6 +262,7 @@ public class GameScreen implements Screen {
                 else if (score > 0){
                     font.draw(batch, "Score: " + score, 850, 450);
                 }
+
                 font.draw(batch, "Lives: " + lives, 0, 400);
 
                 incomingWord = speechGDX.getWord();
@@ -263,12 +271,15 @@ public class GameScreen implements Screen {
                 if(displayWord.equals(incomingWord)){
                     correctWord = true;
                 }
+                else{
+                    correctWord = false;
+                }
 
                 if(correctWord) {
+                    displayWord = dbListWords.get(listCounter++).getEngSpelling();
                     correctWord = false;
                     score = score + 1;
                     lives = lives + 1;
-                    displayWord = dbListWords.get(listCounter++).getEngSpelling();
                 }
 
 
