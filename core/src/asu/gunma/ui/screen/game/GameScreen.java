@@ -33,14 +33,17 @@ public class GameScreen implements Screen {
         DbInterface dbCallback;
         private Game game;
         private Music gameMusic;
+        public static float masterVolume = 0;
         public ActionResolver speechGDX;
         private Screen previousScreen;
 
         // Game logic variables
-        private int score;
-        private int listCounter = 1;
+        private int score = -1;
+        private int listCounter = 0;
         private String displayWord;
+        private String incomingWord;
         private List<VocabWord> dbListWords;
+        private boolean correctWord = false;
         private boolean recordState;
 
         // Using these are unnecessary but will make our lives easier.
@@ -93,7 +96,9 @@ public class GameScreen implements Screen {
         @Override
         public void show() {
             gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
+            gameMusic.setVolume(masterVolume);
             gameMusic.play();
+
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
@@ -151,6 +156,9 @@ public class GameScreen implements Screen {
             pauseButton = new TextButton("Pause", textButtonStyle);
             pauseButton.setPosition(0, 100);
 
+            dbListWords = dbCallback.getDbVocab();
+            displayWord = dbListWords.get(listCounter).getEngSpelling();
+
             /*
                 If you want to test functions with UI instead of with console,
                 add it into one of these Listeners. Each of them correspond to
@@ -178,23 +186,7 @@ public class GameScreen implements Screen {
 
                 }
             });
-            dbListWords = dbCallback.getDbVocab();
 
-            displayWord = dbListWords.get(listCounter).getEngSpelling();
-            String incomingWord = speechGDX.getWord();
-
-            //need to parse out correct words separating by comma and check
-            //with all correct words then use grading functionality
-            if(displayWord.equals(incomingWord)) {
-                score++;
-            }
-
-            if(listCounter < dbListWords.size()) {
-                listCounter++;
-            }
-            if(listCounter == dbListWords.size()){
-                listCounter = 0;
-            }
             //if(listCounter == dbListWords.size()){
             //  displayWord = "You Won! Going to next level...";
             //  new gamescreen
@@ -224,6 +216,7 @@ public class GameScreen implements Screen {
                         musicOnOff = false;
                     }
                     else if(!musicOnOff){
+                        gameMusic.setVolume(masterVolume);
                         gameMusic.play();
                         musicOnOff = true;
                     }
@@ -254,9 +247,30 @@ public class GameScreen implements Screen {
             batch.draw(background, 0, 0);
 
             if (!isGameOver) {
+
                 font.draw(batch, "Word: " + displayWord, 380, 380);
-                font.draw(batch, "Score: " + score, 850, 450);
+                if(score == -1) {
+                    font.draw(batch, "Score: " + 0, 850, 450);
+                }
+                else if (score > 0){
+                    font.draw(batch, "Score: " + score, 850, 450);
+                }
                 font.draw(batch, "Lives: " + lives, 0, 400);
+
+                incomingWord = speechGDX.getWord();
+                //need to parse out correct words separating by comma and check
+                //with all correct words then use grading functionality
+                if(displayWord.equals(incomingWord)){
+                    correctWord = true;
+                }
+
+                if(correctWord) {
+                    correctWord = false;
+                    score = score + 1;
+                    lives = lives + 1;
+                    displayWord = dbListWords.get(listCounter++).getEngSpelling();
+                }
+
 
                 batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
                 this.walkOntoScreenFromRight(delta);

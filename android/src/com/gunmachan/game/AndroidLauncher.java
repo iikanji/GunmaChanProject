@@ -94,16 +94,18 @@ import asu.gunma.DbContainers.VocabWord;
                     return sendWord;
                 }
             };
+
             DbInterface vocabDatabase = new DbInterface() {
                 public List<VocabWord> getDbVocab(){return androidDB.viewDb();}
             };
-
             initialize(new GunmaChan(callback, vocabDatabase),config);
             if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M){
                     requestPermissions(perms, permsRequestCode);
             }
             androidDB = newDb();
             test(androidDB);
+            androidDB.viewDb();
+            androidDB.getvDbHelper().close();
         }
 
         public void showResults(Bundle results) {
@@ -134,6 +136,16 @@ import asu.gunma.DbContainers.VocabWord;
         public void test(VocabDb vDB) {
             try {
                 vDB.importCSV("Numbers.csv");
+                vDB.importCSV("Colors_Shapes.csv");
+                vDB.importCSV("Countries.csv");
+                vDB.importCSV("Days_Months.csv");
+                vDB.importCSV("Feelings.csv");
+                vDB.importCSV("Subjects.csv");
+                vDB.importCSV("Fruits_Foods.csv");
+                vDB.importCSV("Professions.csv");
+                vDB.importCSV("Places.csv");
+                vDB.importCSV("Time.csv");
+
             } catch(Exception e){
                 System.out.println(e);
             }

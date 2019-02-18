@@ -11,7 +11,6 @@ package com.gunmachan.SQLite;
 public class VocabWord {
     public static final String TABLE_NAME = "Vocab";
 
-    public static final String COLUMN_ID = "id";
     public static final String COLUMN_KANJI = "TargetVocabularyKanji";
     public static final String COLUMN_KANA = "TargetVocabularyKana";
     public static final String COLUMN_ENG = "TargetVocabulary";
@@ -20,7 +19,6 @@ public class VocabWord {
 
     public static final String SQLITE_CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY," +
                     COLUMN_KANJI + " TEXT," +
                     COLUMN_KANA + " TEXT," +
                     COLUMN_ENG + " TEXT," +
@@ -30,7 +28,6 @@ public class VocabWord {
     public static final String SQLITE_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    private int id;
     private String kanjiSpelling;
     private String kanaSpelling;
     private String engSpelling;
@@ -40,22 +37,13 @@ public class VocabWord {
     public VocabWord() {
     }
 
-    public VocabWord(int id, String kanjiSpelling, String kanaSpelling, String engSpelling,
+    public VocabWord(String kanjiSpelling, String kanaSpelling, String engSpelling,
                      String moduleCategory, String correctWords) {
-        this.id = id;
         this.kanjiSpelling = kanjiSpelling;
         this.kanaSpelling = kanaSpelling;
         this.engSpelling = engSpelling;
         this.moduleCategory = moduleCategory;
         this.correctWords = correctWords;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getKanjiSpelling() {

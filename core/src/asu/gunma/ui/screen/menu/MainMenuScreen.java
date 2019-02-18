@@ -54,6 +54,7 @@ public class MainMenuScreen implements Screen {
 
         private BitmapFont font;
         private Label heading;
+        private static float masterVolume = 0;
 
         public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
             this.game = game;
@@ -68,6 +69,7 @@ public class MainMenuScreen implements Screen {
             this.dbCallback = dbCallback;
             music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
             music.setLooping(true);
+            music.setVolume(masterVolume);
             music.play();
         }
 

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import asu.gunma.DbContainers.VocabWord;
-
 import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
 /**
@@ -34,6 +33,7 @@ import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 public final class VocabDb {
     protected SqlHelper vDbHelper;
     protected AssetManager assetManager;
+    //private int id = 0;
     /**
      * Constructor that always keeps the same table active given the application context.
      *
@@ -72,15 +72,14 @@ public final class VocabDb {
     public VocabWord getVocabWord(long id) {
         SQLiteDatabase db = vDbHelper.getReadableDatabase();
         Cursor cursor = db.query(VocabWord.TABLE_NAME,
-                new String[]{VocabWord.COLUMN_ID, VocabWord.COLUMN_KANJI, VocabWord.COLUMN_KANA,
+                new String[]{VocabWord.COLUMN_KANJI, VocabWord.COLUMN_KANA,
                         VocabWord.COLUMN_ENG, VocabWord.COLUMN_MODULE, VocabWord.COLUMN_CORRECT_WORDS},
-                VocabWord.COLUMN_ID + "=?",
+                VocabWord.COLUMN_ENG + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
             cursor.moveToFirst();
 
         VocabWord vocabWord = new VocabWord(
-                cursor.getInt(cursor.getColumnIndex(VocabWord.COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_KANJI)),
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_KANA)),
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)),
@@ -107,7 +106,6 @@ public final class VocabDb {
         if (cursor.moveToFirst()) {
             do {
                 VocabWord vocabWord = new VocabWord();
-                vocabWord.setId(cursor.getInt(cursor.getColumnIndex(VocabWord.COLUMN_ID)));
                 vocabWord.setKanjiSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_KANJI)));
                 vocabWord.setKanaSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_KANA)));
                 vocabWord.setEngSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)));
@@ -153,8 +151,8 @@ public final class VocabDb {
         contentValues.put(VocabWord.COLUMN_MODULE, vWord.getModuleCategory());
         contentValues.put(VocabWord.COLUMN_CORRECT_WORDS, vWord.getCorrectWords());
         //unfinished
-        return db.update(VocabWord.TABLE_NAME, contentValues, VocabWord.COLUMN_ID + " =?",
-                new String[]{String.valueOf(vWord.getId())});
+        return db.update(VocabWord.TABLE_NAME, contentValues, VocabWord.COLUMN_ENG + " =?",
+                new String[]{String.valueOf(vWord.getEngSpelling())});
     }
 
     /**
@@ -165,8 +163,8 @@ public final class VocabDb {
      */
     public void dbDeleteVocab(VocabWord vWord) {
         SQLiteDatabase db = vDbHelper.getWritableDatabase();
-        db.delete(VocabWord.TABLE_NAME, VocabWord.COLUMN_ID + " =?",
-                new String[]{String.valueOf(vWord.getId())});
+        db.delete(VocabWord.TABLE_NAME, VocabWord.COLUMN_ENG + " =?",
+                new String[]{String.valueOf(vWord.getEngSpelling())});
         db.close();
     }
 
@@ -188,7 +186,6 @@ public final class VocabDb {
      * */
     public void importCSV(String fileName) throws IOException {
         SQLiteDatabase db = vDbHelper.getWritableDatabase();
-        int id = 0;
         InputStream inStream = null;
         try {
             inStream = Gdx.files.internal(fileName).read();
@@ -207,8 +204,7 @@ public final class VocabDb {
                     Log.d("CSVParser", "Skipping Bad CSV Row");
                     continue;
                 }
-                ContentValues contentValues = new ContentValues(6);
-                contentValues.put(VocabWord.COLUMN_ID, id);
+                ContentValues contentValues = new ContentValues(5);
                 contentValues.put(VocabWord.COLUMN_KANJI, columns[0].trim());
                 contentValues.put(VocabWord.COLUMN_KANA, columns[1].trim());
                 contentValues.put(VocabWord.COLUMN_ENG, columns[2].trim());
@@ -223,7 +219,6 @@ public final class VocabDb {
                 contentValues.put(VocabWord.COLUMN_CORRECT_WORDS, correctWordsList);
                 db.insert(VocabWord.TABLE_NAME, null, contentValues);
                 correctWordsList = "";
-                id++;
             }
         } catch (IOException e) {
             e.printStackTrace();
