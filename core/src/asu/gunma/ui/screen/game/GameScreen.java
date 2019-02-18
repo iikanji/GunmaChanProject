@@ -1,5 +1,7 @@
 package asu.gunma.ui.screen.game;
 
+import java.util.List;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -22,12 +24,13 @@ import com.badlogic.gdx.audio.Music;
 
 import asu.gunma.DatabaseInterface.*;
 
+import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
 
 public class GameScreen implements Screen {
-        DbCallback dbCallback = new DbCallback();
+        DbInterface dbCallback;
         private Game game;
         private Music gameMusic;
         public ActionResolver speechGDX;
@@ -35,7 +38,9 @@ public class GameScreen implements Screen {
 
         // Game logic variables
         private int score;
-        private String word;
+        private int listCounter = 1;
+        private String displayWord;
+        private List<VocabWord> dbListWords;
         private boolean recordState;
 
         // Using these are unnecessary but will make our lives easier.
@@ -77,10 +82,11 @@ public class GameScreen implements Screen {
 
         boolean musicOnOff = true;
 
-        public GameScreen(Game game, ActionResolver speechGDX, Screen previous) {
+        public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
 
-            this.speechGDX = speechGDX;
             this.game = game;
+            this.speechGDX = speechGDX;
+            this.dbCallback = dbCallback;
             this.previousScreen = previous;
         }
 
@@ -138,7 +144,7 @@ public class GameScreen implements Screen {
             //buttonRecord.setPosition(x, y);
 
             backButton = new TextButton("Back", textButtonStyle);
-            backButton.setPosition(Gdx.graphics.getWidth()-70, Gdx.graphics.getHeight()-32);
+            backButton.setPosition(Gdx.graphics.getWidth() - 70, Gdx.graphics.getHeight() - 32);
 
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
@@ -166,12 +172,34 @@ public class GameScreen implements Screen {
                             }
                         }, 5);*/
 
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         System.out.println(e);
                     }
 
                 }
             });
+            dbListWords = dbCallback.getDbVocab();
+
+            displayWord = dbListWords.get(listCounter).getEngSpelling();
+            String incomingWord = speechGDX.getWord();
+
+            //need to parse out correct words separating by comma and check
+            //with all correct words then use grading functionality
+            if(displayWord.equals(incomingWord)) {
+                score++;
+            }
+
+            if(listCounter < dbListWords.size()) {
+                listCounter++;
+            }
+            if(listCounter == dbListWords.size()){
+                listCounter = 0;
+            }
+            //if(listCounter == dbListWords.size()){
+            //  displayWord = "You Won! Going to next level...";
+            //  new gamescreen
+            //
+            //}
 
             // Remove this later
             table.debug();
@@ -208,7 +236,7 @@ public class GameScreen implements Screen {
                     musicOnOff = false;
                     dispose(); // dispose of current GameScreen
                     previousScreen.dispose();
-                    game.setScreen(new MainMenuScreen(game, speechGDX));
+                    game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
                 }
             });
 
@@ -225,11 +253,10 @@ public class GameScreen implements Screen {
             batch.begin();
             batch.draw(background, 0, 0);
 
-
-
             if (!isGameOver) {
-                font.draw(batch, "Word: " + speechGDX.getWord(), 400, 380);
-                font.draw(batch, "Lives: " + this.lives, 0, 400);
+                font.draw(batch, "Word: " + displayWord, 380, 380);
+                font.draw(batch, "Score: " + score, 850, 450);
+                font.draw(batch, "Lives: " + lives, 0, 400);
 
                 batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
                 this.walkOntoScreenFromRight(delta);

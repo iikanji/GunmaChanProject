@@ -17,6 +17,9 @@ import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapte
 import com.gunmachan.SQLite.*;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+
+import asu.gunma.DbContainers.Instructor;
+import asu.gunma.DbContainers.StudentMetric;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
 import com.badlogic.gdx.assets.AssetManager;
@@ -91,17 +94,16 @@ import asu.gunma.DbContainers.VocabWord;
                     return sendWord;
                 }
             };
+            DbInterface vocabDatabase = new DbInterface() {
+                public List<VocabWord> getDbVocab(){return androidDB.viewDb();}
+            };
 
-
-            initialize(new GunmaChan(callback),config);
-            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M)
-
-                {
+            initialize(new GunmaChan(callback, vocabDatabase),config);
+            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M){
                     requestPermissions(perms, permsRequestCode);
-                }
-                androidDB = newDb();
-                test(androidDB);
-
+            }
+            androidDB = newDb();
+            test(androidDB);
         }
 
         public void showResults(Bundle results) {
@@ -130,35 +132,18 @@ import asu.gunma.DbContainers.VocabWord;
         }
 
         public void test(VocabDb vDB) {
-            int vocabIndex = 0;
-            String jSpell = "ゼロ";
-            String eSpell = "Zero";
-            VocabWord vocabWord = new VocabWord(vocabIndex, jSpell, eSpell);
-            //VocabWord gameWord = dbInterface.getGameVocabWord();
-            //dbInterface.setGameVocabWord(vocabWord);
-
-            vDB.dbInsertVocab(vocabWord);
-            List<VocabWord> dbWords = vDB.viewDb();
-            for (VocabWord element : dbWords) {
-                Log.d("DATABASE", element.getJpnSpelling());
-                Log.d("DATABASE", element.getEngSpelling());
-            }
-            for(VocabWord element : dbWords){
-                try {
-                    vDB.dbDeleteVocab(element);
-                } catch(Exception e){
-                    System.out.println("ENTRY IS NULL");
-                }
-            }
             try {
-                vDB.importCSV("testCSV.csv");
+                vDB.importCSV("Numbers.csv");
             } catch(Exception e){
-                System.out.println("FILE NOT FOUND!");
+                System.out.println(e);
             }
             List<VocabWord> currentDb = vDB.viewDb();
             for(VocabWord element : currentDb){
-                System.out.println("JPN: " + element.getJpnSpelling());
+                System.out.println("KANJI: " + element.getKanjiSpelling());
+                System.out.println("KANA: " + element.getKanaSpelling());
                 System.out.println("ENG: " + element.getEngSpelling());
+                System.out.println("Module: " + element.getModuleCategory());
+                System.out.println("Correct Word: " + element.getCorrectWords());
             }
         }
 

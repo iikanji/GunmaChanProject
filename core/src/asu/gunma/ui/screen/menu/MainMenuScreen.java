@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
 
+import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.game.GameScreen;
 
@@ -25,6 +26,7 @@ public class MainMenuScreen implements Screen {
 
         private Game game;
         public ActionResolver speechGDX;
+        public DbInterface dbCallback;
         public Music music;
 
         // Using these are unnecessary but will make our lives easier.
@@ -53,15 +55,17 @@ public class MainMenuScreen implements Screen {
         private BitmapFont font;
         private Label heading;
 
-        public MainMenuScreen(Game game, ActionResolver speechGDX, Music music) {
+        public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
             this.game = game;
             this.speechGDX = speechGDX;
             this.music = music;
+            this.dbCallback = dbCallback;
         }
 
-        public MainMenuScreen(Game game, ActionResolver speechGDX){
+        public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback){
             this.game = game;
             this.speechGDX = speechGDX;
+            this.dbCallback = dbCallback;
             music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
             music.setLooping(true);
             music.play();
@@ -140,7 +144,7 @@ public class MainMenuScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     music.pause();
-                    game.setScreen(new GameScreen(game, speechGDX, game.getScreen()));
+                    game.setScreen(new GameScreen(game, speechGDX, dbCallback, game.getScreen()));
 
                 }
             });

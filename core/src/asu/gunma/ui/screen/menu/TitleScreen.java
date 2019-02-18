@@ -1,5 +1,6 @@
 package asu.gunma.ui.screen.menu;
 
+import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 
@@ -27,6 +28,7 @@ import com.badlogic.gdx.audio.Music;
         // This is needed to change screens later on
         private Game game;
         public ActionResolver speechGDX;
+        public DbInterface dbCallback;
         private Music music;
         // Using these are unnecessary but will make our lives easier.
         private Stage stage;
@@ -54,11 +56,12 @@ import com.badlogic.gdx.audio.Music;
         private BitmapFont font;
         private Label heading;
 
-        public TitleScreen(Game game, ActionResolver speechGDX, Music music) {
+        public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
 
             this.game = game;
             this.speechGDX = speechGDX;
             this.music = music;
+            this.dbCallback = dbCallback;
 
         }
 
@@ -113,7 +116,7 @@ import com.badlogic.gdx.audio.Music;
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     System.out.println("Going from TitleScreen to MainMenuScreen");
-                    game.setScreen(new MainMenuScreen(game, speechGDX, music));
+                    game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, music));
                 }
             });
 
