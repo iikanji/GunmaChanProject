@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
         private Animator onionWalkAnimation;
         private Animator gunmaWalkAnimation;
 
-        boolean musicOnOff = true;
+        boolean isNotPaused = true;
 
         public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
 
@@ -218,14 +218,14 @@ public class GameScreen implements Screen {
 
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if(musicOnOff) {
+                    if(isNotPaused) {
                         gameMusic.pause();
-                        musicOnOff = false;
+                        isNotPaused = false;
                     }
-                    else if(!musicOnOff){
+                    else {
                         gameMusic.setVolume(masterVolume);
                         gameMusic.play();
-                        musicOnOff = true;
+                        isNotPaused = true;
                     }
                 }
             });
@@ -233,7 +233,7 @@ public class GameScreen implements Screen {
             backButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     gameMusic.pause();
-                    musicOnOff = false;
+                    isNotPaused = false;
                     dispose(); // dispose of current GameScreen
                     previousScreen.dispose();
                     game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
@@ -329,10 +329,21 @@ public class GameScreen implements Screen {
         }
 
         private void walkOntoScreenFromRight(float delta) {
-            batch.draw(onionWalkAnimation.getCurrentFrame(delta), this.enemyPosition, 60);
-            this.enemyPosition--;
-            if (this.enemyPosition < 100) {
-                this.takeDamage();
+            if (isNotPaused) {
+                // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 60);
+                tmp.flip(true, false);
+                this.enemyPosition--;
+                if (this.enemyPosition < 100) {
+                    this.takeDamage();
+                }
+            } else {
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 60);
+                tmp.flip(true, false);
             }
         }
 
