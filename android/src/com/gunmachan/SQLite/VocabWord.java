@@ -11,55 +11,77 @@ package com.gunmachan.SQLite;
 public class VocabWord {
     public static final String TABLE_NAME = "Vocab";
 
-    public static final String COLUMN_ID = "id";
-    public static final String COLUMN_JPN = "JPN_Spelling";
-    public static final String COLUMN_ENG = "ENG_Spelling";
-    public static final String COLUMN_MODULE = "";
+    public static final String COLUMN_KANJI = "TargetVocabularyKanji";
+    public static final String COLUMN_KANA = "TargetVocabularyKana";
+    public static final String COLUMN_ENG = "TargetVocabulary";
+    public static final String COLUMN_MODULE = "Category";
+    public static final String COLUMN_CORRECT_WORDS = "CorrectWords";
 
     public static final String SQLITE_CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
-                    COLUMN_JPN + " TEXT," +
-                    COLUMN_ENG + " TEXT)";
+                    COLUMN_KANJI + " TEXT," +
+                    COLUMN_KANA + " TEXT," +
+                    COLUMN_ENG + " TEXT," +
+                    COLUMN_MODULE + " TEXT," +
+                    COLUMN_CORRECT_WORDS + " TEXT" + ")";
 
     public static final String SQLITE_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    private int id;
-    private String jpnSpelling;
+    private String kanjiSpelling;
+    private String kanaSpelling;
     private String engSpelling;
+    private String moduleCategory;
+    private String correctWords;
 
     public VocabWord() {
     }
 
-    public VocabWord(int id, String jpnSpelling, String engSpelling) {
-        this.id = id;
-        this.jpnSpelling = jpnSpelling;
+    public VocabWord(String kanjiSpelling, String kanaSpelling, String engSpelling,
+                     String moduleCategory, String correctWords) {
+        this.kanjiSpelling = kanjiSpelling;
+        this.kanaSpelling = kanaSpelling;
         this.engSpelling = engSpelling;
+        this.moduleCategory = moduleCategory;
+        this.correctWords = correctWords;
     }
 
-    public int getId() {
-        return id;
+    public String getKanjiSpelling() {
+        return kanjiSpelling;
     }
 
-    public String getJpnSpelling() {
-        return jpnSpelling;
+    public void setKanjiSpelling(String kanjiSpelling) {
+        this.kanjiSpelling = kanjiSpelling;
     }
 
-    public void setJpnSpelling(String jpnSpelling) {
-        this.jpnSpelling = jpnSpelling;
+    public String getKanaSpelling() {
+        return kanaSpelling;
+    }
+
+    public void setKanaSpelling(String kanaSpelling) {
+        this.kanaSpelling = kanaSpelling;
     }
 
     public String getEngSpelling() {
         return engSpelling;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setEngSpelling(String engSpelling) {
         this.engSpelling = engSpelling;
+    }
+
+    public void setModuleCategory(String moduleCategory) {
+        this.moduleCategory = moduleCategory;
+    }
+
+    public String getModuleCategory() {
+        return moduleCategory;
+    }
+
+    public String getCorrectWords() { return correctWords; }
+
+    public void setCorrectWords(String correctWords) {
+        this.correctWords = correctWords;
     }
 
 }

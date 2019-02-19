@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
+import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.TitleScreen;
 
@@ -14,18 +15,24 @@ public class GunmaChan extends Game {
 	public static final String TITLE = "Gunma-chan Game";
 	private Music background_music;
 	public ActionResolver speechGDX;
+	public DbInterface dbCallback;
 
 		public GunmaChan() {}
+		public GunmaChan(ActionResolver speechGDX, DbInterface dbCallback){
+			this.speechGDX = speechGDX;
+			this.dbCallback = dbCallback;
+		}
 		public GunmaChan(ActionResolver speechGDX) {
 			this.speechGDX = speechGDX;
 		}
+		public GunmaChan(DbInterface database){this.dbCallback = database;}
 
 		@Override
 		public void create() {
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
 			background_music.setLooping(true);
 			background_music.play();
-			this.setScreen(new TitleScreen(this, speechGDX, background_music));
+			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music));
 
 		}
 
