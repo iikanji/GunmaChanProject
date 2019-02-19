@@ -14,6 +14,9 @@ import android.util.Log;
 import com.badlogic.gdx.Gdx;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.gunmachan.SQLite.*;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -42,6 +45,7 @@ import asu.gunma.DbContainers.VocabWord;
         public SpeechRecognizer speechRecognizer;
         public ActionResolver callback;
         protected String sendWord;
+        private static final int RC_SIGN_IN = 100;
 
         String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET", "android.permission.WRITE_EXTERNAL_STORAGE"};
         int permsRequestCode = 200;
@@ -50,6 +54,12 @@ import asu.gunma.DbContainers.VocabWord;
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+
+            //DEFAULT_SIGN_IN will request user ID, email address, and profile
+            GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+
+            //creating sign in object with options specified by gso
+            final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
 
             AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
@@ -69,6 +79,14 @@ import asu.gunma.DbContainers.VocabWord;
 
             ActionResolver callback = new ActionResolver() {
                 @Override
+
+                //method that starts the Google login client
+                public void signIn()
+                {
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                }
+
                 public void startRecognition() {
 
                     try {
