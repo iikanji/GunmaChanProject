@@ -47,7 +47,7 @@ public class MainMenuScreen implements Screen {
             This is based on the Project Proposal, I'd like to change this
             before the final release.
          */
-        private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonGameSecond, buttonGameThird;
+        private TextButton buttonTutorial, buttonFlashcard, buttonGameFirst, buttonOptionMenu;
 
         private SpriteBatch batch;
         private Texture texture;
@@ -106,8 +106,8 @@ public class MainMenuScreen implements Screen {
             buttonTutorial = new TextButton("Video Tutorials", textButtonStyle);
             buttonFlashcard = new TextButton("Flashcards", textButtonStyle);
             buttonGameFirst = new TextButton("Game #1", textButtonStyle);
-            buttonGameSecond = new TextButton("Game #2", textButtonStyle);
-            buttonGameThird = new TextButton("Game #3", textButtonStyle);
+            buttonOptionMenu = new TextButton("Options Menu", textButtonStyle);
+
 
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
             //
@@ -120,8 +120,8 @@ public class MainMenuScreen implements Screen {
             buttonTutorial.pad(20);
             buttonFlashcard.pad(20);
             buttonGameFirst.pad(20);
-            buttonGameSecond.pad(20);
-            buttonGameThird.pad(20);
+            buttonOptionMenu.pad(20);
+
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -150,18 +150,14 @@ public class MainMenuScreen implements Screen {
 
                 }
             });
-            buttonGameSecond.addListener(new ClickListener() {
+            buttonOptionMenu.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-
+                    music.pause();
+                    game.setScreen(new OptionMenu(game));
                 }
             });
-            buttonGameThird.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
 
-                }
-            });
 
             table.add(heading);
             table.row();
@@ -171,9 +167,9 @@ public class MainMenuScreen implements Screen {
             table.row();
             table.add(buttonGameFirst);
             table.row();
-            table.add(buttonGameSecond);
+            table.add(buttonOptionMenu);
             table.row();
-            table.add(buttonGameThird);
+
 
             // Remove this later
             table.debug();
