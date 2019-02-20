@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -16,12 +18,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
+
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.speech.ActionResolver;
 
 
 public class OptionMenu implements Screen {
 
     private Game game;
-
+    private Screen previousScreen;
+    private ActionResolver speechGDX;
+    private DbInterface dbCallback;
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
     private TextureAtlas atlas;
@@ -30,19 +38,29 @@ public class OptionMenu implements Screen {
 
     private int testInt = 0;
 
-    private TextButton buttonAlphabet, buttonColor, buttonCustom1,buttonCustom2,buttonCustom3,buttonCustom4,buttonCustom5,buttonCustom6,buttonCustom7,buttonCustom8,buttonCustom9,buttonCustom10;
+    private BitmapFont font;
+
+    FreeTypeFontGenerator generator;
+    FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+
+    private TextButton buttonAlphabet, buttonColor, buttonCustom1,buttonCustom2,buttonCustom3,
+            buttonCustom4,buttonCustom5,buttonCustom6,buttonCustom7,buttonCustom8,buttonCustom9,
+            buttonCustom10, backButton;
 
     private SpriteBatch batch;
     private Texture texture;
 
-    private BitmapFont font;
     private Label alphabetHeading;
     private Label colorHeading;
-    private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
+    private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,
+            custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
 
 
-    public OptionMenu(Game game) {
+    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
         this.game = game;
+        this.speechGDX = speechGDX;
+        this.dbCallback = dbCallback;
+        this.previousScreen = previous;
     }
 
     @Override
@@ -58,10 +76,16 @@ public class OptionMenu implements Screen {
         table = new Table();
         table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        font = new BitmapFont(); // needs a font file still
-        font.setColor(Color.BLACK); // Does nothing at the moment
-        font.getData().setScale(2);
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        //font file
+        final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+        //font for vocab word
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 15;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.pressedOffsetX = 1;
@@ -81,6 +105,9 @@ public class OptionMenu implements Screen {
         buttonCustom8 = new TextButton("Custom 8", textButtonStyle);
         buttonCustom9 = new TextButton("Custom 9", textButtonStyle);
         buttonCustom10 = new TextButton("Custom 10", textButtonStyle);
+
+        backButton = new TextButton("Back", textButtonStyle);
+        backButton.setPosition(20, 530, Align.left);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
@@ -192,6 +219,15 @@ public class OptionMenu implements Screen {
             }
         });
 
+        backButton.addListener(new ClickListener(){
+           @Override
+           public void clicked(InputEvent event, float x, float y){
+               dispose(); // dispose of current FlashScreen
+               previousScreen.dispose();
+               game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+           }
+        });
+
         table.add(alphabetHeading);
         table.row();
         table.add(colorHeading);
@@ -222,6 +258,7 @@ public class OptionMenu implements Screen {
         table.debug();
 
         stage.addActor(table);
+        stage.addActor(backButton);
 
     }
 

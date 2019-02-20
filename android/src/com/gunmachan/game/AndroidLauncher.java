@@ -1,5 +1,6 @@
 package com.gunmachan.game;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.pm.PackageManager;
-import android.util.Log;
+
 import com.badlogic.gdx.Gdx;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
@@ -18,8 +19,6 @@ import com.gunmachan.SQLite.*;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
-import asu.gunma.DbContainers.Instructor;
-import asu.gunma.DbContainers.StudentMetric;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
 import com.badlogic.gdx.assets.AssetManager;
@@ -42,8 +41,12 @@ import asu.gunma.DbContainers.VocabWord;
         public SpeechRecognizer speechRecognizer;
         public ActionResolver callback;
         protected String sendWord;
+        private Context context;
 
-        String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET", "android.permission.WRITE_EXTERNAL_STORAGE"};
+        // add permission to hide navigation bar?
+        // create button to exit to home screen under instructor menu
+        String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET",
+                "android.permission.WRITE_EXTERNAL_STORAGE"};
         int permsRequestCode = 200;
 
         @Override
@@ -105,7 +108,10 @@ import asu.gunma.DbContainers.VocabWord;
             androidDB = newDb();
             test(androidDB);
             androidDB.viewDb();
-            androidDB.getvDbHelper().close();
+            if(isFinishing()){
+                System.out.println("Hit2");
+                this.deleteDatabase("AppDb");
+            }
         }
 
         public void showResults(Bundle results) {
@@ -129,8 +135,29 @@ import asu.gunma.DbContainers.VocabWord;
             }
         }
         @Override
+        public void onPause() {
+            super.onPause();
+        }
+
+        @Override
         public void onResume(){
             super.onResume();
+        }
+
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
+            switch (permsRequestCode) {
+                case 200:
+                    boolean RecordingAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean InternetAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean ExternalAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    break;
+            }
         }
 
         public void test(VocabDb vDB) {
@@ -163,22 +190,6 @@ import asu.gunma.DbContainers.VocabWord;
             VocabDb testDb = new VocabDb(AndroidLauncher.this);
             return testDb;
         }
-        @Override
-        protected void onDestroy() {
-            androidDB.getvDbHelper().close();
-            super.onDestroy();
-        }
 
-        @Override
-        public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
-            switch (permsRequestCode) {
-                case 200:
-                    boolean RecordingAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean InternetAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    boolean ExternalAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-
-                    break;
-            }
-        }
     }
 
