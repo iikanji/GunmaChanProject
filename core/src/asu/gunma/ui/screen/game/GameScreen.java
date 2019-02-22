@@ -222,7 +222,7 @@ public class GameScreen implements Screen {
                         gameMusic.pause();
                         musicOnOff = false;
                     }
-                    else if(!musicOnOff){
+                    else {
                         gameMusic.setVolume(masterVolume);
                         gameMusic.play();
                         musicOnOff = true;
