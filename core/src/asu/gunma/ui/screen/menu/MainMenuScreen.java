@@ -153,6 +153,9 @@ public class MainMenuScreen implements Screen {
             buttonOptionMenu.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    //testing sign in method when option menu is selected
+                    speechGDX.signIn();
+
                     music.pause();
                     game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), music));
                     //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));

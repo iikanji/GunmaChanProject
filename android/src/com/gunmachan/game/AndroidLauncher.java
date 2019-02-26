@@ -16,6 +16,9 @@ import android.content.pm.PackageManager;
 import com.badlogic.gdx.Gdx;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.gunmachan.SQLite.*;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -46,6 +49,7 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
         public View decorView;
         public int uiOptions;
         private AndroidApplicationConfiguration config;
+        private static final int RC_SIGN_IN = 100;
         private Context context;
 
         // add permission to hide navigation bar?
@@ -58,8 +62,19 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+
             hideNavigationBar();
             config = new AndroidApplicationConfiguration();
+
+            //DEFAULT_SIGN_IN will request user ID, email address, and profile
+            GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+
+            //creating sign in object with options specified by gso
+            final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+
+            AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
 
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
@@ -76,6 +91,14 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
 
             callback = new ActionResolver() {
                 @Override
+
+                //method that starts the Google login client
+                public void signIn()
+                {
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, RC_SIGN_IN);
+                }
+
                 public void startRecognition() {
 
                     try {
