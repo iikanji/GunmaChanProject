@@ -138,10 +138,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 Gdx.app.log("you said: ", thingsYouSaid.get(0));
             }
         }
-        @Override
-        public void onPause() {
-            super.onPause();
-        }
 
         @Override
         public void onResume(){
@@ -215,7 +211,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 vDB.importCSV("Professions.csv");
                 vDB.importCSV("Places.csv");
                 vDB.importCSV("Time.csv");
-
             } catch(Exception e){
                 System.out.println(e);
             }
@@ -233,9 +228,7 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             VocabDb testDb = new VocabDb(AndroidLauncher.this);
             return testDb;
         }
-                    break;
-            }
-        }
+
 
         private void hideNavigationBar(){
             decorView = getWindow().getDecorView();

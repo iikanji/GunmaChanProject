@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -66,7 +67,7 @@ public class OptionMenu implements Screen {
             deleteCustomButton10, deleteCustomButton11, deleteCustomButton12, deleteCustomButton13,deleteCustomButton14,
             deleteCustomButton15;
 
-    //private TextButton newButton, deleteButton, settingsButton, backButton;
+    private TextButton newButton, deleteButton, settingsButton, backButton;
     private ArrayList<TextButton> buttonList;
     private ArrayList<TextButton> deleteButtonList;
     private BitmapFont font;
@@ -74,14 +75,9 @@ public class OptionMenu implements Screen {
     FreeTypeFontGenerator generator;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
 
-    private TextButton buttonAlphabet, buttonColor, buttonCustom1,buttonCustom2,buttonCustom3,
-            buttonCustom4,buttonCustom5,buttonCustom6,buttonCustom7,buttonCustom8,buttonCustom9,
-            buttonCustom10, backButton, newButton, deleteButton, settingsButton;
-
     private SpriteBatch batch;
     private Texture texture;
 
-    private BitmapFont font;
     private Label alphabetHeading;
     private Label colorHeading;
     private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,
@@ -100,13 +96,7 @@ public class OptionMenu implements Screen {
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.gameMusic = music;
-  }  
-  public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
-        this.game = game;
-        this.speechGDX = speechGDX;
-        this.dbCallback = dbCallback;
-        this.previousScreen = previous;
-    }
+  }
 
     @Override
     public void show() {
@@ -147,7 +137,7 @@ public class OptionMenu implements Screen {
 
         parameter.size = 15;
         parameter.color = Color.BLACK;
-        //font = generator.generateFont(parameter);
+        font = generator.generateFont(parameter);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.pressedOffsetX = 1;
@@ -527,14 +517,6 @@ public class OptionMenu implements Screen {
                     }
                 }
             }
-        });
-        backButton.addListener(new ClickListener(){
-           @Override
-           public void clicked(InputEvent event, float x, float y){
-               dispose(); // dispose of current FlashScreen
-               previousScreen.dispose();
-               game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
-           }
         });
 
         table.add(alphabetHeading);

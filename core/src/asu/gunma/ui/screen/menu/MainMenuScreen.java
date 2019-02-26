@@ -155,7 +155,7 @@ public class MainMenuScreen implements Screen {
                 public void clicked(InputEvent event, float x, float y) {
                     music.pause();
                     game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), music));
-                    game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
+                    //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
                 }
             });
 
