@@ -241,7 +241,7 @@ public class GameScreen implements Screen {
                         gameMusic.pause();
                         musicOnOff = false;
                     }
-                    else if(!musicOnOff){
+                    else {
                         gameMusic.setVolume(masterVolume);
                         gameMusic.play();
                         musicOnOff = true;
@@ -254,8 +254,7 @@ public class GameScreen implements Screen {
                     gameMusic.pause();
                     musicOnOff = false;
                     dispose(); // dispose of current GameScreen
-                    previousScreen.dispose();
-                    game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+                    game.setScreen(previousScreen);
                 }
             });
 

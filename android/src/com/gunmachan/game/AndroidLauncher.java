@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.assets.AssetManager;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
+import asu.gunma.ui.screen.menu.SettingsScreen;
 
     public class AndroidLauncher extends AndroidApplication {
 
@@ -44,6 +46,9 @@ import asu.gunma.DbContainers.VocabWord;
         public SpeechRecognizer speechRecognizer;
         public ActionResolver callback;
         protected String sendWord;
+        public View decorView;
+        public int uiOptions;
+        private AndroidApplicationConfiguration config;
         private static final int RC_SIGN_IN = 100;
         private Context context;
 
@@ -58,6 +63,9 @@ import asu.gunma.DbContainers.VocabWord;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
 
+            hideNavigationBar();
+            config = new AndroidApplicationConfiguration();
+
             //DEFAULT_SIGN_IN will request user ID, email address, and profile
             GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
@@ -66,6 +74,7 @@ import asu.gunma.DbContainers.VocabWord;
 
 
             AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+
 
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
@@ -80,7 +89,7 @@ import asu.gunma.DbContainers.VocabWord;
                 }
             });
 
-            ActionResolver callback = new ActionResolver() {
+            callback = new ActionResolver() {
                 @Override
 
                 //method that starts the Google login client
@@ -116,10 +125,10 @@ import asu.gunma.DbContainers.VocabWord;
                 }
             };
 
-            DbInterface vocabDatabase = new DbInterface() {
+            dbInterface = new DbInterface() {
                 public List<VocabWord> getDbVocab(){return androidDB.viewDb();}
             };
-            initialize(new GunmaChan(callback, vocabDatabase),config);
+            initialize(new GunmaChan(callback, dbInterface),config);
             if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M){
                     requestPermissions(perms, permsRequestCode);
             }
@@ -152,14 +161,49 @@ import asu.gunma.DbContainers.VocabWord;
                 Gdx.app.log("you said: ", thingsYouSaid.get(0));
             }
         }
-        @Override
-        public void onPause() {
-            super.onPause();
-        }
 
         @Override
         public void onResume(){
             super.onResume();
+            hideNavigationBar();
+        }
+
+        @Override
+        public void onPause(){
+            super.onPause();
+            this.onResume();
+            hideNavigationBar();
+        }
+
+        @Override
+        public void onBackPressed() {
+            hideNavigationBar();
+        }
+
+
+        public boolean onKeyDown(int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_HOME) {
+                hideNavigationBar();
+                return true;
+            }
+            return super.onKeyDown(keyCode, event);
+        }
+
+        /*
+         * Called as part of the activity lifecycle when an activity is about to go into the background
+         * as the result of user choice. For example, when the user presses the Home key, onUserLeaveHint() will be called,
+         * but when an incoming phone call causes the in-call Activity to be automatically brought to the foreground,
+         * onUserLeaveHint() will not be called on the activity being interrupted.
+         * In cases when it is invoked, this method is called right before the activity's onPause() callback.
+         */
+        @Override
+        protected void onUserLeaveHint() {
+            super.onUserLeaveHint();
+            /*setContentView(R.layout.activity_main);
+            initialize(new GunmaChan(callback, dbInterface),config);
+            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M){
+                requestPermissions(perms, permsRequestCode);
+            }*/
         }
 
         @Override
@@ -181,16 +225,15 @@ import asu.gunma.DbContainers.VocabWord;
         public void test(VocabDb vDB) {
             try {
                 vDB.importCSV("Numbers.csv");
-                vDB.importCSV("Colors_Shapes.csv");
+                vDB.importCSV("Colors-Shapes.csv");
                 vDB.importCSV("Countries.csv");
-                vDB.importCSV("Days_Months.csv");
+                vDB.importCSV("Days-Months.csv");
                 vDB.importCSV("Feelings.csv");
                 vDB.importCSV("Subjects.csv");
-                vDB.importCSV("Fruits_Foods.csv");
+                vDB.importCSV("Fruits-Foods.csv");
                 vDB.importCSV("Professions.csv");
                 vDB.importCSV("Places.csv");
                 vDB.importCSV("Time.csv");
-
             } catch(Exception e){
                 System.out.println(e);
             }
@@ -209,5 +252,13 @@ import asu.gunma.DbContainers.VocabWord;
             return testDb;
         }
 
+
+        private void hideNavigationBar(){
+            decorView = getWindow().getDecorView();
+            uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
