@@ -139,7 +139,7 @@ public class MainMenuScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     music.pause();
-                    game.setScreen(new FlashcardScreen(game, speechGDX, game.getScreen()));
+                    game.setScreen(new FlashcardScreen(game, speechGDX, dbCallback, game.getScreen()));
                 }
             });
             buttonGameFirst.addListener(new ClickListener() {
@@ -154,7 +154,7 @@ public class MainMenuScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     music.pause();
-                    game.setScreen(new OptionMenu(game));
+                    game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
                 }
             });
 
