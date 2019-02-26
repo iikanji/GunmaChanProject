@@ -6,7 +6,9 @@ import com.badlogic.gdx.audio.Music;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.util.SimpleDirectionGestureDetector;
 import asu.gunma.ui.screen.menu.TitleScreen;
+
 
 public class GunmaChan extends Game {
 	// Temporary values
@@ -31,7 +33,7 @@ public class GunmaChan extends Game {
 		public void create() {
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
 			background_music.setLooping(true);
-			background_music.play();
+			//background_music.play();
 			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music));
 
 		}
@@ -43,7 +45,9 @@ public class GunmaChan extends Game {
 
 		@Override
 		public void dispose () {
+			// close database here
 			super.dispose();
+
 		}
 
 		@Override

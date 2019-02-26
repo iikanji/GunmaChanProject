@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -23,6 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.speech.ActionResolver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ public class OptionMenu implements Screen {
     private DbInterface dbInterface;
     private AssetManager assetManager;
     private Screen previousScreen;
-
+  
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
     private TextureAtlas atlas;
@@ -63,14 +66,26 @@ public class OptionMenu implements Screen {
             deleteCustomButton10, deleteCustomButton11, deleteCustomButton12, deleteCustomButton13,deleteCustomButton14,
             deleteCustomButton15;
 
-    private TextButton newButton, deleteButton, settingsButton, backButton;
+    //private TextButton newButton, deleteButton, settingsButton, backButton;
     private ArrayList<TextButton> buttonList;
     private ArrayList<TextButton> deleteButtonList;
+    private BitmapFont font;
+
+    FreeTypeFontGenerator generator;
+    FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+
+    private TextButton buttonAlphabet, buttonColor, buttonCustom1,buttonCustom2,buttonCustom3,
+            buttonCustom4,buttonCustom5,buttonCustom6,buttonCustom7,buttonCustom8,buttonCustom9,
+            buttonCustom10, backButton, newButton, deleteButton, settingsButton;
 
     private SpriteBatch batch;
     private Texture texture;
 
     private BitmapFont font;
+    private Label alphabetHeading;
+    private Label colorHeading;
+    private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,
+            custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
 
     public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music) {
         this.game = game;
@@ -85,6 +100,12 @@ public class OptionMenu implements Screen {
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.gameMusic = music;
+  }  
+  public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
+        this.game = game;
+        this.speechGDX = speechGDX;
+        this.dbCallback = dbCallback;
+        this.previousScreen = previous;
     }
 
     @Override
@@ -116,6 +137,17 @@ public class OptionMenu implements Screen {
         font.setColor(Color.BLACK); // Does nothing at the moment
         font.getData().setScale(2);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+        //font file
+        final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+        //font for vocab word
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        parameter.size = 15;
+        parameter.color = Color.BLACK;
+        //font = generator.generateFont(parameter);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.pressedOffsetX = 1;
@@ -207,6 +239,35 @@ public class OptionMenu implements Screen {
                 t.setDisabled(true);
         }
 
+        backButton = new TextButton("Back", textButtonStyle);
+        backButton.setPosition(20, 530, Align.left);
+
+        Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
+
+        alphabetHeading = new Label("Alphabet", headingStyle);
+        alphabetHeading.setFontScale(2);
+        colorHeading = new Label("Colors", headingStyle);
+        colorHeading.setFontScale(2);
+        custom1Heading = new Label("Custom Set 1", headingStyle);
+        custom1Heading.setFontScale(2);
+        custom2Heading = new Label("Custom Set 2", headingStyle);
+        custom2Heading.setFontScale(2);
+        custom3Heading = new Label("Custom Set 3", headingStyle);
+        custom3Heading.setFontScale(2);
+        custom4Heading = new Label("Custom Set 4", headingStyle);
+        custom4Heading.setFontScale(2);
+        custom5Heading = new Label("Custom Set 5", headingStyle);
+        custom5Heading.setFontScale(2);
+        custom6Heading = new Label("Custom Set 6", headingStyle);
+        custom6Heading.setFontScale(2);
+        custom7Heading = new Label("Custom Set 7", headingStyle);
+        custom7Heading.setFontScale(2);
+        custom8Heading = new Label("Custom Set 8", headingStyle);
+        custom8Heading.setFontScale(2);
+        custom9Heading = new Label("Custom Set 9", headingStyle);
+        custom9Heading.setFontScale(2);
+        custom10Heading = new Label("Custom Set 10", headingStyle);
+        custom10Heading.setFontScale(2);
         // Actually, should probably custom class this process
 
         /*
@@ -467,6 +528,39 @@ public class OptionMenu implements Screen {
                 }
             }
         });
+        backButton.addListener(new ClickListener(){
+           @Override
+           public void clicked(InputEvent event, float x, float y){
+               dispose(); // dispose of current FlashScreen
+               previousScreen.dispose();
+               game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+           }
+        });
+
+        table.add(alphabetHeading);
+        table.row();
+        table.add(colorHeading);
+        table.row();
+        table.add(custom1Heading);
+        table.row();
+        table.add(custom2Heading);
+        table.row();
+        table.add(custom3Heading);
+        table.row();
+        table.add(custom4Heading);
+        table.row();
+        table.add(custom5Heading);
+        table.row();
+        table.add(custom6Heading);
+        table.row();
+        table.add(custom7Heading);
+        table.row();
+        table.add(custom8Heading);
+        table.row();
+        table.add(custom9Heading);
+        table.row();
+        table.add(custom10Heading);
+        table.row();
 
         buttonCustom15.addListener(new ClickListener() {
             @Override

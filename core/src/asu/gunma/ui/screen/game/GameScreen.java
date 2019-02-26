@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -21,6 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.scenes.scene2d.utils.Layout;
+import com.badlogic.gdx.utils.Align;
 
 import asu.gunma.DatabaseInterface.*;
 
@@ -51,6 +55,7 @@ public class GameScreen implements Screen {
         private TextureAtlas atlas;
         private Skin skin;
         private Table table;
+        private SpriteBatch batch;
 
         private int lives;
         private float enemyPosition;
@@ -72,12 +77,19 @@ public class GameScreen implements Screen {
         private TextButton backButton;
 
         private BitmapFont font;
+        private BitmapFont font2;
 
-        private SpriteBatch batch;
+        FreeTypeFontGenerator generator;
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
+
         private Texture gunmaSprite;
         private Texture gunmaFaintedSprite;
         private Texture onionIdleSprite;
         private Texture background;
+
+        private GlyphLayout displayWordLayout;
+        private int targetWidth = 400;
 
         // Animation declarations
         private Animator onionWalkAnimation;
@@ -95,6 +107,8 @@ public class GameScreen implements Screen {
 
         @Override
         public void show() {
+            String cWords;
+            String[] correctWordList;
             gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
             gameMusic.setVolume(masterVolume);
             gameMusic.play();
@@ -113,8 +127,6 @@ public class GameScreen implements Screen {
             this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
             this.gunmaWalkAnimation = new Animator("gunma_sheet.png", 8, 1, 0.1f);
 
-            font = new BitmapFont();
-
             // Spawning variables
             this.enemyPosition = Gdx.graphics.getWidth();
             this.lives = 3;
@@ -129,35 +141,56 @@ public class GameScreen implements Screen {
             table = new Table();
             table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-            /*
-            font = new BitmapFont(); // needs a font file still
-            */
-            font.setColor(Color.BLACK); // Does nothing at the moment
-            font.getData().setScale(2);
-            font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            //font file
+            final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+            generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+            //font for vocab word
+            parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+            //font for other words
+            parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+            //db list of vocab words
+            dbListWords = dbCallback.getDbVocab();
+            displayWord = dbListWords.get(listCounter).getEngSpelling();
+
+            //spliced correct words for grading
+            cWords = dbListWords.get(listCounter).getCorrectWords();
+            correctWordList = cWords.split("\\s*,\\s*");
+
+            //setting font values
+            parameter.characters = displayWord;
+            parameter.size = 70;
+            parameter.color = Color.BLACK;
+            font = generator.generateFont(parameter);
+            parameter2.size = 35;
+            parameter2.color = Color.BLACK;
+            font2 = generator.generateFont(parameter2);
+
+            //Alignment and Text Wrapping for Vocab Word
+            displayWordLayout = new GlyphLayout();
+            displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
 
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             //textButtonStyle.up = skin.getDrawable("button.up");
             //textButtonStyle.down = skin.getDrawable("button.down");
             textButtonStyle.pressedOffsetX = 1;
             textButtonStyle.pressedOffsetY = -1;
-            textButtonStyle.font = font;
+            textButtonStyle.font = font2;
             textButtonStyle.fontColor = Color.BLACK;
 
             // IMPORTANT: needs localization support
             buttonRecord = new TextButton("Microphone", textButtonStyle);
-            //buttonRecord.setPosition(x, y);
+            buttonRecord.setPosition(25, 0);
 
             backButton = new TextButton("Back", textButtonStyle);
-            backButton.setPosition(Gdx.graphics.getWidth() - 70, Gdx.graphics.getHeight() - 32);
+            backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
 
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
             pauseButton = new TextButton("Pause", textButtonStyle);
-            pauseButton.setPosition(0, 100);
-
-            dbListWords = dbCallback.getDbVocab();
-            displayWord = dbListWords.get(listCounter).getEngSpelling();
+            pauseButton.setPosition(25, 200);
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -187,32 +220,18 @@ public class GameScreen implements Screen {
                 }
             });
 
-            String cWords = dbListWords.get(listCounter).getCorrectWords();
-            String[] correctWordList = cWords.split("\\s*,\\s*");
-
             /*for(int i = 0; i < correctWordList.length; i++){
                 System.out.println(correctWordList[i]);
             }*/
 
             //if(listCounter == dbListWords.size()){
             //  displayWord = "You Won! Going to next level...";
+            //
+            //  work with metrics when game over
+            //  studentMetric = studentMetric();
             //  new gamescreen
             //
             //}
-
-            // Remove this later
-            table.debug();
-
-            //inputWord = new VocabWord();
-            //studentMetric = studentMetric();
-            //if english word
-            //  set inputWord.setEngSpelling = google word
-            //if japanese word
-            //  set inputWord.setJpnSpelling = google word
-            //search for word.
-            //  WRITE FUNCTION FOR SEARCHING WORDS IF ENG SPELLING = NULL
-            //  OR IF JPN SPELLING = NULL
-
 
             pauseButton.addListener(new ClickListener() {
 
@@ -239,6 +258,9 @@ public class GameScreen implements Screen {
                 }
             });
 
+            // Remove this later
+            table.debug();
+
             stage.addActor(buttonRecord);
             stage.addActor(pauseButton);
             stage.addActor(backButton);
@@ -254,19 +276,21 @@ public class GameScreen implements Screen {
 
             if (!isGameOver) {
 
-                font.draw(batch, "Word: " + displayWord, 380, 380);
+                font.draw(batch, displayWordLayout, 325, 425);
                 if(score == -1) {
-                    font.draw(batch, "Score: " + 0, 850, 450);
+                    font2.draw(batch, "Score: " + 0, 850, 450);
                 }
                 else if (score > 0){
-                    font.draw(batch, "Score: " + score, 850, 450);
+                    font2.draw(batch, "Score: " + score, 850, 450);
                 }
 
-                font.draw(batch, "Lives: " + lives, 0, 400);
+                font2.draw(batch, "Lives: " + lives, 25, 450);
 
                 incomingWord = speechGDX.getWord();
+
                 //need to parse out correct words separating by comma and check
                 //with all correct words then use grading functionality
+
                 if(displayWord.equals(incomingWord)){
                     correctWord = true;
                 }
@@ -276,19 +300,22 @@ public class GameScreen implements Screen {
 
                 if(correctWord) {
                     displayWord = dbListWords.get(listCounter++).getEngSpelling();
+                    parameter.characters = displayWord;
+                    parameter.size = 70;
+                    parameter.color = Color.BLACK;
+                    font = generator.generateFont(parameter);
+                    displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
                     correctWord = false;
                     score = score + 1;
                     lives = lives + 1;
                 }
 
-
                 batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
                 this.walkOntoScreenFromRight(delta);
             } else {
-                font.draw(batch, "Game Over", 400, 380);
+                font2.draw(batch, "Game Over", 425, 380);
                 batch.draw(this.gunmaFaintedSprite, 70, 40);
             }
-
 
             batch.end();
 
@@ -347,6 +374,7 @@ public class GameScreen implements Screen {
             this.enemyPosition = Gdx.graphics.getWidth();
             // However you want to change the current vocab would go here
         }
+
     //takes arr of phonetic similar words, and the speech recognition word as input
     //Return score//
     public int grade(String arr[], String s2) {
@@ -365,7 +393,6 @@ public class GameScreen implements Screen {
                 }
             }
         }
-
         return max;
 
     }

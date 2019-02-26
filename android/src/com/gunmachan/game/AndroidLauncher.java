@@ -1,5 +1,6 @@
 package com.gunmachan.game;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,8 +46,12 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
         public View decorView;
         public int uiOptions;
         private AndroidApplicationConfiguration config;
+        private Context context;
 
-        String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET", "android.permission.WRITE_EXTERNAL_STORAGE"};
+        // add permission to hide navigation bar?
+        // create button to exit to home screen under instructor menu
+        String[] perms = {"android.permission.RECORD_AUDIO", "android.permission.INTERNET",
+                "android.permission.WRITE_EXTERNAL_STORAGE"};
         int permsRequestCode = 200;
 
         @Override
@@ -107,7 +112,10 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             androidDB = newDb();
             test(androidDB);
             androidDB.viewDb();
-            androidDB.getvDbHelper().close();
+            if(isFinishing()){
+                System.out.println("Hit2");
+                this.deleteDatabase("AppDb");
+            }
         }
 
         public void showResults(Bundle results) {
@@ -130,6 +138,11 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 Gdx.app.log("you said: ", thingsYouSaid.get(0));
             }
         }
+        @Override
+        public void onPause() {
+            super.onPause();
+        }
+
         @Override
         public void onResume(){
             super.onResume();
@@ -174,6 +187,22 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             }*/
         }
 
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+        }
+
+        @Override
+        public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
+            switch (permsRequestCode) {
+                case 200:
+                    boolean RecordingAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean InternetAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean ExternalAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    break;
+            }
+        }
+
         public void test(VocabDb vDB) {
             try {
                 vDB.importCSV("Numbers.csv");
@@ -204,20 +233,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             VocabDb testDb = new VocabDb(AndroidLauncher.this);
             return testDb;
         }
-        @Override
-        protected void onDestroy() {
-            androidDB.getvDbHelper().close();
-            super.onDestroy();
-        }
-
-        @Override
-        public void onRequestPermissionsResult(int permsRequestCode, String[] permissions, int[] grantResults) {
-            switch (permsRequestCode) {
-                case 200:
-                    boolean RecordingAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean InternetAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    boolean ExternalAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
-
                     break;
             }
         }
