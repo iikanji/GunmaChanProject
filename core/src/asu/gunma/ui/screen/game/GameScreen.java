@@ -235,8 +235,7 @@ public class GameScreen implements Screen {
                     gameMusic.pause();
                     musicOnOff = false;
                     dispose(); // dispose of current GameScreen
-                    previousScreen.dispose();
-                    game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+                    game.setScreen(previousScreen);
                 }
             });
 

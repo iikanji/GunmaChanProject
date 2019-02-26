@@ -13,6 +13,7 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +33,7 @@ import static com.gunmachan.SQLite.SqlHelper.getsInstance;
  */
 public final class VocabDb {
     protected SqlHelper vDbHelper;
-    protected AssetManager assetManager;
+    protected Context context;
     //private int id = 0;
     /**
      * Constructor that always keeps the same table active given the application context.
@@ -187,7 +188,9 @@ public final class VocabDb {
     public void importCSV(String fileName) throws IOException {
         SQLiteDatabase db = vDbHelper.getWritableDatabase();
         InputStream inStream = null;
+
         try {
+            //inStream = Gdx.files.local("/storage/emulated/0/Documents/" + fileName).read();
             inStream = Gdx.files.internal(fileName).read();
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,30 +232,25 @@ public final class VocabDb {
 
     public void exportDB() {
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-        if (!exportDir.exists())
-        {
+        if (!exportDir.exists()) {
             exportDir.mkdirs();
         }
 
         File file = new File(exportDir, "VocabList.csv");
-        try
-        {
+        try {
             file.createNewFile();
             CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = vDbHelper.getReadableDatabase();
-            Cursor curCSV = db.rawQuery("SELECT * FROM " + VocabWord.TABLE_NAME,null);
+            Cursor curCSV = db.rawQuery("SELECT * FROM " + VocabWord.TABLE_NAME, null);
             csvWrite.writeNext(curCSV.getColumnNames());
-            while(curCSV.moveToNext())
-            {
+            while (curCSV.moveToNext()) {
                 //Which column you want to export
-                String arrStr[] = new String[]{curCSV.getString(1),curCSV.getString(2)};
+                String arrStr[] = new String[]{curCSV.getString(1), curCSV.getString(2)};
                 csvWrite.writeNext(arrStr);
             }
             csvWrite.close();
             curCSV.close();
-        }
-        catch(Exception sqlEx)
-        {
+        } catch (Exception sqlEx) {
             Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
         }
     }

@@ -4,6 +4,8 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -19,12 +22,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 
+import java.io.File;
 import java.util.ArrayList;
+
+import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.speech.ActionResolver;
 
 public class OptionMenu implements Screen {
 
     private Game game;
+    private Music gameMusic;
+    private ActionResolver speechGDX;
+    private DbInterface dbInterface;
+    private AssetManager assetManager;
+    private Screen previousScreen;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -35,7 +48,9 @@ public class OptionMenu implements Screen {
 
     //true = instructor, false = student
     private boolean verified = true;
-    private boolean active = true;
+    private boolean active1 = true, active2 = true, active3 = true, active4 = true, active5 = true,
+            active6 = true, active7 = true, active8 = true, active9 = true, active10 = true,
+            active11 = true, active12 = true, active13 = true, active14 = true, active15 = true;
     //temp bool until login system works
     private boolean login = false;
 
@@ -48,7 +63,7 @@ public class OptionMenu implements Screen {
             deleteCustomButton10, deleteCustomButton11, deleteCustomButton12, deleteCustomButton13,deleteCustomButton14,
             deleteCustomButton15;
 
-    private TextButton newButton, deleteButton, settingsButton;
+    private TextButton newButton, deleteButton, settingsButton, backButton;
     private ArrayList<TextButton> buttonList;
     private ArrayList<TextButton> deleteButtonList;
 
@@ -57,21 +72,31 @@ public class OptionMenu implements Screen {
 
     private BitmapFont font;
 
-    public OptionMenu(Game game) {
+    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music) {
         this.game = game;
+        this.speechGDX = speechGDX;
+        this.dbInterface = dbInterface;
+        this.previousScreen = previousScreen;
+        this.gameMusic = music;
+    }
+
+    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Music music){
+        this.game = game;
+        this.speechGDX = speechGDX;
+        this.dbInterface = dbInterface;
+        this.gameMusic = music;
     }
 
     @Override
     public void show() {
         Gdx.gl.glClearColor(.8f, 1, 1, 1);
         stage = new Stage();
-
-        testSkin = new Skin(Gdx.files.internal("glassy-ui.json"));
-
         batch = new SpriteBatch();
         texture = new Texture("title_gunma.png");
 
         Gdx.input.setInputProcessor(stage);
+        assetManager = new AssetManager();
+        testSkin = new Skin(Gdx.files.internal("glassy-ui.json"));
 
         table = new Table();
         table2 = new Table();
@@ -104,11 +129,11 @@ public class OptionMenu implements Screen {
         // Make image buttons
         //use drawable to set image
         buttonCustom1 = new TextButton("Alphabet", testSkin, "default");
-        buttonCustom2 = new TextButton("Colors/Shapes", testSkin, "default");
+        buttonCustom2 = new TextButton("Colors-Shapes", testSkin, "default");
         buttonCustom3 = new TextButton("Countries", testSkin, "default");
-        buttonCustom4 = new TextButton("Days/Months", testSkin, "default");
+        buttonCustom4 = new TextButton("Days-Months", testSkin, "default");
         buttonCustom5 = new TextButton("Feelings", testSkin, "default");
-        buttonCustom6 = new TextButton("Fruits/Foods", testSkin, "default");
+        buttonCustom6 = new TextButton("Fruits-Foods", testSkin, "default");
         buttonCustom7 = new TextButton("Numbers", testSkin, "default");
         buttonCustom8 = new TextButton("Places", testSkin, "default");
         buttonCustom9 = new TextButton("Professions", testSkin, "default");
@@ -195,14 +220,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active) {
+                    if (active1) {
                         System.out.println("Hit2");
                         buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        deactivateModule(buttonCustom1, 0);
+                        active1 = false;
                     } else {
                         buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-                        //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        activateModule(buttonCustom1, 0);
+                        active1 = true;
                     }
                 }
             }
@@ -213,14 +239,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active2) {
                         System.out.println("Hit2");
                         buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active2 = false;
                     } else {
                         buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active2 = true;
                     }
                 }
             }
@@ -231,14 +257,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active3) {
                         System.out.println("Hit2");
                         buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active3 = false;
                     } else {
                         buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active3 = true;
                     }
                 }
             }
@@ -249,14 +275,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active4) {
                         System.out.println("Hit2");
                         buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active4 = false;
                     } else {
                         buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active4 = true;
                     }
                 }
             }
@@ -267,14 +293,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active5) {
                         System.out.println("Hit2");
                         buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active5 = false;
                     } else {
                         buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active5 = true;
                     }
                 }
             }
@@ -285,14 +311,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active6) {
                         System.out.println("Hit2");
                         buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active6 = false;
                     } else {
                         buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active6 = true;
                     }
                 }
             }
@@ -303,14 +329,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active7) {
                         System.out.println("Hit2");
                         buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active7 = false;
                     } else {
                         buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active7 = true;
                     }
                 }
             }
@@ -321,14 +347,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active8) {
                         System.out.println("Hit2");
                         buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active8 = false;
                     } else {
                         buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active8 = true;
                     }
                 }
             }
@@ -339,14 +365,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active9) {
                         System.out.println("Hit2");
                         buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active9 = false;
                     } else {
                         buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active9 = true;
                     }
                 }
             }
@@ -357,14 +383,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active10) {
                         System.out.println("Hit2");
                         buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active10 = false;
                     } else {
                         buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active10 = true;
                     }
                 }
             }
@@ -375,14 +401,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active11) {
                         System.out.println("Hit2");
                         buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active11 = false;
                     } else {
                         buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active11 = true;
                     }
                 }
             }
@@ -393,14 +419,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active12) {
                         System.out.println("Hit2");
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active12 = false;
                     } else {
                         buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active12 = true;
                     }
                 }
             }
@@ -411,14 +437,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active13) {
                         System.out.println("Hit2");
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active13 = false;
                     } else {
                         buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active13 = true;
                     }
                 }
             }
@@ -429,14 +455,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active14) {
                         System.out.println("Hit2");
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active14 = false;
                     } else {
                         buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active14 = true;
                     }
                 }
             }
@@ -447,14 +473,14 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if(verified) {
-                    if (active) {
+                    if (active15) {
                         System.out.println("Hit2");
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-                        active = false;
+                        active15 = false;
                     } else {
                         buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
-                        active = true;
+                        active15 = true;
                     }
                 }
             }
@@ -463,26 +489,43 @@ public class OptionMenu implements Screen {
         deleteCustomButton1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                for(int i = 0; i < buttonList.size()-1; i++){
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for(int i = 0; i < buttonList.size(); i++){
-                    if(buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()){
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
+                if(Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).file().exists()) {
+                    Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).delete();
+
+                    for (int i = 0; i < buttonList.size() - 1; i++) {
+                        buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
+                    }
+
+                    //delete out of database
+                    //loop through table looking for tuples that match module name
+                    //if match
+                    //  dbDeleteVocab
+                    for (int i = 0; i < buttonList.size(); i++) {
+                        if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
+                            buttonList.get(i).setVisible(false);
+                            buttonList.get(i).setDisabled(true);
+                            deleteButtonList.get(i).setVisible(false);
+                            deleteButtonList.get(i).setDisabled(true);
+                        }
+                    }
+                    for (TextButton t : deleteButtonList) {
+                        t.setVisible(false);
+                        t.setDisabled(true);
                     }
                 }
-                for(TextButton t : deleteButtonList){
-                    t.setVisible(false);
-                    t.setDisabled(true);
+                else{
+                    //make label to display this
+                    System.out.println("Error file does not exist");
                 }
             }
         });
         deleteCustomButton2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                //Gdx.files.internal(buttonList.get(1).getText().toString() + ".csv").delete();
+                /*if(Gdx.files.internal("ColorsShapes.csv").exists()){
+                    System.out.println("ColorsShapes.csv");
+                }*/
                 for(int i = 1; i < buttonList.size()-1; i++){
                     buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
                 }
@@ -756,12 +799,15 @@ public class OptionMenu implements Screen {
         newButton = new TextButton("Add", testSkin, "default");
         deleteButton = new TextButton("Delete", testSkin, "default");
         settingsButton = new TextButton("Settings", testSkin, "default");
+        backButton = new TextButton("Back", testSkin, "default");
         newButton.setTransform(true);
         newButton.setScale(0.5f);
         deleteButton.setTransform(true);
         deleteButton.setScale(0.5f);
         settingsButton.setTransform(true);
         settingsButton.setScale(0.5f);
+        backButton.setTransform(true);
+        backButton.setScale(0.5f);
 
         newButton.setPosition(850, 250);
         deleteButton.setPosition(850, 175);
@@ -769,6 +815,9 @@ public class OptionMenu implements Screen {
         newButton.getLabel().setAlignment(Align.center);
         deleteButton.getLabel().setAlignment(Align.center);
         settingsButton.getLabel().setAlignment(Align.center);
+
+        backButton.setPosition(0, 540);
+        backButton.getLabel().setAlignment(Align.center);
 
 
         //log out button or use google button?
@@ -813,7 +862,7 @@ public class OptionMenu implements Screen {
                     }
                 }
 
-                //maybe change to boolean for closing delete buttons for custom buttons
+                //Delete csv file in assets folder with same name
             }
         });
 
@@ -821,22 +870,20 @@ public class OptionMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("Going from OptionsScreen to SettingsScreen");
-                active = false;
-                /*gameMusic.pause();
-                /musicOnOff = false;
-                dispose(); // dispose of current GameScreen
-                previousScreen.dispose();
-                game.setScreen(new SettingsScreen(game, speechGDX, dbCallback));*/
+                // need option to enable navigation bar
+                if(verified) {
+                    gameMusic.pause();
+                    game.setScreen(new SettingsScreen(game, speechGDX, dbInterface, game.getScreen(), gameMusic));
+                }
             }
         });
-
-        //use to activate the lists in the database
-        for(int i = 0; i < buttonList.size(); i++){
-            if(buttonList.get(i).getStyle() == textButtonStyle){
-                String s = buttonList.get(i).getText().toString();
-                //do stuff with database
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                gameMusic.pause();
+                dispose(); // dispose of current GameScreen
+                game.setScreen(previousScreen);
             }
-        }
+        });
 
         int count = 0;
         for(TextButton t : buttonList) {
@@ -868,6 +915,9 @@ public class OptionMenu implements Screen {
             count++;
         }
 
+        //scale buttons not table!
+        //create active booleans for custom button
+        //
         table.setTransform(true);
         table.setScale(0.5f);
         table2.setTransform(true);
@@ -912,6 +962,7 @@ public class OptionMenu implements Screen {
         stage.addActor(newButton);
         stage.addActor(deleteButton);
         stage.addActor(settingsButton);
+        stage.addActor(backButton);
     }
 
     @Override
@@ -950,7 +1001,27 @@ public class OptionMenu implements Screen {
 
     @Override
     public void dispose() {
+        font.dispose();
+        testSkin.dispose();
+        assetManager.dispose();
+        texture.dispose();
+        batch.dispose();
+        stage.dispose();
+    }
 
+    public void activateModule(TextButton button, int position){
+        //use to activate the lists in the database
+        if(buttonList.get(position).getStyle() == testSkin.get("default", TextButton.TextButtonStyle.class)) {
+            String s = buttonList.get(position).getText().toString();
+            //activate based on module info in database
+        }
+    }
+
+    public void deactivateModule(TextButton button, int position){
+        if(buttonList.get(position).getStyle() == testSkin.get("default", TextButton.TextButtonStyle.class)){
+            String s = buttonList.get(position).getText().toString();
+            //deactivate based on module info in database
+        }
     }
 
 }
