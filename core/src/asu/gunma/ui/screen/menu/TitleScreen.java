@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
+
 
 
     public class TitleScreen implements Screen {
@@ -56,12 +58,27 @@ import com.badlogic.gdx.audio.Music;
         private BitmapFont font;
         private Label heading;
 
+        FreeTypeFontGenerator generator;
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
+
         public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
 
             this.game = game;
             this.speechGDX = speechGDX;
             this.music = music;
             this.dbCallback = dbCallback;
+
+
+            //font file
+            final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+            generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+            //font for vocab word
+            parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+            //font for other words
+            parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
         }
 
@@ -82,10 +99,9 @@ import com.badlogic.gdx.audio.Music;
             table = new Table();
             table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-            font = new BitmapFont(); // needs a font file still
-            font.setColor(Color.BLACK); // Does nothing at the moment
-            font.getData().setScale(2);
-            font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            parameter.size = 30;
+            parameter.color = Color.BLACK;
+            font = generator.generateFont(parameter);
 
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             //textButtonStyle.up = skin.getDrawable("button.up");
@@ -101,7 +117,7 @@ import com.badlogic.gdx.audio.Music;
             //
 
             heading = new Label("Gunma-chan Takes a Hike", headingStyle);
-            heading.setFontScale(3);
+            heading.setFontScale(2);
             //
 
             // Actually, should probably custom class this process
