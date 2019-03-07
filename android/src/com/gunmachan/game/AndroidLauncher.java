@@ -121,7 +121,13 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 }
 
                 public String getWord() {
-                    return sendWord;
+                    String temp = sendWord;
+                    sendWord = null;
+                    return temp;
+                }
+
+                public void setWordNull() {
+                    sendWord = null;
                 }
             };
 

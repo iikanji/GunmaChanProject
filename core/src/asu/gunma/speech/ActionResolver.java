@@ -5,4 +5,5 @@ public interface ActionResolver {
      void startRecognition();
      String getWord();
      void signIn();
+     void setWordNull();
 }

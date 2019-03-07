@@ -1,4 +1,4 @@
-package asu.gunma.ui.screen.menu;
+package asu.gunma.ui.screen.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -24,12 +24,15 @@ import java.util.List;
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.SimpleDirectionGestureDetector;
+import asu.gunma.ui.util.GradeSystem;
 
 public class FlashcardScreen implements Screen {
 
     private Game game;
     public ActionResolver speechGDX;
+    private GradeSystem gradeSystem;
     public DbInterface dbCallback;
     public Screen previousScreen;
     public Music music;
