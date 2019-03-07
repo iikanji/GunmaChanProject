@@ -10,15 +10,16 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import android.content.pm.PackageManager;
 
 import com.badlogic.gdx.Gdx;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.*;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.tasks.Task;
 import com.gunmachan.SQLite.*;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -67,8 +68,8 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             config = new AndroidApplicationConfiguration();
 
             //DEFAULT_SIGN_IN will request user ID, email address, and profile
-            GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
-
+            final GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+            //requestIdToken().requestServerAuthCode()
             //creating sign in object with options specified by gso
             final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -93,11 +94,34 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 @Override
 
                 //method that starts the Google login client
-                public void signIn()
+                public List<String> signIn()
                 {
+                    List<String> loginCredentials;
+                    String personName = "";
+                    String personGivenName = "";
+                    String personFamilyName = "";
+                    String personEmail = "";
+                    String personId = "";
                     Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                     startActivityForResult(signInIntent, RC_SIGN_IN);
+                    GoogleSignInResult result =
+                            Auth.GoogleSignInApi.getSignInResultFromIntent(signInIntent);
+                    if(result.isSuccess()) {
+                        GoogleSignInAccount acct = result.getSignInAccount();
+                        if (acct != null) {
+                            personName = acct.getDisplayName();
+
+                            personGivenName = acct.getGivenName();
+                            personFamilyName = acct.getFamilyName();
+                            personEmail = acct.getEmail();
+                            personId = acct.getId();
+                        }
+                    }
+                    loginCredentials = Arrays.asList(personName, personGivenName, personFamilyName, personEmail, personId);
+                    return loginCredentials;
                 }
+
+                //google logout
 
                 public void startRecognition() {
 

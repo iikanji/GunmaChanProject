@@ -19,6 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.List;
+
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
 
@@ -38,7 +40,7 @@ public class SettingsScreen implements Screen {
     private Skin testSkin;
     private Table table, table2, table3, table4, table5, table6;
 
-    private TextButton homeScreenLockButton, backButton;
+    private TextButton homeScreenLockButton, googleLoginButton,backButton;
 
     private SpriteBatch batch;
     private Texture texture;
@@ -85,6 +87,12 @@ public class SettingsScreen implements Screen {
         homeScreenLockButton.setPosition(50, 400);
         homeScreenLockButton.getLabel().setAlignment(Align.center);
 
+        googleLoginButton = new TextButton("Google Login", testSkin, "default");
+        googleLoginButton.setTransform(true);
+        googleLoginButton.setScale(0.5f);
+        googleLoginButton.setPosition(50, 300);
+        googleLoginButton.getLabel().setAlignment(Align.center);
+
         //Theme button
         //google login/logout
 
@@ -94,6 +102,20 @@ public class SettingsScreen implements Screen {
         backButton.setPosition(0, 540);
         backButton.getLabel().setAlignment(Align.center);
 
+        homeScreenLockButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+
+        googleLoginButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                List<String> currentInstructor = speechGDX.signIn();
+                for(int i = 0; i < currentInstructor.size(); i++){
+                    System.out.println(currentInstructor.get(i));
+                }
+            }
+        });
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -105,7 +127,7 @@ public class SettingsScreen implements Screen {
 
         stage.addActor(homeScreenLockButton);
         stage.addActor(backButton);
-
+        stage.addActor(googleLoginButton);
     }
 
     @Override
