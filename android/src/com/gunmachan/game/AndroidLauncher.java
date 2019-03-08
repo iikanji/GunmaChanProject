@@ -200,17 +200,16 @@ public class AndroidLauncher extends AndroidApplication {
                     googleSignInSuccessful = false;
                 }
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                googleLoginInfo = new ArrayList<>();
-                googleLoginInfo.add(account.getDisplayName());
-                googleLoginInfo.add(account.getEmail());
+                System.out.println(account.getDisplayName());
+                System.out.println(account.getEmail());
+                //parse out first, last name from display name
+
                 Instructor loggedInInstructor = new Instructor();
                 /*loggedInInstructor.setInstructorFName();
                 loggedInInstructor.setInstructorLName();
                 loggedInInstructor.setId();*/
                 //insert this into instructor database;
                 instructorDb.dbInsertInstructor(loggedInInstructor);
-                System.out.println(account.getDisplayName());
-                System.out.println(account.getEmail());
 
             } catch (ApiException e) {
                 // The ApiException status code indicates the detailed failure reason.
