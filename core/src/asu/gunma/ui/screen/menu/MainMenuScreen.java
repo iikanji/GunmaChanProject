@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.audio.Music;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.game.FlashcardScreen;
 import asu.gunma.ui.screen.game.GameScreen;
 
 public class MainMenuScreen implements Screen {
@@ -54,7 +56,11 @@ public class MainMenuScreen implements Screen {
 
         private BitmapFont font;
         private Label heading;
-        private static float masterVolume = 0;
+        private static float masterVolume = 50;
+
+         FreeTypeFontGenerator generator;
+         FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+         FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
         public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
             this.game = game;
@@ -67,14 +73,32 @@ public class MainMenuScreen implements Screen {
             this.game = game;
             this.speechGDX = speechGDX;
             this.dbCallback = dbCallback;
+
             music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
             music.setLooping(true);
             music.setVolume(masterVolume);
             music.play();
+
+
         }
 
         @Override
         public void show() {
+
+            //font file
+            final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+            generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+            //font for vocab word
+            parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+            //font for other words
+            parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+            parameter.size = 30;
+            parameter.color = Color.BLACK;
+            font = generator.generateFont(parameter);
+
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
@@ -89,11 +113,6 @@ public class MainMenuScreen implements Screen {
 
             table = new Table();
             table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-            font = new BitmapFont(); // needs a font file still
-            font.setColor(Color.BLACK); // Does nothing at the moment
-            font.getData().setScale(2);
-            font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
             TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
             //textButtonStyle.up = skin.getDrawable("button.up");
@@ -112,8 +131,9 @@ public class MainMenuScreen implements Screen {
             Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
             //
 
+
             heading = new Label("Select Type:", headingStyle);
-            heading.setFontScale(3);
+            heading.setFontScale(2);
             //
 
             // Actually, should probably custom class this process
@@ -139,7 +159,7 @@ public class MainMenuScreen implements Screen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     music.pause();
-                    game.setScreen(new FlashcardScreen(game, speechGDX, game.getScreen()));
+                    game.setScreen(new FlashcardScreen(game, speechGDX, dbCallback, game.getScreen()));
                 }
             });
             buttonGameFirst.addListener(new ClickListener() {
@@ -153,8 +173,12 @@ public class MainMenuScreen implements Screen {
             buttonOptionMenu.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    //testing sign in method when option menu is selected
+                    speechGDX.signIn();
+
                     music.pause();
-                    game.setScreen(new OptionMenu(game));
+                    game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), music));
+                    //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
                 }
             });
 
@@ -169,10 +193,6 @@ public class MainMenuScreen implements Screen {
             table.row();
             table.add(buttonOptionMenu);
             table.row();
-
-
-            // Remove this later
-            table.debug();
 
             stage.addActor(table);
 

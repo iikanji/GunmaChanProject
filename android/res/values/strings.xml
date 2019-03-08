@@ -2,5 +2,8 @@
 <resources>
 
     <string name="app_name">GunmaChan</string>
+    <string name="popup_title">Please Enter Login Information!<br/><br/></string>
+    <string name="login_username">Username:<br/></string>
+    <string name="login_password">Password:<br/></string>
 
 </resources>
