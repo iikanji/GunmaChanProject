@@ -56,7 +56,7 @@ public class MainMenuScreen implements Screen {
 
         private BitmapFont font;
         private Label heading;
-        private static float masterVolume = 0;
+        private static float masterVolume = 50;
 
          FreeTypeFontGenerator generator;
          FreeTypeFontGenerator.FreeTypeFontParameter parameter;
@@ -73,6 +73,7 @@ public class MainMenuScreen implements Screen {
             this.game = game;
             this.speechGDX = speechGDX;
             this.dbCallback = dbCallback;
+
             music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
             music.setLooping(true);
             music.setVolume(masterVolume);

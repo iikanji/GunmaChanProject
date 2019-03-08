@@ -37,6 +37,7 @@ import com.badlogic.gdx.audio.Music;
         private TextureAtlas atlas;
         private Skin skin;
         private Table table;
+        public static float masterVolume = 50;
 
         private int testInt = 0;
 
@@ -69,6 +70,10 @@ import com.badlogic.gdx.audio.Music;
             this.music = music;
             this.dbCallback = dbCallback;
 
+            music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+            music.setLooping(true);
+            music.setVolume(masterVolume);
+            music.play();
 
             //font file
             final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
