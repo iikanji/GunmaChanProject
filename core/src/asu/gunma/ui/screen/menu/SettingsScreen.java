@@ -55,6 +55,7 @@ public class SettingsScreen implements Screen {
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     private FreeTypeFontGenerator generator;
     private String googleLoginMessage = "";
+    private boolean signedIn = false;
 
     public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
         this.game = game;
@@ -62,7 +63,6 @@ public class SettingsScreen implements Screen {
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
-        this.googleLoginMessage = speechGDX.loginMessage();
     }
 
     @Override
@@ -130,10 +130,26 @@ public class SettingsScreen implements Screen {
         googleLoginButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.signIn();
-                //ArrayList<String> login = speechGDX.loginInfo();
-                /*for(int i = 0; i < login.size(); i++){
-                    System.out.println(login.get(i));
-                }*/
+                if(!signedIn){
+                    if(speechGDX.signIn()){
+                        signedIn = true;
+                        googleLoginMessage = "Login Successful!";
+                    }
+                    else{
+                        signedIn = false;
+                        googleLoginMessage = "Login Failed!";
+                    }
+                }
+                else{
+                    if(speechGDX.signOut()){
+                        signedIn = false;
+                        googleLoginMessage = "Logout Successful!";
+                    }
+                    else{
+                        signedIn = true;
+                        googleLoginMessage = "Logout Failed!";
+                    }
+                }
             }
         });
 

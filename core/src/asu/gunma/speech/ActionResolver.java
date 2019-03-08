@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public interface ActionResolver {
      void startRecognition();
      String getWord();
-     void signIn();
-     public ArrayList<String> androidLoginInfo();
-     public String loginMessage();
+     boolean signIn();
+     boolean signOut();
+     ArrayList<String> androidLoginInfo();
 }

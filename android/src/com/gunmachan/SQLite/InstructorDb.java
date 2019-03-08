@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.badlogic.gdx.assets.AssetManager;
 
-import asu.gunma.DbContainers.Instructor;
-
 import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
 /**
@@ -79,7 +77,8 @@ public class InstructorDb {
                 cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_FN)),
                 cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_LN)),
-                cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)));
+                cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)),
+                cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_EMAIL)));
 
         cursor.close();
         return instructor;
