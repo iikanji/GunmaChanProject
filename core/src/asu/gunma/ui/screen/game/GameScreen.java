@@ -32,6 +32,8 @@ import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
+import asu.gunma.ui.util.BackgroundDrawer;
+import asu.gunma.ui.util.GradeSystem;
 
 public class GameScreen implements Screen {
         DbInterface dbCallback;
@@ -42,7 +44,7 @@ public class GameScreen implements Screen {
         private Screen previousScreen;
 
         // Game logic variables
-        private int score = -1;
+        private int score = 0;
         private int listCounter = 0;
         private String displayWord;
         private String incomingWord;
@@ -95,7 +97,13 @@ public class GameScreen implements Screen {
         private Animator onionWalkAnimation;
         private Animator gunmaWalkAnimation;
 
-        boolean musicOnOff = true;
+        private BackgroundDrawer backgroundDrawer;
+
+        boolean isNotPaused = true;
+
+        private GradeSystem gradeSystem;
+        String cWords;
+        String[] correctWordList;
 
         public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
 
@@ -107,11 +115,10 @@ public class GameScreen implements Screen {
 
         @Override
         public void show() {
-            String cWords;
-            String[] correctWordList;
             gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
             gameMusic.setVolume(masterVolume);
             gameMusic.play();
+
 
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
@@ -122,6 +129,7 @@ public class GameScreen implements Screen {
             //onionIdleSprite = new Texture("")
 
             background = new Texture("BG_temp.png");
+            backgroundDrawer = new BackgroundDrawer(this.batch);
 
             // Animation initializations
             this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
@@ -220,31 +228,19 @@ public class GameScreen implements Screen {
                 }
             });
 
-            /*for(int i = 0; i < correctWordList.length; i++){
-                System.out.println(correctWordList[i]);
-            }*/
-
-            //if(listCounter == dbListWords.size()){
-            //  displayWord = "You Won! Going to next level...";
-            //
-            //  work with metrics when game over
-            //  studentMetric = studentMetric();
-            //  new gamescreen
-            //
-            //}
 
             pauseButton.addListener(new ClickListener() {
 
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if(musicOnOff) {
+                    if(isNotPaused) {
                         gameMusic.pause();
-                        musicOnOff = false;
+                        isNotPaused = false;
                     }
                     else {
                         gameMusic.setVolume(masterVolume);
                         gameMusic.play();
-                        musicOnOff = true;
+                        isNotPaused = true;
                     }
                 }
             });
@@ -252,7 +248,7 @@ public class GameScreen implements Screen {
             backButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     gameMusic.pause();
-                    musicOnOff = false;
+                    isNotPaused = false;
                     dispose(); // dispose of current GameScreen
                     game.setScreen(previousScreen);
                 }
@@ -272,49 +268,50 @@ public class GameScreen implements Screen {
 
             // SpriteBatch is resource intensive, try to use it for only brief moments
             batch.begin();
-            batch.draw(background, 0, 0);
+            backgroundDrawer.render(this.isNotPaused, this.isGameOver);
+            //batch.draw(background, 0, 0);
 
             if (!isGameOver) {
 
                 font.draw(batch, displayWordLayout, 325, 425);
-                if(score == -1) {
-                    font2.draw(batch, "Score: " + 0, 850, 450);
-                }
-                else if (score > 0){
+
+                if (score >= 0){
                     font2.draw(batch, "Score: " + score, 850, 450);
                 }
 
                 font2.draw(batch, "Lives: " + lives, 25, 450);
 
-                incomingWord = speechGDX.getWord();
+                //incomingWord = speechGDX.getWord();
 
                 //need to parse out correct words separating by comma and check
                 //with all correct words then use grading functionality
 
-                if(displayWord.equals(incomingWord)){
-                    correctWord = true;
-                }
-                else{
-                    correctWord = false;
-                }
 
-                if(correctWord) {
-                    displayWord = dbListWords.get(listCounter++).getEngSpelling();
+                if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
+                    listCounter++;
+                    displayWord = dbListWords.get(listCounter).getEngSpelling();
                     parameter.characters = displayWord;
                     parameter.size = 70;
                     parameter.color = Color.BLACK;
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
-                    correctWord = false;
                     score = score + 1;
                     lives = lives + 1;
+
+                    //spliced correct words for grading
+                    cWords = dbListWords.get(listCounter).getCorrectWords();
+                    correctWordList = cWords.split("\\s*,\\s*");
                 }
 
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
+                if (this.isNotPaused) {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                } else {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                }
                 this.walkOntoScreenFromRight(delta);
             } else {
-                font2.draw(batch, "Game Over", 425, 380);
-                batch.draw(this.gunmaFaintedSprite, 70, 40);
+                font2.draw(batch, "Game Over", 450, 380);
+                batch.draw(this.gunmaFaintedSprite, 70, 10);
             }
 
             batch.end();
@@ -347,6 +344,7 @@ public class GameScreen implements Screen {
         public void dispose() {
             font.dispose();
             background.dispose();
+            this.backgroundDrawer.dispose();
             this.onionWalkAnimation.dispose();
             this.gunmaWalkAnimation.dispose();
             batch.dispose();
@@ -355,10 +353,21 @@ public class GameScreen implements Screen {
         }
 
         private void walkOntoScreenFromRight(float delta) {
-            batch.draw(onionWalkAnimation.getCurrentFrame(delta), this.enemyPosition, 60);
-            this.enemyPosition--;
-            if (this.enemyPosition < 100) {
-                this.takeDamage();
+            if (isNotPaused) {
+                // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 40);
+                tmp.flip(true, false);
+                this.enemyPosition -= 2;
+                if (this.enemyPosition < 100) {
+                    this.takeDamage();
+                }
+            } else {
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 40);
+                tmp.flip(true, false);
             }
         }
 
@@ -374,98 +383,4 @@ public class GameScreen implements Screen {
             this.enemyPosition = Gdx.graphics.getWidth();
             // However you want to change the current vocab would go here
         }
-
-    //takes arr of phonetic similar words, and the speech recognition word as input
-    //Return score//
-    public int grade(String arr[], String s2) {
-
-        int max = 0;
-        int temp = 0;
-
-        for (int i = 0; i < arr.length; i++) {
-
-            temp = generateScore(arr[i].toLowerCase(), s2.toLowerCase());
-
-            if (temp > max) {
-                max = temp;
-                if(max == 100){
-                    return 100;
-                }
-            }
-        }
-        return max;
-
-    }
-
-    //Help the grade system produce an accurate score.
-    public int generateScore(String s1, String s2) {
-
-        s1 = s1.toLowerCase();
-        s2 = s2.toLowerCase();
-
-
-        char[][] arr = new char[s1.length() + 1][s2.length() + 1];
-
-        for (int i = 0; i < s1.length() + 1; i++) {
-            for (int j = 0; j < s2.length() + 1; j++) {
-                arr[i][j] = '0';
-            }
-        }
-
-
-        arr[0][0] = '#';
-
-        for (int i = 1; i < s1.length() + 1; i++) {
-            arr[i][0] = s1.charAt(i - 1);
-        }
-        for (int i = 1; i < s2.length() + 1; i++) {
-            arr[0][i] = s2.charAt(i - 1);
-        }
-
-        for (int i = 1; i < s1.length() + 1; i++) {
-            for (int j = 1; j < s2.length() + 1; j++) {
-                if (arr[0][j] == arr[i][0]) {
-                    arr[i][j] = '1';
-                }
-            }
-        }
-
-        String diagonal = "";
-
-        //s1 > s2
-        if (s1.length() >= s2.length()) {
-            for (int i = 1; i < s1.length() + 1; i++) {
-                if (i > s2.length()) {
-                    diagonal = diagonal + arr[i][s2.length()];
-                } else {
-                    diagonal = diagonal + arr[i][i];
-                }
-            }
-        }
-
-        if (s1.length() < s2.length()) {
-            for (int i = 1; i < s2.length() + 1; i++) {
-                if (i > s1.length()) {
-                    diagonal = diagonal + arr[s1.length()][i];
-                } else {
-                    diagonal = diagonal + arr[i][i];
-                }
-            }
-        }
-
-        int penalty = 100 / diagonal.length();
-        int score = 100;
-
-        for (int i = 0; i < diagonal.length(); i++) {
-            if (diagonal.charAt(i) == '0') {
-                score = score - penalty;
-            }
-        }
-
-        if (score < 0) {
-            score = 0;
-        }
-        return score;
-
-    }
 }
