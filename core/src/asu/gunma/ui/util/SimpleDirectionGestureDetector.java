@@ -48,7 +48,6 @@ public class SimpleDirectionGestureDetector extends GestureDetector {
 
             return super.pan(x, y, deltaX, deltaY);
         }
-
     }
 
 }

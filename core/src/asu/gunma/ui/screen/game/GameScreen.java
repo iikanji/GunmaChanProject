@@ -223,18 +223,6 @@ public class GameScreen implements Screen {
                 }
             });
 
-            /*for(int i = 0; i < correctWordList.length; i++){
-                System.out.println(correctWordList[i]);
-            }*/
-
-            //if(listCounter == dbListWords.size()){
-            //  displayWord = "You Won! Going to next level...";
-            //
-            //  work with metrics when game over
-            //  studentMetric = studentMetric();
-            //  new gamescreen
-            //
-            //}
 
             pauseButton.addListener(new ClickListener() {
 
@@ -294,10 +282,8 @@ public class GameScreen implements Screen {
 
 
                 if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
-                    System.out.println("Before Display word is: " + displayWord + " listCounter is: " + listCounter);
                     listCounter++;
                     displayWord = dbListWords.get(listCounter).getEngSpelling();
-                    System.out.println("After Display word is: " + displayWord + " listCounter is: " + listCounter);
                     parameter.characters = displayWord;
                     parameter.size = 70;
                     parameter.color = Color.BLACK;
