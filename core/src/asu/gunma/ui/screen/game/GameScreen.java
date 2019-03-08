@@ -32,6 +32,7 @@ import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
+import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
 
 public class GameScreen implements Screen {
@@ -96,7 +97,9 @@ public class GameScreen implements Screen {
         private Animator onionWalkAnimation;
         private Animator gunmaWalkAnimation;
 
-        boolean musicOnOff = true;
+        private BackgroundDrawer backgroundDrawer;
+
+        boolean isNotPaused = true;
 
         private GradeSystem gradeSystem;
         String cWords;
@@ -116,6 +119,7 @@ public class GameScreen implements Screen {
             gameMusic.setVolume(masterVolume);
             gameMusic.play();
 
+
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
@@ -125,6 +129,7 @@ public class GameScreen implements Screen {
             //onionIdleSprite = new Texture("")
 
             background = new Texture("BG_temp.png");
+            backgroundDrawer = new BackgroundDrawer(this.batch);
 
             // Animation initializations
             this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
@@ -228,14 +233,14 @@ public class GameScreen implements Screen {
 
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if(musicOnOff) {
+                    if(isNotPaused) {
                         gameMusic.pause();
-                        musicOnOff = false;
+                        isNotPaused = false;
                     }
                     else {
                         gameMusic.setVolume(masterVolume);
                         gameMusic.play();
-                        musicOnOff = true;
+                        isNotPaused = true;
                     }
                 }
             });
@@ -243,7 +248,7 @@ public class GameScreen implements Screen {
             backButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
                     gameMusic.pause();
-                    musicOnOff = false;
+                    isNotPaused = false;
                     dispose(); // dispose of current GameScreen
                     game.setScreen(previousScreen);
                 }
@@ -263,7 +268,8 @@ public class GameScreen implements Screen {
 
             // SpriteBatch is resource intensive, try to use it for only brief moments
             batch.begin();
-            batch.draw(background, 0, 0);
+            backgroundDrawer.render(this.isNotPaused, this.isGameOver);
+            //batch.draw(background, 0, 0);
 
             if (!isGameOver) {
 
@@ -297,12 +303,15 @@ public class GameScreen implements Screen {
                     correctWordList = cWords.split("\\s*,\\s*");
                 }
 
-
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
+                if (this.isNotPaused) {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                } else {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                }
                 this.walkOntoScreenFromRight(delta);
             } else {
-                font2.draw(batch, "Game Over", 425, 380);
-                batch.draw(this.gunmaFaintedSprite, 70, 40);
+                font2.draw(batch, "Game Over", 450, 380);
+                batch.draw(this.gunmaFaintedSprite, 70, 10);
             }
 
             batch.end();
@@ -335,6 +344,7 @@ public class GameScreen implements Screen {
         public void dispose() {
             font.dispose();
             background.dispose();
+            this.backgroundDrawer.dispose();
             this.onionWalkAnimation.dispose();
             this.gunmaWalkAnimation.dispose();
             batch.dispose();
@@ -343,10 +353,21 @@ public class GameScreen implements Screen {
         }
 
         private void walkOntoScreenFromRight(float delta) {
-            batch.draw(onionWalkAnimation.getCurrentFrame(delta), this.enemyPosition, 60);
-            this.enemyPosition--;
-            if (this.enemyPosition < 100) {
-                this.takeDamage();
+            if (isNotPaused) {
+                // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 40);
+                tmp.flip(true, false);
+                this.enemyPosition -= 2;
+                if (this.enemyPosition < 100) {
+                    this.takeDamage();
+                }
+            } else {
+                TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
+                tmp.flip(true, false);
+                batch.draw(tmp, this.enemyPosition, 40);
+                tmp.flip(true, false);
             }
         }
 
