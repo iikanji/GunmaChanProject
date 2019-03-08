@@ -310,7 +310,7 @@ public class GameScreen implements Screen {
                 }
                 this.walkOntoScreenFromRight(delta);
             } else {
-                font.draw(batch, "Game Over", 400, 380);
+                font2.draw(batch, "Game Over", 450, 380);
                 batch.draw(this.gunmaFaintedSprite, 70, 10);
             }
 
