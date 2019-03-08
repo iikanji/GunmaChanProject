@@ -28,6 +28,7 @@ import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
+import asu.gunma.ui.util.BackgroundDrawer;
 
 public class GameScreen implements Screen {
         DbInterface dbCallback;
@@ -83,6 +84,8 @@ public class GameScreen implements Screen {
         private Animator onionWalkAnimation;
         private Animator gunmaWalkAnimation;
 
+        private BackgroundDrawer backgroundDrawer;
+
         boolean isNotPaused = true;
 
         public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
@@ -99,6 +102,7 @@ public class GameScreen implements Screen {
             gameMusic.setVolume(masterVolume);
             gameMusic.play();
 
+
             Gdx.gl.glClearColor(.8f, 1, 1, 1);
             stage = new Stage();
 
@@ -108,6 +112,7 @@ public class GameScreen implements Screen {
             //onionIdleSprite = new Texture("")
 
             background = new Texture("BG_temp.png");
+            backgroundDrawer = new BackgroundDrawer(this.batch);
 
             // Animation initializations
             this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
@@ -251,7 +256,8 @@ public class GameScreen implements Screen {
 
             // SpriteBatch is resource intensive, try to use it for only brief moments
             batch.begin();
-            batch.draw(background, 0, 0);
+            backgroundDrawer.render(this.isNotPaused, this.isGameOver);
+            //batch.draw(background, 0, 0);
 
             if (!isGameOver) {
 
@@ -282,12 +288,15 @@ public class GameScreen implements Screen {
                     lives = lives + 1;
                 }
 
-
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 60);
+                if (this.isNotPaused) {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                } else {
+                    batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                }
                 this.walkOntoScreenFromRight(delta);
             } else {
                 font.draw(batch, "Game Over", 400, 380);
-                batch.draw(this.gunmaFaintedSprite, 70, 40);
+                batch.draw(this.gunmaFaintedSprite, 70, 10);
             }
 
 
@@ -321,6 +330,7 @@ public class GameScreen implements Screen {
         public void dispose() {
             font.dispose();
             background.dispose();
+            this.backgroundDrawer.dispose();
             this.onionWalkAnimation.dispose();
             this.gunmaWalkAnimation.dispose();
             batch.dispose();
@@ -333,7 +343,7 @@ public class GameScreen implements Screen {
                 // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
                 TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
                 tmp.flip(true, false);
-                batch.draw(tmp, this.enemyPosition, 60);
+                batch.draw(tmp, this.enemyPosition, 40);
                 tmp.flip(true, false);
                 this.enemyPosition -= 2;
                 if (this.enemyPosition < 100) {
@@ -342,7 +352,7 @@ public class GameScreen implements Screen {
             } else {
                 TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
                 tmp.flip(true, false);
-                batch.draw(tmp, this.enemyPosition, 60);
+                batch.draw(tmp, this.enemyPosition, 40);
                 tmp.flip(true, false);
             }
         }
