@@ -1,10 +1,12 @@
 package asu.gunma.speech;
 
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface ActionResolver {
      void startRecognition();
      String getWord();
-     List<String> signIn();
+     void signIn();
+     public ArrayList<String> androidLoginInfo();
+     public String loginMessage();
 }

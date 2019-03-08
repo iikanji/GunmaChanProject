@@ -11,14 +11,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
@@ -49,6 +52,9 @@ public class SettingsScreen implements Screen {
 
     private boolean homeLock = false;
     private String buttonText = "Home key unlocked";
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+    private FreeTypeFontGenerator generator;
+    private String googleLoginMessage = "";
 
     public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
         this.game = game;
@@ -56,6 +62,7 @@ public class SettingsScreen implements Screen {
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
+        this.googleLoginMessage = speechGDX.loginMessage();
     }
 
     @Override
@@ -93,6 +100,18 @@ public class SettingsScreen implements Screen {
         googleLoginButton.setPosition(50, 300);
         googleLoginButton.getLabel().setAlignment(Align.center);
 
+        //font file
+        final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+        //font for vocab word
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        //setting font values
+        parameter.size = 70;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+
         //Theme button
         //google login/logout
 
@@ -110,16 +129,18 @@ public class SettingsScreen implements Screen {
 
         googleLoginButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                List<String> currentInstructor = speechGDX.signIn();
-                for(int i = 0; i < currentInstructor.size(); i++){
-                    System.out.println(currentInstructor.get(i));
-                }
+                speechGDX.signIn();
+                //ArrayList<String> login = speechGDX.loginInfo();
+                /*for(int i = 0; i < login.size(); i++){
+                    System.out.println(login.get(i));
+                }*/
             }
         });
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
+                googleLoginMessage = "";
                 dispose(); // dispose of current GameScreen
                 game.setScreen(previousScreen);
             }
@@ -137,6 +158,7 @@ public class SettingsScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
+        font.draw(batch, googleLoginMessage, 500, 425);
         batch.end();
 
         stage.act(delta); // optional to pass delta value
