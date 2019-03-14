@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -11,13 +12,18 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
@@ -38,7 +44,7 @@ public class SettingsScreen implements Screen {
     private Skin testSkin;
     private Table table, table2, table3, table4, table5, table6;
 
-    private TextButton homeScreenLockButton, backButton;
+    private TextButton homeScreenLockButton, googleLoginButton,backButton, googleLogoutButton;
 
     private SpriteBatch batch;
     private Texture texture;
@@ -47,6 +53,12 @@ public class SettingsScreen implements Screen {
 
     private boolean homeLock = false;
     private String buttonText = "Home key unlocked";
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+    private FreeTypeFontGenerator generator;
+    private String googleLoginMessage = "";
+    private String googleLogoutMessage = "";
+    private boolean signedIn = false;
+
 
     public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
         this.game = game;
@@ -85,6 +97,30 @@ public class SettingsScreen implements Screen {
         homeScreenLockButton.setPosition(50, 400);
         homeScreenLockButton.getLabel().setAlignment(Align.center);
 
+        googleLoginButton = new TextButton("Google Login", testSkin, "default");
+        googleLoginButton.setTransform(true);
+        googleLoginButton.setScale(0.5f);
+        googleLoginButton.setPosition(50, 300);
+        googleLoginButton.getLabel().setAlignment(Align.center);
+
+        googleLogoutButton = new TextButton("Google Logout", testSkin, "default");
+        googleLogoutButton.setTransform(true);
+        googleLogoutButton.setScale(0.5f);
+        googleLogoutButton.setPosition(50, 200);
+        googleLogoutButton.getLabel().setAlignment(Align.center);
+
+        //font file
+        final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
+        generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
+
+        //font for vocab word
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+
+        //setting font values
+        parameter.size = 70;
+        parameter.color = Color.BLACK;
+        font = generator.generateFont(parameter);
+
         //Theme button
         //google login/logout
 
@@ -94,10 +130,27 @@ public class SettingsScreen implements Screen {
         backButton.setPosition(0, 540);
         backButton.getLabel().setAlignment(Align.center);
 
+        homeScreenLockButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+
+            }
+        });
+        googleLoginButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                speechGDX.signIn();
+            }
+        });
+
+        googleLogoutButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                speechGDX.signOut();
+            }
+        });
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
+                googleLoginMessage = "";
                 dispose(); // dispose of current GameScreen
                 game.setScreen(previousScreen);
             }
@@ -105,7 +158,8 @@ public class SettingsScreen implements Screen {
 
         stage.addActor(homeScreenLockButton);
         stage.addActor(backButton);
-
+        stage.addActor(googleLoginButton);
+        stage.addActor(googleLogoutButton);
     }
 
     @Override
@@ -115,6 +169,11 @@ public class SettingsScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
+        font.draw(batch, googleLoginMessage, 350, 200);
+        /*if(!googleLogoutMessage.equals(""))
+            font.draw(batch, googleLogoutMessage, 350, 200);
+        googleLoginMessage = speechGDX.googleLoginMessage();
+        googleLogoutMessage = speechGDX.googleLogoutMessage();*/
         batch.end();
 
         stage.act(delta); // optional to pass delta value

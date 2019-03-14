@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.badlogic.gdx.assets.AssetManager;
 
-import asu.gunma.DbContainers.Instructor;
-
 import static com.gunmachan.SQLite.SqlHelper.getsInstance;
 
 /**
@@ -53,6 +51,7 @@ public class InstructorDb {
         contentValues.put(instructor.COLUMN_FN, instructor.getInstructorFName());
         contentValues.put(instructor.COLUMN_LN, instructor.getInstructorLName());
         contentValues.put(instructor.COLUMN_INSTRUCTOR_ID, instructor.getInstructorID());
+        contentValues.put(instructor.COLUMN_EMAIL, instructor.getInstructorEmail());
         long newRowId =
                 db.insert(instructor.TABLE_NAME, null, contentValues);
         db.close();
@@ -69,7 +68,7 @@ public class InstructorDb {
         SQLiteDatabase db = iDbHelper.getReadableDatabase();
         Cursor cursor = db.query(Instructor.TABLE_NAME,
                 new String[]{Instructor.COLUMN_ID, Instructor.COLUMN_FN, Instructor.COLUMN_LN,
-                        Instructor.COLUMN_INSTRUCTOR_ID},
+                        Instructor.COLUMN_INSTRUCTOR_ID, Instructor.COLUMN_EMAIL},
                 Instructor.COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
@@ -79,7 +78,8 @@ public class InstructorDb {
                 cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_ID)),
                 cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_FN)),
                 cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_LN)),
-                cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)));
+                cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)),
+                cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_EMAIL)));
 
         cursor.close();
         return instructor;
@@ -104,7 +104,8 @@ public class InstructorDb {
                 instructor.setId(cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_ID)));
                 instructor.setInstructorFName(cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_FN)));
                 instructor.setInstructorLName(cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_LN)));
-                instructor.setInstructorID(cursor.getInt(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)));
+                instructor.setInstructorID(cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_INSTRUCTOR_ID)));
+                instructor.setInstructorEmail(cursor.getString(cursor.getColumnIndex(Instructor.COLUMN_EMAIL)));
                 instructorItems.add(instructor);
             } while (cursor.moveToNext());
         }
@@ -142,6 +143,7 @@ public class InstructorDb {
         contentValues.put(Instructor.COLUMN_FN, instructor.getInstructorFName());
         contentValues.put(Instructor.COLUMN_LN, instructor.getInstructorLName());
         contentValues.put(Instructor.COLUMN_INSTRUCTOR_ID, instructor.getInstructorID());
+        contentValues.put(Instructor.COLUMN_INSTRUCTOR_ID, instructor.getInstructorEmail());
 
         //unfinished
         return db.update(Instructor.TABLE_NAME, contentValues, Instructor.COLUMN_ID + " = ?",
@@ -196,6 +198,7 @@ public class InstructorDb {
                 contentValues.put(Instructor.COLUMN_FN, columns[1].trim());
                 contentValues.put(Instructor.COLUMN_LN, columns[2].trim());
                 contentValues.put(Instructor.COLUMN_INSTRUCTOR_ID, columns[3].trim());
+                contentValues.put(Instructor.COLUMN_EMAIL, columns[4].trim());
                 db.insert(Instructor.TABLE_NAME, null, contentValues);
             }
         } catch (IOException e) {
@@ -229,6 +232,18 @@ public class InstructorDb {
         } catch (Exception sqlEx) {
             Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
         }
+    }
+    public boolean CheckIsDataAlreadyInDBorNot(String fieldValue) {
+        SQLiteDatabase db = iDbHelper.getWritableDatabase();
+        String Query;
+        Cursor cursor = db.rawQuery("Select * from " + Instructor.TABLE_NAME + " where "
+                + Instructor.COLUMN_EMAIL + " =?", new String[]{fieldValue});
+        if(cursor.getCount() <= 0){
+            cursor.close();
+            return false;
+        }
+        cursor.close();
+        return true;
     }
 }
 
