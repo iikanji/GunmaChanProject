@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -43,7 +44,7 @@ public class SettingsScreen implements Screen {
     private Skin testSkin;
     private Table table, table2, table3, table4, table5, table6;
 
-    private TextButton homeScreenLockButton, googleLoginButton,backButton;
+    private TextButton homeScreenLockButton, googleLoginButton,backButton, googleLogoutButton;
 
     private SpriteBatch batch;
     private Texture texture;
@@ -55,7 +56,9 @@ public class SettingsScreen implements Screen {
     private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     private FreeTypeFontGenerator generator;
     private String googleLoginMessage = "";
+    private String googleLogoutMessage = "";
     private boolean signedIn = false;
+
 
     public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
         this.game = game;
@@ -100,6 +103,12 @@ public class SettingsScreen implements Screen {
         googleLoginButton.setPosition(50, 300);
         googleLoginButton.getLabel().setAlignment(Align.center);
 
+        googleLogoutButton = new TextButton("Google Logout", testSkin, "default");
+        googleLogoutButton.setTransform(true);
+        googleLogoutButton.setScale(0.5f);
+        googleLogoutButton.setPosition(50, 200);
+        googleLogoutButton.getLabel().setAlignment(Align.center);
+
         //font file
         final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
         generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
@@ -126,30 +135,15 @@ public class SettingsScreen implements Screen {
 
             }
         });
-
         googleLoginButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.signIn();
-                if(!signedIn){
-                    if(speechGDX.signIn()){
-                        signedIn = true;
-                        googleLoginMessage = "Login Successful!";
-                    }
-                    else{
-                        signedIn = false;
-                        googleLoginMessage = "Login Failed!";
-                    }
-                }
-                else{
-                    if(speechGDX.signOut()){
-                        signedIn = false;
-                        googleLoginMessage = "Logout Successful!";
-                    }
-                    else{
-                        signedIn = true;
-                        googleLoginMessage = "Logout Failed!";
-                    }
-                }
+            }
+        });
+
+        googleLogoutButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y){
+                speechGDX.signOut();
             }
         });
 
@@ -165,6 +159,7 @@ public class SettingsScreen implements Screen {
         stage.addActor(homeScreenLockButton);
         stage.addActor(backButton);
         stage.addActor(googleLoginButton);
+        stage.addActor(googleLogoutButton);
     }
 
     @Override
@@ -174,7 +169,11 @@ public class SettingsScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
-        font.draw(batch, googleLoginMessage, 500, 425);
+        font.draw(batch, googleLoginMessage, 350, 200);
+        /*if(!googleLogoutMessage.equals(""))
+            font.draw(batch, googleLogoutMessage, 350, 200);
+        googleLoginMessage = speechGDX.googleLoginMessage();
+        googleLogoutMessage = speechGDX.googleLogoutMessage();*/
         batch.end();
 
         stage.act(delta); // optional to pass delta value

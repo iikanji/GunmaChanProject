@@ -1,7 +1,7 @@
 package asu.gunma.DbContainers;
 
 public class Instructor {
-    public static final String TABLE_NAME = "Vocab";
+    public static final String TABLE_NAME = "InstructorDB";
 
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_FN = "FirstName";
@@ -22,13 +22,13 @@ public class Instructor {
     private int id;
     private String instructorFName;
     private String instructorLName;
-    private int instructorID;
+    private String instructorID;
     private String instructorEmail;
 
     public Instructor() {
     }
 
-    public Instructor(int id, String instructorFName, String instructorLName, int instructorID, String instructorEmail) {
+    public Instructor(int id, String instructorFName, String instructorLName, String instructorID, String instructorEmail) {
         this.id = id;
         this.instructorFName = instructorFName;
         this.instructorLName = instructorLName;
@@ -56,9 +56,9 @@ public class Instructor {
     public void setInstructorLName(String instructorLName) {
         this.instructorLName = instructorLName;
     }
-    public int getInstructorID(){ return instructorID;}
+    public String getInstructorID(){ return instructorID;}
 
-    public void setInstructorID(int instructorID) {
+    public void setInstructorID(String instructorID) {
         this.instructorID = instructorID;
     }
 

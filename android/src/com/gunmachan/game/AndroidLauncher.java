@@ -2,18 +2,18 @@ package com.gunmachan.game;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -28,22 +28,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.gunmachan.SQLite.Instructor;
 import com.gunmachan.SQLite.InstructorDb;
 import com.gunmachan.SQLite.VocabDb;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
-
-import static com.google.android.gms.auth.api.Auth.GoogleSignInApi;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -51,7 +45,6 @@ public class AndroidLauncher extends AndroidApplication {
     public VocabDb androidDB;
     public InstructorDb instructorDb;
     protected DbInterface dbInterface;
-    private View view;
     public static final int REQUEST_SPEECH = 0;
     public SpeechRecognizer speechRecognizer;
     public ActionResolver callback;
@@ -64,9 +57,8 @@ public class AndroidLauncher extends AndroidApplication {
     private GoogleSignInClient mGoogleSignInClient;
     private String googleLoginMessage = "";
     private static final int RC_SIGN_IN = 100;
-    private boolean googleSignInSuccessful = false;
-    private boolean googleSignOutSuccessful = false;
-    private ArrayList<String> googleLoginInfo;
+    private static final int RC_SIGN_OUT = 101;
+    private String googleSignOutMessage = "";
 
     // add permission to hide navigation bar?
     // create button to exit to home screen under instructor menu
@@ -99,22 +91,47 @@ public class AndroidLauncher extends AndroidApplication {
 
         //DEFAULT_SIGN_IN will request user ID, email address, and profile
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken("423723200587-i62dqi74dmheebmv2uqb55n12har4i2m.apps.googleusercontent.com").requestEmail().build();
-
         //creating sign in object with options specified by gso
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         signInIntent = new Intent(mGoogleSignInClient.getSignInIntent());
+
         callback = new ActionResolver() {
             @Override
             //method that starts the Google login client
-            public boolean signIn() {
+            public void signIn() {
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 setResult(RESULT_OK, signInIntent);
-                return googleSignInSuccessful;
             }
-            public boolean signOut(){
+            public String googleLoginMessage(){
+                return googleLoginMessage;
+            }
+
+            public void signOut() {
                 //do signOut operation
-                return googleSignOutSuccessful;
+                try {
+                    mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
+                            revokeAccess();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e.getStackTrace());
+                }
             }
+            public String googleLogoutMessage(){
+                return googleSignOutMessage;
+            }
+
+            public void revokeAccess() {
+                try {
+                    mGoogleSignInClient.revokeAccess();
+                } catch (Exception e) {
+                    System.out.println(e.getStackTrace());
+                }
+            }
+
             public ArrayList<String> androidLoginInfo() {
                 ArrayList<String> loginCredentials = new ArrayList<>();
                 Account acct;
@@ -126,8 +143,8 @@ public class AndroidLauncher extends AndroidApplication {
                 loginCredentials.add(fullName);
                 return loginCredentials;
             }
-            public void startRecognition() {
 
+            public void startRecognition() {
                 try {
                     runOnUiThread(new Runnable() {
                         @Override
@@ -156,6 +173,7 @@ public class AndroidLauncher extends AndroidApplication {
                 return androidDB.viewDb();
             }
         };
+        
         initialize(new GunmaChan(callback, dbInterface), config);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(perms, permsRequestCode);
@@ -192,33 +210,52 @@ public class AndroidLauncher extends AndroidApplication {
                 if (googleSignInResult.isSuccess()) {
                     // Signed in successfully.
                     System.out.println("Google Login Success");
-                    googleSignInSuccessful = true;
-
+                    googleLoginMessage = "Login Successful";
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    System.out.println(account.getDisplayName());
+                    System.out.println(account.getEmail());
+                    //parse out first, last name from display name
+                    Instructor loggedInInstructor = new Instructor();
+                    //System.out.println(instructorDb.CheckIsDataAlreadyInDBorNot(account.getEmail()));
+                    if (!instructorDb.CheckIsDataAlreadyInDBorNot(account.getEmail())) {
+                        System.out.println("NOT IN DATABASE");
+                        loggedInInstructor.setInstructorFName(account.getGivenName());
+                        loggedInInstructor.setInstructorLName(account.getFamilyName());
+                        loggedInInstructor.setInstructorEmail(account.getEmail());
+                        loggedInInstructor.setInstructorID(parseEmailId(account.getEmail()));
+                        instructorDb.dbInsertInstructor(loggedInInstructor);
+                    } else {
+                        System.out.println("INSTRUCTOR ALREADY EXISTS");
+                    }
+                    //insert this into instructor database;
+                    List<Instructor> instructorList = instructorDb.viewDb();
+                    for (Instructor element : instructorList) {
+                        System.out.println(element.getId());
+                        System.out.println(element.getInstructorFName());
+                        System.out.println(element.getInstructorLName());
+                        System.out.println(element.getInstructorID());
+                        System.out.println(element.getInstructorEmail());
+                    }
+                    Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_SHORT).show();
                 } else {
                     // Signed in failed.
                     System.out.println("Google Login Failed");
-                    googleSignInSuccessful = false;
+                    googleLoginMessage = "Login Failed";
                 }
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                System.out.println(account.getDisplayName());
-                System.out.println(account.getEmail());
-                //parse out first, last name from display name
-
-                Instructor loggedInInstructor = new Instructor();
-                /*loggedInInstructor.setInstructorFName();
-                loggedInInstructor.setInstructorLName();
-                loggedInInstructor.setId();*/
-                //insert this into instructor database;
-                instructorDb.dbInsertInstructor(loggedInInstructor);
-
-            } catch (ApiException e) {
+            }catch(ApiException e){
                 // The ApiException status code indicates the detailed failure reason.
                 // Please refer to the GoogleSignInStatusCodes class reference for more information.
                 System.out.println("Sign-In failed: " + e.getStackTrace());
             }
         }
+        if(requestCode == RC_SIGN_OUT){
+            if (mGoogleSignInClient.signOut().isSuccessful()) {
+                googleSignOutMessage = "Logout Successful";
+            } else {
+                googleSignOutMessage = "Logout Failed";
+            }
+        }
     }
-
 
     @Override
     public void onResume() {
@@ -238,7 +275,6 @@ public class AndroidLauncher extends AndroidApplication {
         hideNavigationBar();
     }
 
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_HOME) {
             hideNavigationBar();
@@ -257,11 +293,6 @@ public class AndroidLauncher extends AndroidApplication {
     @Override
     protected void onUserLeaveHint() {
         super.onUserLeaveHint();
-            /*setContentView(R.layout.activity_main);
-            initialize(new GunmaChan(callback, dbInterface),config);
-            if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M){
-                requestPermissions(perms, permsRequestCode);
-            }*/
     }
 
     @Override
@@ -332,6 +363,11 @@ public class AndroidLauncher extends AndroidApplication {
             account = null;
         }
         return account;
+    }
+
+    public String parseEmailId(String input) {
+        String[] fullname = input.split("@");
+        return fullname[0];
     }
 }
 

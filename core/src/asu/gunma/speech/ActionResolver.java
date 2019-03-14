@@ -6,7 +6,10 @@ import java.util.ArrayList;
 public interface ActionResolver {
      void startRecognition();
      String getWord();
-     boolean signIn();
-     boolean signOut();
+     void signIn();
+     void signOut();
      ArrayList<String> androidLoginInfo();
+     void revokeAccess();
+     public String googleLoginMessage();
+     public String googleLogoutMessage();
 }
