@@ -346,7 +346,7 @@ public class GameScreen implements Screen {
             tmp.flip(true, false);
             batch.draw(tmp, this.enemyPosition, 40);
             tmp.flip(true, false);
-            this.enemyPosition -= 2;
+            this.enemyPosition -= 1.8;
             if (this.enemyPosition < 100) {
                 this.takeDamage();
             }

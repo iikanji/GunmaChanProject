@@ -33,7 +33,7 @@ public class BackgroundDrawer {
 
         this.random = new Random();
         this.grassPosition = 0.0;
-        this.mountainPosition = 100.0;
+        this.mountainPosition = 300.0;
         this.cloud1Position = 0 + (CLOUD_X_MAX - 0) * random.nextDouble();
         this.cloud2Position = 0 + (CLOUD_X_MAX - 0) * random.nextDouble();
     }
@@ -45,7 +45,7 @@ public class BackgroundDrawer {
     public void render(boolean isNotPaused, boolean isGameOver) {
         if (isNotPaused && !isGameOver) {
             this.grassPosition -= 0.6;
-            this.mountainPosition -= 0.025;
+            this.mountainPosition -= 0.020;
             this.cloud1Position -= 0.2;
             this.cloud2Position -= 0.2;
         }
