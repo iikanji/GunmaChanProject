@@ -196,6 +196,36 @@ public class AndroidLauncher extends AndroidApplication {
                     System.out.println(e);
                 }
             }
+
+            public void listenOnce() {
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+                            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
+                            speechRecognizer.startListening(intent);
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+            public void stopListeningOnce(){
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            speechRecognizer.stopListening();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            }
             public void stopRecognition() {
                 try {
                     runOnUiThread(new Runnable() {
