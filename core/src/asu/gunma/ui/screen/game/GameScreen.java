@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Timer;
 
 import asu.gunma.DatabaseInterface.*;
 
@@ -47,10 +48,7 @@ public class GameScreen implements Screen {
         private int score = 0;
         private int listCounter = 0;
         private String displayWord;
-        private String incomingWord;
         private List<VocabWord> dbListWords;
-        private boolean correctWord = false;
-        private boolean recordState;
 
         // Using these are unnecessary but will make our lives easier.
         private Stage stage;
@@ -74,7 +72,6 @@ public class GameScreen implements Screen {
             This is based on the Project Proposal, I'd like to change this
             before the final release.
          */
-        private TextButton buttonRecord;
         private TextButton pauseButton;
         private TextButton backButton;
 
@@ -115,7 +112,8 @@ public class GameScreen implements Screen {
 
         @Override
         public void show() {
-            gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Naruto_Theme-The_Raising_Fighting_Spirit.mp3"));
+            gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+            gameMusic.setLooping(false);
             gameMusic.setVolume(masterVolume);
             gameMusic.play();
 
@@ -188,10 +186,6 @@ public class GameScreen implements Screen {
             textButtonStyle.font = font2;
             textButtonStyle.fontColor = Color.BLACK;
 
-            // IMPORTANT: needs localization support
-            buttonRecord = new TextButton("Microphone", textButtonStyle);
-            buttonRecord.setPosition(25, 0);
-
             backButton = new TextButton("Back", textButtonStyle);
             backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
 
@@ -205,28 +199,6 @@ public class GameScreen implements Screen {
                 add it into one of these Listeners. Each of them correspond to
                 one of the buttons on the screen in top-down order.
              */
-            buttonRecord.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    // I have it in reverse order like this because it makes more sense
-                    // but I can't think of a good variable name for it to not be backwards
-                    try {
-                        speechGDX.startRecognition();
-
-                        //add delay
-                        /*Timer.schedule(new Timer.Task(){
-                            @Override
-                            public void run() {
-                                word = speechGDX.getWord();
-                            }
-                        }, 5);*/
-
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
-
-                }
-            });
 
 
             pauseButton.addListener(new ClickListener() {
@@ -247,6 +219,7 @@ public class GameScreen implements Screen {
 
             backButton.addListener(new ClickListener() {
                 public void clicked(InputEvent event, float x, float y) {
+                    speechGDX.stopRecognition();
                     gameMusic.pause();
                     isNotPaused = false;
                     dispose(); // dispose of current GameScreen
@@ -257,9 +230,17 @@ public class GameScreen implements Screen {
             // Remove this later
             table.debug();
 
-            stage.addActor(buttonRecord);
             stage.addActor(pauseButton);
             stage.addActor(backButton);
+
+
+            //Start Speech Recognition
+            try {
+                speechGDX.startRecognition();
+
+            } catch (Exception e) {
+                System.out.println(e);
+            }
         }
 
         @Override
@@ -272,6 +253,15 @@ public class GameScreen implements Screen {
             //batch.draw(background, 0, 0);
 
             if (!isGameOver) {
+
+               /* try {
+                    if(!restartSpeech) {
+                        speechGDX.startRecognition();
+                        restartSpeech = true;
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                }*/
 
                 font.draw(batch, displayWordLayout, 325, 425);
 
@@ -287,6 +277,7 @@ public class GameScreen implements Screen {
                 //with all correct words then use grading functionality
 
 
+                //Returns false if word is null(no word has been said), or if word is incorrect
                 if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
                     listCounter++;
                     displayWord = dbListWords.get(listCounter).getEngSpelling();
@@ -310,6 +301,7 @@ public class GameScreen implements Screen {
                 }
                 this.walkOntoScreenFromRight(delta);
             } else {
+                speechGDX.stopRecognition();
                 font2.draw(batch, "Game Over", 450, 380);
                 batch.draw(this.gunmaFaintedSprite, 70, 10);
             }
@@ -349,6 +341,7 @@ public class GameScreen implements Screen {
             this.gunmaWalkAnimation.dispose();
             batch.dispose();
             stage.dispose();
+            gameMusic.stop();
             gameMusic.dispose();
         }
 
@@ -374,6 +367,7 @@ public class GameScreen implements Screen {
         private void takeDamage() {
             this.enemyPosition = Gdx.graphics.getWidth();
             this.lives--;
+
             if (this.lives == 0) {
                 this.isGameOver = true;
             }

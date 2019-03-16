@@ -37,7 +37,7 @@ import com.badlogic.gdx.audio.Music;
         private TextureAtlas atlas;
         private Skin skin;
         private Table table;
-        public static float masterVolume = 50;
+        public static float masterVolume = 10;
 
         private int testInt = 0;
 
@@ -63,11 +63,10 @@ import com.badlogic.gdx.audio.Music;
         FreeTypeFontGenerator.FreeTypeFontParameter parameter;
         FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
-        public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
+        public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback) {
 
             this.game = game;
             this.speechGDX = speechGDX;
-            this.music = music;
             this.dbCallback = dbCallback;
 
             music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));

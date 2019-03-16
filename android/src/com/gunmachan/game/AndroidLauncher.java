@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -14,6 +15,8 @@ import java.util.List;
 import android.content.pm.PackageManager;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g3d.model.data.ModelData;
+import com.badlogic.gdx.utils.Timer;
 import com.github.zagum.speechrecognitionview.RecognitionProgressView;
 import com.github.zagum.speechrecognitionview.adapters.RecognitionListenerAdapter;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -26,6 +29,8 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
 import com.badlogic.gdx.assets.AssetManager;
+import com.vikramezhil.droidspeech.DroidSpeech;
+import com.vikramezhil.droidspeech.OnDSListener;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
@@ -33,11 +38,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
 
     public class AndroidLauncher extends AndroidApplication {
 
-        /*public VocabDb androidDB;
-        Button buttonStart, buttonStop;
-        String AudioSavePathInDevice = null;
-        MediaRecorder mediaRecorder;
-        MediaPlayer mediaPlayer;*/
         public AssetManager assetManager;
         public VocabDb androidDB;
         protected DbInterface dbInterface;
@@ -51,6 +51,9 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
         private AndroidApplicationConfiguration config;
         private static final int RC_SIGN_IN = 100;
         private Context context;
+        public Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        public boolean recognizingATM = false;
+        DroidSpeech droidSpeech;
 
         // add permission to hide navigation bar?
         // create button to exit to home screen under instructor menu
@@ -66,6 +69,43 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             hideNavigationBar();
             config = new AndroidApplicationConfiguration();
 
+           droidSpeech = new DroidSpeech(this, null);
+
+           OnDSListener onDSListener = new OnDSListener() {
+               @Override
+               public void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages) {
+
+               }
+
+               @Override
+               public void onDroidSpeechRmsChanged(float rmsChangedValue) {
+
+               }
+
+               @Override
+               public void onDroidSpeechLiveResult(String liveSpeechResult) {
+
+               }
+
+               @Override
+               public void onDroidSpeechFinalResult(String finalSpeechResult) {
+                    System.out.println("Recognized Word " + finalSpeechResult);
+                    sendWord = finalSpeechResult;
+               }
+
+               @Override
+               public void onDroidSpeechClosedByUser() {
+
+               }
+
+               @Override
+               public void onDroidSpeechError(String errorMsg) {
+
+               }
+           };
+
+           droidSpeech.setOnDroidSpeechListener(onDSListener);
+
             //DEFAULT_SIGN_IN will request user ID, email address, and profile
             GoogleSignInOptions gso =  new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
 
@@ -74,7 +114,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
 
 
             AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-
 
             speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
@@ -90,8 +129,8 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
             });
 
             callback = new ActionResolver() {
-                @Override
 
+                @Override
                 //method that starts the Google login client
                 public void signIn()
                 {
@@ -102,17 +141,25 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                 public void startRecognition() {
 
                     try {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                droidSpeech.startDroidSpeechRecognition();
+                            }
+                        });
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                }
+
+                public void stopRecognition() {
+
+                    try {
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                System.out.println("Start Recognition");
-                                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                                intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-                                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
-                                speechRecognizer.startListening(intent);
-                                System.out.println("End Recognition");
+                                droidSpeech.closeDroidSpeechOperations();
                             }
                         });
                     } catch (Exception e) {
@@ -124,10 +171,6 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
                     String temp = sendWord;
                     sendWord = null;
                     return temp;
-                }
-
-                public void setWordNull() {
-                    sendWord = null;
                 }
             };
 
@@ -150,8 +193,11 @@ import asu.gunma.ui.screen.menu.SettingsScreen;
         public void showResults(Bundle results) {
             ArrayList<String> matches = results
                     .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            Toast.makeText(this, matches.get(0), Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, matches.get(0), Toast.LENGTH_LONG).show();
             sendWord = matches.get(0);
+            System.out.println("Speech Result Word => " + matches.get(0));
+            recognizingATM = false;
+            speechRecognizer.stopListening();
         }
 
         protected void onActivityResult(int requestCode, int resultCode, Intent data) {

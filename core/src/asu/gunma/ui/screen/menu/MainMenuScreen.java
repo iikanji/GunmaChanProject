@@ -56,13 +56,14 @@ public class MainMenuScreen implements Screen {
 
         private BitmapFont font;
         private Label heading;
-        private static float masterVolume = 50;
+        private static float masterVolume = 10;
 
          FreeTypeFontGenerator generator;
          FreeTypeFontGenerator.FreeTypeFontParameter parameter;
          FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
         public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
+
             this.game = game;
             this.speechGDX = speechGDX;
             this.music = music;
@@ -73,13 +74,6 @@ public class MainMenuScreen implements Screen {
             this.game = game;
             this.speechGDX = speechGDX;
             this.dbCallback = dbCallback;
-
-            music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
-            music.setLooping(true);
-            music.setVolume(masterVolume);
-            music.play();
-
-
         }
 
         @Override
@@ -175,7 +169,6 @@ public class MainMenuScreen implements Screen {
                 public void clicked(InputEvent event, float x, float y) {
                     //testing sign in method when option menu is selected
                     speechGDX.signIn();
-
                     music.pause();
                     game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), music));
                     //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
