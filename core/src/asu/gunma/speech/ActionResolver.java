@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public interface ActionResolver {
      void startRecognition();
+     void stopRecognition();
      String getWord();
      void signIn();
      void signOut();
