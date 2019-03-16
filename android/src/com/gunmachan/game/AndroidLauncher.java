@@ -33,6 +33,8 @@ import com.google.android.gms.tasks.Task;
 import com.gunmachan.SQLite.Instructor;
 import com.gunmachan.SQLite.InstructorDb;
 import com.gunmachan.SQLite.VocabDb;
+import com.vikramezhil.droidspeech.DroidSpeech;
+import com.vikramezhil.droidspeech.OnDSListener;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
@@ -59,6 +61,7 @@ public class AndroidLauncher extends AndroidApplication {
     private static final int RC_SIGN_IN = 100;
     private static final int RC_SIGN_OUT = 101;
     private String googleSignOutMessage = "";
+    DroidSpeech droidSpeech;
 
     // add permission to hide navigation bar?
     // create button to exit to home screen under instructor menu
@@ -70,6 +73,43 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        droidSpeech = new DroidSpeech(this, null);
+
+        OnDSListener onDSListener = new OnDSListener() {
+            @Override
+            public void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages) {
+
+            }
+
+            @Override
+            public void onDroidSpeechRmsChanged(float rmsChangedValue) {
+
+            }
+
+            @Override
+            public void onDroidSpeechLiveResult(String liveSpeechResult) {
+
+            }
+
+            @Override
+            public void onDroidSpeechFinalResult(String finalSpeechResult) {
+                System.out.println("Recognized Word " + finalSpeechResult);
+                sendWord = finalSpeechResult;
+            }
+
+            @Override
+            public void onDroidSpeechClosedByUser() {
+
+            }
+
+            @Override
+            public void onDroidSpeechError(String errorMsg) {
+
+            }
+        };
+
+        droidSpeech.setOnDroidSpeechListener(onDSListener);
 
         hideNavigationBar();
         config = new AndroidApplicationConfiguration();
@@ -149,13 +189,19 @@ public class AndroidLauncher extends AndroidApplication {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("Start Recognition");
-                            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                            intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-                            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
-                            speechRecognizer.startListening(intent);
-                            System.out.println("End Recognition");
+                            droidSpeech.startDroidSpeechRecognition();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+            public void stopRecognition() {
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            droidSpeech.closeDroidSpeechOperations();
                         }
                     });
                 } catch (Exception e) {
@@ -173,7 +219,7 @@ public class AndroidLauncher extends AndroidApplication {
                 return androidDB.viewDb();
             }
         };
-        
+
         initialize(new GunmaChan(callback, dbInterface), config);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(perms, permsRequestCode);

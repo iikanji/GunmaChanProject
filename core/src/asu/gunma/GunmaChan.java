@@ -34,7 +34,7 @@ public class GunmaChan extends Game {
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
 			background_music.setLooping(true);
 			//background_music.play();
-			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music));
+			this.setScreen(new TitleScreen(this, speechGDX, dbCallback));
 
 		}
 
