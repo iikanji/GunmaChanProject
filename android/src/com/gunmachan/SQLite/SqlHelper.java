@@ -19,7 +19,7 @@ public final class SqlHelper extends SQLiteOpenHelper {
     private static SqlHelper sInstance;
 
     // increment when the schema is changed
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "AppDb";
 
     public static synchronized SqlHelper getsInstance(Context context) {
@@ -42,6 +42,7 @@ public final class SqlHelper extends SQLiteOpenHelper {
 
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(VocabWord.SQLITE_CREATE_TABLE);
+        db.execSQL(Instructor.SQLITE_CREATE_TABLE);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -49,6 +50,7 @@ public final class SqlHelper extends SQLiteOpenHelper {
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL(VocabWord.SQLITE_DELETE_TABLE);
+        db.execSQL(Instructor.SQLITE_DELETE_TABLE);
         onCreate(db);
     }
 
