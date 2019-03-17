@@ -66,6 +66,7 @@ public class SettingsScreen implements Screen {
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
+        this.gameMusic.play();
     }
 
     @Override
@@ -151,8 +152,8 @@ public class SettingsScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
                 googleLoginMessage = "";
-                dispose(); // dispose of current GameScreen
                 game.setScreen(previousScreen);
+                dispose(); // dispose of current GameScreen
             }
         });
 

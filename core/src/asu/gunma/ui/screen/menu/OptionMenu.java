@@ -89,6 +89,7 @@ public class OptionMenu implements Screen {
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
+        this.gameMusic.play();
     }
 
     public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Music music){
@@ -955,9 +956,10 @@ public class OptionMenu implements Screen {
         });
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                previousScreen.dispose();
                 gameMusic.pause();
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbInterface, gameMusic));
                 dispose(); // dispose of current GameScreen
-                game.setScreen(previousScreen);
             }
         });
 

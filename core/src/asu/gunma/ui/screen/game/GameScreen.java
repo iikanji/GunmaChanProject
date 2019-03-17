@@ -26,11 +26,21 @@ import com.badlogic.gdx.utils.Align;
 import asu.gunma.DatabaseInterface.*;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
 import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
+import asu.gunma.ui.util.lives.LivesDrawer;
 
 public class GameScreen implements Screen {
+    private final int SCREEN_BOTTOM_ADJUST = 35;
+    private final int CORRECT_DISPLAY_DURATION = 80;
+    private final int INCORRECT_DISPLAY_DURATION = 80;
+
+    private TextButton testButton;
+    private int correctDisplayTimer;
+    private int incorrectDisplayTimer;
+
     DbInterface dbCallback;
     private Game game;
     private Music gameMusic;
@@ -80,6 +90,8 @@ public class GameScreen implements Screen {
     private Texture gunmaFaintedSprite;
     private Texture onionIdleSprite;
     private Texture background;
+    private Texture correctSprite;
+    private Texture incorrectSprite;
 
     private GlyphLayout displayWordLayout;
     private int targetWidth = 400;
@@ -89,6 +101,7 @@ public class GameScreen implements Screen {
     private Animator gunmaWalkAnimation;
 
     private BackgroundDrawer backgroundDrawer;
+    private LivesDrawer livesDrawer;
 
     boolean isPaused = false;
 
@@ -96,21 +109,20 @@ public class GameScreen implements Screen {
     String cWords;
     String[] correctWordList;
 
-    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
+    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music) {
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.previousScreen = previous;
+        this.gameMusic = music;
     }
 
     @Override
     public void show() {
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
-        gameMusic.setLooping(false);
-        gameMusic.setVolume(masterVolume);
         gameMusic.play();
-
+        this.correctDisplayTimer = 0;
+        this.incorrectDisplayTimer = 0;
 
         Gdx.gl.glClearColor(.8f, 1, 1, 1);
         stage = new Stage();
@@ -121,11 +133,16 @@ public class GameScreen implements Screen {
         //onionIdleSprite = new Texture("")
 
         background = new Texture("BG_temp.png");
-        backgroundDrawer = new BackgroundDrawer(this.batch);
+        backgroundDrawer = new BackgroundDrawer(this.batch, this.SCREEN_BOTTOM_ADJUST);
+        this.livesDrawer = new LivesDrawer(this.batch);
 
         // Animation initializations
         this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
         this.gunmaWalkAnimation = new Animator("gunma_sheet.png", 8, 1, 0.1f);
+
+        // Game feedback
+        this.correctSprite = new Texture("background/correct.png");
+        this.incorrectSprite = new Texture("background/incorrect.png");
 
         // Spawning variables
         this.enemyPosition = Gdx.graphics.getWidth();
@@ -181,12 +198,24 @@ public class GameScreen implements Screen {
         textButtonStyle.fontColor = Color.BLACK;
 
         backButton = new TextButton("Back", textButtonStyle);
-        backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
+        backButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
         pauseButton = new TextButton("Pause", textButtonStyle);
-        pauseButton.setPosition(25, 0);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - 200, 0);
+
+        /*
+        testButton = new TextButton("Test", textButtonStyle);
+        testButton.setPosition(800, 200);
+
+        testButton.addListener(new ClickListener() {
+           @Override
+           public void clicked(InputEvent event, float x, float y) {
+               incorrectDisplayTimer = INCORRECT_DISPLAY_DURATION;
+           }
+        });
+        */
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -225,8 +254,9 @@ public class GameScreen implements Screen {
                 speechGDX.stopRecognition();
                 gameMusic.pause();
                 isPaused = true;
+                previousScreen.dispose();
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic));
                 dispose(); // dispose of current GameScreen
-                game.setScreen(previousScreen);
             }
         });
 
@@ -252,7 +282,9 @@ public class GameScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
+        this.livesDrawer.render();
         backgroundDrawer.render(this.isPaused, this.isGameOver);
+
         //batch.draw(background, 0, 0);
 
         if (!isGameOver) {
@@ -260,17 +292,19 @@ public class GameScreen implements Screen {
             font.draw(batch, displayWordLayout, 325, 425);
 
             if (score >= 0){
-                font2.draw(batch, "Score: " + score, 850, 450);
+                //font2.draw(batch, "Score: " + score, 850, 30);
             }
 
-            font2.draw(batch, "Lives: " + lives, 25, 450);
+            //font2.draw(batch, "Lives: " + lives, 25, 30);
 
             //need to parse out correct words separating by comma and check
             //with all correct words then use grading functionality
 
-
             //Returns false if word is null(no word has been said), or if word is incorrect
             if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
+                // Start correct icon display
+                this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
+
                 listCounter++;
                 displayWord = dbListWords.get(listCounter).getEngSpelling();
                 parameter.characters = displayWord;
@@ -279,25 +313,30 @@ public class GameScreen implements Screen {
                 font = generator.generateFont(parameter);
                 displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
                 score = score + 1;
-                lives = lives + 1;
+                // lives = lives + 1;
 
                 //spliced correct words for grading
                 cWords = dbListWords.get(listCounter).getCorrectWords();
                 correctWordList = cWords.split("\\s*,\\s*");
+            } else {
+                // Start incorrect icon display
+                //this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
             }
 
             if (!this.isPaused) {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             } else {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             }
             this.walkOntoScreenFromRight(delta);
         } else {
             speechGDX.stopRecognition();
             font2.draw(batch, "Game Over", 450, 380);
-            batch.draw(this.gunmaFaintedSprite, 70, 10);
+            batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
         }
 
+        if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
+        if(incorrectDisplayTimer > 0) {this.incorrectAnswerGraphic();}
         batch.end();
 
         stage.act(delta); // optional to pass delta value
@@ -327,8 +366,14 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         font.dispose();
+        font2.dispose();
         background.dispose();
+        this.correctSprite.dispose();
+        this.incorrectSprite.dispose();
+
+
         this.backgroundDrawer.dispose();
+        this.livesDrawer.dispose();
         this.onionWalkAnimation.dispose();
         this.gunmaWalkAnimation.dispose();
         batch.dispose();
@@ -342,16 +387,16 @@ public class GameScreen implements Screen {
             // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
-            this.enemyPosition -= 2;
+            this.enemyPosition -= 1.8;
             if (this.enemyPosition < 100) {
                 this.takeDamage();
             }
         } else {
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
         }
     }
@@ -359,6 +404,7 @@ public class GameScreen implements Screen {
     private void takeDamage() {
         this.enemyPosition = Gdx.graphics.getWidth();
         this.lives--;
+        this.livesDrawer.takeLife();
 
         if (this.lives == 0) {
             this.isGameOver = true;
@@ -368,5 +414,21 @@ public class GameScreen implements Screen {
     private void defeatEnemy() {
         this.enemyPosition = Gdx.graphics.getWidth();
         // However you want to change the current vocab would go here
+    }
+
+    private void correctAnswerGraphic() {
+        if (this.correctDisplayTimer == this.CORRECT_DISPLAY_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(this.correctSprite, Gdx.graphics.getWidth()/2-80, Gdx.graphics.getHeight()/4*3-140);
+        this.correctDisplayTimer--;
+    }
+
+    private void incorrectAnswerGraphic() {
+        if (this.incorrectDisplayTimer == this.INCORRECT_DISPLAY_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(this.incorrectSprite, Gdx.graphics.getWidth()/2-80, Gdx.graphics.getHeight()/4*3-140);
+        this.incorrectDisplayTimer--;
     }
 }

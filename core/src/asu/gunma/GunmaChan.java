@@ -18,6 +18,7 @@ public class GunmaChan extends Game {
 	private Music background_music;
 	public ActionResolver speechGDX;
 	public DbInterface dbCallback;
+	private static float masterVolume = 10;
 
 		public GunmaChan() {}
 		public GunmaChan(ActionResolver speechGDX, DbInterface dbCallback){
@@ -31,10 +32,11 @@ public class GunmaChan extends Game {
 
 		@Override
 		public void create() {
-			background_music = Gdx.audio.newMusic(Gdx.files.internal("PerituneMaterial_Sakuya.mp3"));
-			background_music.setLooping(true);
+			background_music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+			background_music.setLooping(false);
+			background_music.setVolume(masterVolume);
 			//background_music.play();
-			this.setScreen(new TitleScreen(this, speechGDX, dbCallback));
+			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music));
 
 		}
 

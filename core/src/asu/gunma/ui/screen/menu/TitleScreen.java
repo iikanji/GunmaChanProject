@@ -31,7 +31,7 @@ public class TitleScreen implements Screen {
     private Game game;
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
-    private Music music;
+    private Music gameMusic;
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
     private TextureAtlas atlas;
@@ -63,15 +63,13 @@ public class TitleScreen implements Screen {
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
-    public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback) {
+    public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
-        music.setLooping(true);
-        music.setVolume(masterVolume);
+        this.gameMusic = music;
         music.play();
 
         //font file
@@ -136,7 +134,8 @@ public class TitleScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Going from TitleScreen to MainMenuScreen");
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, music));
+                gameMusic.pause();
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic));
             }
         });
 
