@@ -337,8 +337,8 @@ public class GameScreen implements Screen {
             batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
         }
 
-        if(correctDisplayTimer > 0) { this.correctAnswer();}
-        if(incorrectDisplayTimer > 0) {this.incorrectAnswer();}
+        if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
+        if(incorrectDisplayTimer > 0) {this.incorrectAnswerGraphic();}
         batch.end();
 
         stage.act(delta); // optional to pass delta value
@@ -418,7 +418,7 @@ public class GameScreen implements Screen {
         // However you want to change the current vocab would go here
     }
 
-    private void correctAnswer() {
+    private void correctAnswerGraphic() {
         if (this.correctDisplayTimer == this.CORRECT_DISPLAY_DURATION) {
             // Play sound effect here
         }
@@ -426,7 +426,7 @@ public class GameScreen implements Screen {
         this.correctDisplayTimer--;
     }
 
-    private void incorrectAnswer() {
+    private void incorrectAnswerGraphic() {
         if (this.incorrectDisplayTimer == this.INCORRECT_DISPLAY_DURATION) {
             // Play sound effect here
         }
