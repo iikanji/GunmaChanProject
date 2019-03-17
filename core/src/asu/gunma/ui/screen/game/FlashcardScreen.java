@@ -281,7 +281,7 @@ public class FlashcardScreen implements Screen {
                 // I have it in reverse order like this because it makes more sense
                 // but I can't think of a good variable name for it to not be backwards
                 try {
-                    speechGDX.startRecognition();
+                    speechGDX.listenOnce();
 
                 } catch (Exception e) {
                     System.out.println(e);
@@ -292,44 +292,44 @@ public class FlashcardScreen implements Screen {
 
         /*
         nextButton.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y) {
-               if(listCounter < dbListWords.size() - 1) {
-                   if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
-                       listCounter = listCounter + 1;
-                       displayWord = dbListWords.get(listCounter).getEngSpelling();
-                       Gdx.gl.glClearColor(1, .8f, 1, 1);
-                   }
-                   else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
-                       listCounter = listCounter + 1;
-                       displayWord = dbListWords.get(listCounter).getKanjiSpelling();
-                       Gdx.gl.glClearColor(.2f, 1, 1, 1);
-                   }
-                   parameter.characters = displayWord;
-                   parameter.size = 60;
-                   parameter.color = Color.BLACK;
-                   font = generator.generateFont(parameter);
-                   displayWordLayout.setText(font, displayWord, Color.BLACK,
-                           targetWidth, Align.center, true);
-               } else {
-                   if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
-                       listCounter = 0;
-                       displayWord = dbListWords.get(listCounter).getEngSpelling();
-                       Gdx.gl.glClearColor(1, .8f, 1, 1);
-                   }
-                   else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
-                       listCounter = 0;
-                       displayWord = dbListWords.get(listCounter).getKanjiSpelling();
-                       Gdx.gl.glClearColor(.2f, 1, 1, 1);
-                   }
-                   parameter.characters = displayWord;
-                   parameter.size = 60;
-                   parameter.color = Color.BLACK;
-                   font = generator.generateFont(parameter);
-                   displayWordLayout.setText(font, displayWord, Color.BLACK,
-                           targetWidth, Align.center, true);
-               }
-           }
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if(listCounter < dbListWords.size() - 1) {
+                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+                        listCounter = listCounter + 1;
+                        displayWord = dbListWords.get(listCounter).getEngSpelling();
+                        Gdx.gl.glClearColor(1, .8f, 1, 1);
+                    }
+                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                        listCounter = listCounter + 1;
+                        displayWord = dbListWords.get(listCounter).getKanjiSpelling();
+                        Gdx.gl.glClearColor(.2f, 1, 1, 1);
+                    }
+                    parameter.characters = displayWord;
+                    parameter.size = 60;
+                    parameter.color = Color.BLACK;
+                    font = generator.generateFont(parameter);
+                    displayWordLayout.setText(font, displayWord, Color.BLACK,
+                            targetWidth, Align.center, true);
+                } else {
+                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+                        listCounter = 0;
+                        displayWord = dbListWords.get(listCounter).getEngSpelling();
+                        Gdx.gl.glClearColor(1, .8f, 1, 1);
+                    }
+                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                        listCounter = 0;
+                        displayWord = dbListWords.get(listCounter).getKanjiSpelling();
+                        Gdx.gl.glClearColor(.2f, 1, 1, 1);
+                    }
+                    parameter.characters = displayWord;
+                    parameter.size = 60;
+                    parameter.color = Color.BLACK;
+                    font = generator.generateFont(parameter);
+                    displayWordLayout.setText(font, displayWord, Color.BLACK,
+                            targetWidth, Align.center, true);
+                }
+            }
         });
 
         prevButton.addListener(new ClickListener() {
