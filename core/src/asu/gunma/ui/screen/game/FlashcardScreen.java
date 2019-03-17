@@ -73,14 +73,14 @@ public class FlashcardScreen implements Screen {
     private TextButton flipButton;
     */
 
-    public FlashcardScreen (Game game, ActionResolver speechGDX,
-                            DbInterface dbCallback, Screen previous) {
+    public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
+                            DbInterface dbCallback, Screen previousScreen) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.music = music;
         this.dbCallback = dbCallback;
-        this.previousScreen = previous;
-
+        this.previousScreen = previousScreen;
+        this.music.play();
     }
 
     @Override
@@ -269,9 +269,10 @@ public class FlashcardScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                dispose(); // dispose of current FlashScreen
                 previousScreen.dispose();
+                music.pause();
                 game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+                dispose(); // dispose of current FlashScreen
             }
         });
 

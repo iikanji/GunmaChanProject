@@ -26,6 +26,7 @@ import com.badlogic.gdx.utils.Align;
 import asu.gunma.DatabaseInterface.*;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
 import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
@@ -108,21 +109,18 @@ public class GameScreen implements Screen {
     String cWords;
     String[] correctWordList;
 
-    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
+    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music) {
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.previousScreen = previous;
+        this.gameMusic = music;
     }
 
     @Override
     public void show() {
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
-        gameMusic.setLooping(false);
-        gameMusic.setVolume(masterVolume);
         gameMusic.play();
-
         this.correctDisplayTimer = 0;
         this.incorrectDisplayTimer = 0;
 
@@ -219,7 +217,6 @@ public class GameScreen implements Screen {
         });
         */
 
-
             /*
                 If you want to test functions with UI instead of with console,
                 add it into one of these Listeners. Each of them correspond to
@@ -257,8 +254,9 @@ public class GameScreen implements Screen {
                 speechGDX.stopRecognition();
                 gameMusic.pause();
                 isPaused = true;
+                previousScreen.dispose();
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic));
                 dispose(); // dispose of current GameScreen
-                game.setScreen(previousScreen);
             }
         });
 
