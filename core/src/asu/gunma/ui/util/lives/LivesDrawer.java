@@ -45,7 +45,8 @@ public class LivesDrawer {
     }
 
     public void dispose() {
-
+        this.activeHeart.dispose();
+        this.inactiveHeart.dispose();
     }
 
 }
