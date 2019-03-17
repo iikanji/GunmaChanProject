@@ -567,11 +567,9 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if(Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).file().exists()) {
                     Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).delete();
-
                     for (int i = 0; i < buttonList.size() - 1; i++) {
                         buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
                     }
-
                     //delete out of database
                     //loop through table looking for tuples that match module name
                     //if match
@@ -905,7 +903,12 @@ public class OptionMenu implements Screen {
         newButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                for(int i = 0; i < buttonList.size(); i++){
+
+                speechGDX.googleDriveAccess();
+
+                //Google Drive API
+
+                /*for(int i = 0; i < buttonList.size(); i++){
                     if(buttonList.get(i).getText().toString().equals("x")){
                         //this will become something else later
                         buttonList.get(i).setText("Module Name");
@@ -922,7 +925,7 @@ public class OptionMenu implements Screen {
                         }
                         break;
                     }
-                }
+                }*/
             }
         });
 

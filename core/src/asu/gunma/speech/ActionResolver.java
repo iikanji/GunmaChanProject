@@ -8,6 +8,7 @@ public interface ActionResolver {
      String getWord();
      void signIn();
      void signOut();
+     public void googleDriveAccess();
      ArrayList<String> androidLoginInfo();
      void revokeAccess();
      public String googleLoginMessage();
