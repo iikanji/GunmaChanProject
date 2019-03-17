@@ -31,6 +31,8 @@ import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
 
 public class GameScreen implements Screen {
+    private final int SCREEN_BOTTOM_ADJUST = 35;
+
     DbInterface dbCallback;
     private Game game;
     private Music gameMusic;
@@ -121,7 +123,7 @@ public class GameScreen implements Screen {
         //onionIdleSprite = new Texture("")
 
         background = new Texture("BG_temp.png");
-        backgroundDrawer = new BackgroundDrawer(this.batch);
+        backgroundDrawer = new BackgroundDrawer(this.batch, this.SCREEN_BOTTOM_ADJUST);
 
         // Animation initializations
         this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
@@ -289,15 +291,15 @@ public class GameScreen implements Screen {
             }
 
             if (this.isNotPaused) {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             } else {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             }
             this.walkOntoScreenFromRight(delta);
         } else {
             speechGDX.stopRecognition();
             font2.draw(batch, "Game Over", 450, 380);
-            batch.draw(this.gunmaFaintedSprite, 70, 10);
+            batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
         }
 
         batch.end();
@@ -344,7 +346,7 @@ public class GameScreen implements Screen {
             // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
             this.enemyPosition -= 1.8;
             if (this.enemyPosition < 100) {
@@ -353,7 +355,7 @@ public class GameScreen implements Screen {
         } else {
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
         }
     }

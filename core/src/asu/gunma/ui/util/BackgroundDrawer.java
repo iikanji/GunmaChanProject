@@ -29,8 +29,13 @@ public class BackgroundDrawer {
     private final double CLOUD_X_MAX = 1024;
     private final double CLOUD_Y_MAX = 600;
 
-    public BackgroundDrawer(SpriteBatch batch) {
+    // This is a final defined in GameScreen
+    private int screen_bottom_adjust;
+
+    public BackgroundDrawer(SpriteBatch batch, int screen_bottom_adjust) {
         this.batch = batch;
+        this.screen_bottom_adjust = screen_bottom_adjust;
+
         this.grass = new Texture("background/grassx2.png");
         this.mountain = new Texture("background/mountainx3.png");
         this.sky = new Texture("background/skyx2.png");
@@ -66,9 +71,9 @@ public class BackgroundDrawer {
             this.cloudB3Position -= 0.15;
         }
 
-        this.batch.draw(this.sky,0, 0);
-        this.batch.draw(this.mountain, (int) this.mountainPosition, 0);
-        this.batch.draw(this.grass, (int) this.grassPosition, 0);
+        this.batch.draw(this.sky,0, this.screen_bottom_adjust);
+        this.batch.draw(this.mountain, (int) this.mountainPosition, this.screen_bottom_adjust);
+        this.batch.draw(this.grass, (int) this.grassPosition, this.screen_bottom_adjust);
         if (this.grassPosition < -600) {
             this.grassPosition = 0;
         }
@@ -88,11 +93,11 @@ public class BackgroundDrawer {
             this.cloudB3Position = 1000;
         }
 
-        this.batch.draw(this.cloudA1, (int) this.cloudA1Position, 340);
-        this.batch.draw(this.cloudA2, (int) this.cloudA2Position, 410);
-        this.batch.draw(this.cloudB1, (int) this.cloudB1Position, 410);
-        this.batch.draw(this.cloudB2, (int) this.cloudB2Position, 410);
-        this.batch.draw(this.cloudB3, (int) this.cloudB3Position, 410);
+        this.batch.draw(this.cloudA1, (int) this.cloudA1Position, 340 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudA2, (int) this.cloudA2Position, 410 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudB1, (int) this.cloudB1Position, 410 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudB2, (int) this.cloudB2Position, 410 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudB3, (int) this.cloudB3Position, 410 + this.screen_bottom_adjust);
     }
 
     public void dispose() {
