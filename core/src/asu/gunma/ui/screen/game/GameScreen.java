@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
     private BackgroundDrawer backgroundDrawer;
     private LivesDrawer livesDrawer;
 
-    boolean isNotPaused = true;
+    boolean isPaused = false;
 
     private GradeSystem gradeSystem;
     String cWords;
@@ -219,6 +219,7 @@ public class GameScreen implements Screen {
         });
         */
 
+
             /*
                 If you want to test functions with UI instead of with console,
                 add it into one of these Listeners. Each of them correspond to
@@ -230,14 +231,23 @@ public class GameScreen implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(isNotPaused) {
-                    gameMusic.pause();
-                    isNotPaused = false;
-                }
-                else {
+                if(isPaused) {
+                    try{
+                        speechGDX.startRecognition();
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     gameMusic.setVolume(masterVolume);
                     gameMusic.play();
-                    isNotPaused = true;
+                    isPaused = false;
+                }
+
+                else {
+
+                    speechGDX.stopRecognition();
+                    gameMusic.pause();
+                    isPaused = true;
+
                 }
             }
         });
@@ -246,7 +256,7 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.stopRecognition();
                 gameMusic.pause();
-                isNotPaused = false;
+                isPaused = true;
                 dispose(); // dispose of current GameScreen
                 game.setScreen(previousScreen);
             }
@@ -274,20 +284,12 @@ public class GameScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
-        backgroundDrawer.render(this.isNotPaused, this.isGameOver);
         this.livesDrawer.render();
+        backgroundDrawer.render(this.isPaused, this.isGameOver);
+
         //batch.draw(background, 0, 0);
 
         if (!isGameOver) {
-
-               /* try {
-                    if(!restartSpeech) {
-                        speechGDX.startRecognition();
-                        restartSpeech = true;
-                    }
-                } catch (Exception e) {
-                    System.out.println(e);
-                }*/
 
             font.draw(batch, displayWordLayout, 325, 425);
 
@@ -296,8 +298,6 @@ public class GameScreen implements Screen {
             }
 
             //font2.draw(batch, "Lives: " + lives, 25, 30);
-
-            //incomingWord = speechGDX.getWord();
 
             //need to parse out correct words separating by comma and check
             //with all correct words then use grading functionality
@@ -325,7 +325,7 @@ public class GameScreen implements Screen {
                 //this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
             }
 
-            if (this.isNotPaused) {
+            if (!this.isPaused) {
                 batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             } else {
                 batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
@@ -385,7 +385,7 @@ public class GameScreen implements Screen {
     }
 
     private void walkOntoScreenFromRight(float delta) {
-        if (isNotPaused) {
+        if (!isPaused) {
             // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
             tmp.flip(true, false);

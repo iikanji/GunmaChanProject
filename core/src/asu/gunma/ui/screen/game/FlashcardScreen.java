@@ -56,8 +56,8 @@ public class FlashcardScreen implements Screen {
     private Texture cabbage;
     private Texture happyneg;
     private Texture konjackun;
-    private Texture negisan;
-    private Texture index_card;
+    private Texture greenCircle;
+    private Texture redX;
 
     private Label backInstruction;
 
@@ -66,9 +66,12 @@ public class FlashcardScreen implements Screen {
 
     private TextButton backButton;
     private TextButton buttonRecord;
+    private TextButton speakButton;
+    /*
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
+    */
 
     public FlashcardScreen (Game game, ActionResolver speechGDX,
                             DbInterface dbCallback, Screen previous) {
@@ -90,9 +93,11 @@ public class FlashcardScreen implements Screen {
 
         /*cabbage = new Texture("cabbage1.png");
         happyneg = new Texture("happyneg.png");
-        konjackun = new Texture("konjackun.jpg");*/
+        konjackun = new Texture("konjackun.jpg");
         negisan = new Texture("negisan.png");
-        index_card = new Texture("index_card.png");
+        index_card = new Texture("index_card.png");*/
+        greenCircle = new Texture("greenCircle.png");
+        redX = new Texture("redX.png");
 
         final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
         generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
@@ -246,9 +251,12 @@ public class FlashcardScreen implements Screen {
         backButton = new TextButton("Back", textButtonStyle);
         backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
 
-        buttonRecord = new TextButton("Microphone", textButtonStyle);
-        buttonRecord.setPosition(25, 0);
+        buttonRecord = new TextButton("Listen", textButtonStyle);
+        buttonRecord.setPosition(800, Gdx.graphics.getHeight() - 550);
 
+        speakButton = new TextButton("Speak", textButtonStyle);
+        speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
+        /*
         prevButton = new TextButton("Previous", textButtonStyle);
         prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
 
@@ -257,8 +265,7 @@ public class FlashcardScreen implements Screen {
 
         nextButton = new TextButton("Next", textButtonStyle);
         nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
-
-
+        */
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -283,6 +290,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
+        /*
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -396,15 +404,15 @@ public class FlashcardScreen implements Screen {
                 }
             }
         });
-
+*/
 
 
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
-        stage.addActor(nextButton);
-        stage.addActor(prevButton);
-        stage.addActor(flipButton);
+        stage.addActor(speakButton);
+        //stage.addActor(prevButton);
+        //stage.addActor(flipButton);
     }
 
     @Override
@@ -414,11 +422,13 @@ public class FlashcardScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         //batch.draw(index_card, 50, 150);
-        font.draw(batch, displayWordLayout, 75, 400);
+        font.draw(batch, displayWordLayout, 300, 350);
         //batch.draw(this.cabbage, 750, 40);
         //batch.draw(this.happyneg, 800, 40);
         //batch.draw(this.konjackun, 850, 40);
-        batch.draw(negisan, 700, 20);
+        //batch.draw(negisan, 700, 20);
+        batch.draw(greenCircle, 425, 450,50, 50);
+        batch.draw(redX, 525, 450, 50, 50);
 
         if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
             listCounter++;
@@ -444,8 +454,6 @@ public class FlashcardScreen implements Screen {
         font2.dispose();
         font.dispose();
         generator.dispose();
-        index_card.dispose();
-        negisan.dispose();
         batch.dispose();
         stage.dispose();
     }
