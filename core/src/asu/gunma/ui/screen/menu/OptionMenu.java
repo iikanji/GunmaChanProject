@@ -233,7 +233,7 @@ public class OptionMenu implements Screen {
         backButton.setPosition(20, 530, Align.left);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
-
+/*
         alphabetHeading = new Label("Alphabet", headingStyle);
         alphabetHeading.setFontScale(2);
         colorHeading = new Label("Colors", headingStyle);
@@ -259,7 +259,7 @@ public class OptionMenu implements Screen {
         custom10Heading = new Label("Custom Set 10", headingStyle);
         custom10Heading.setFontScale(2);
         // Actually, should probably custom class this process
-
+*/
         /*
             If you want to test functions with UI instead of with console,
             add it into one of these Listeners. Each of them correspond to
