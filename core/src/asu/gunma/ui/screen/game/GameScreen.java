@@ -29,6 +29,7 @@ import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.util.Animator;
 import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
+import asu.gunma.ui.util.lives.LivesDrawer;
 
 public class GameScreen implements Screen {
     private final int SCREEN_BOTTOM_ADJUST = 35;
@@ -91,6 +92,7 @@ public class GameScreen implements Screen {
     private Animator gunmaWalkAnimation;
 
     private BackgroundDrawer backgroundDrawer;
+    private LivesDrawer livesDrawer;
 
     boolean isNotPaused = true;
 
@@ -124,6 +126,7 @@ public class GameScreen implements Screen {
 
         background = new Texture("BG_temp.png");
         backgroundDrawer = new BackgroundDrawer(this.batch, this.SCREEN_BOTTOM_ADJUST);
+        this.livesDrawer = new LivesDrawer(this.batch);
 
         // Animation initializations
         this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
@@ -183,12 +186,12 @@ public class GameScreen implements Screen {
         textButtonStyle.fontColor = Color.BLACK;
 
         backButton = new TextButton("Back", textButtonStyle);
-        backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
+        backButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
         pauseButton = new TextButton("Pause", textButtonStyle);
-        pauseButton.setPosition(25, 200);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - 200, 0);
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -246,6 +249,7 @@ public class GameScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         backgroundDrawer.render(this.isNotPaused, this.isGameOver);
+        this.livesDrawer.render();
         //batch.draw(background, 0, 0);
 
         if (!isGameOver) {
@@ -262,10 +266,10 @@ public class GameScreen implements Screen {
             font.draw(batch, displayWordLayout, 325, 425);
 
             if (score >= 0){
-                font2.draw(batch, "Score: " + score, 850, 450);
+                //font2.draw(batch, "Score: " + score, 850, 30);
             }
 
-            font2.draw(batch, "Lives: " + lives, 25, 450);
+            //font2.draw(batch, "Lives: " + lives, 25, 30);
 
             //incomingWord = speechGDX.getWord();
 
@@ -283,7 +287,7 @@ public class GameScreen implements Screen {
                 font = generator.generateFont(parameter);
                 displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
                 score = score + 1;
-                lives = lives + 1;
+                // lives = lives + 1;
 
                 //spliced correct words for grading
                 cWords = dbListWords.get(listCounter).getCorrectWords();
@@ -363,6 +367,7 @@ public class GameScreen implements Screen {
     private void takeDamage() {
         this.enemyPosition = Gdx.graphics.getWidth();
         this.lives--;
+        this.livesDrawer.takeLife();
 
         if (this.lives == 0) {
             this.isGameOver = true;

@@ -93,9 +93,9 @@ public class BackgroundDrawer {
             this.cloudB3Position = 1000;
         }
 
-        this.batch.draw(this.cloudA1, (int) this.cloudA1Position, 340 + this.screen_bottom_adjust);
-        this.batch.draw(this.cloudA2, (int) this.cloudA2Position, 410 + this.screen_bottom_adjust);
-        this.batch.draw(this.cloudB1, (int) this.cloudB1Position, 410 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudA1, (int) this.cloudA1Position, 350 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudA2, (int) this.cloudA2Position, 500 + this.screen_bottom_adjust);
+        this.batch.draw(this.cloudB1, (int) this.cloudB1Position, 500 + this.screen_bottom_adjust);
         this.batch.draw(this.cloudB2, (int) this.cloudB2Position, 410 + this.screen_bottom_adjust);
         this.batch.draw(this.cloudB3, (int) this.cloudB3Position, 410 + this.screen_bottom_adjust);
     }
