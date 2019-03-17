@@ -73,7 +73,7 @@ public class BackgroundDrawer {
 
         this.batch.draw(this.sky,0, this.screen_bottom_adjust);
         this.batch.draw(this.mountain, (int) this.mountainPosition, this.screen_bottom_adjust);
-        this.batch.draw(this.grass, (int) this.grassPosition, this.screen_bottom_adjust);
+        this.batch.draw(this.grass, (int) this.grassPosition, 0); // This is not adjust; this is why everything else is adjusted
         if (this.grassPosition < -600) {
             this.grassPosition = 0;
         }
