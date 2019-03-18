@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
@@ -39,6 +40,7 @@ public class FlashcardScreen implements Screen {
     private int listCounter = 0;
     private String displayWord;
     private List<VocabWord> dbListWords;
+    public ArrayList<VocabWord> vocabWordArrayList;
 
     private Stage stage;
     private Stage stage2;
@@ -74,12 +76,13 @@ public class FlashcardScreen implements Screen {
     */
 
     public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
-                            DbInterface dbCallback, Screen previousScreen) {
+                            DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.music = music;
         this.dbCallback = dbCallback;
         this.previousScreen = previousScreen;
+        this.vocabWordArrayList = arrayList;
         this.music.play();
     }
 

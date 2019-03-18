@@ -1,5 +1,6 @@
 package asu.gunma.ui.screen.game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Game;
@@ -53,6 +54,7 @@ public class GameScreen implements Screen {
     private int listCounter = 0;
     private String displayWord;
     private List<VocabWord> dbListWords;
+    public ArrayList<VocabWord> activeVList;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -106,20 +108,21 @@ public class GameScreen implements Screen {
     boolean isPaused = false;
 
     private GradeSystem gradeSystem;
-    String cWords;
-    String[] correctWordList;
-
     String incomingWord = null;
     boolean correct = false;
     boolean win = false;
+    String cWords;
+    String[] correctWordList;
 
-    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music) {
+    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
+       
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.previousScreen = previous;
         this.gameMusic = music;
+        this.activeVList = activeList;
     }
 
     @Override
@@ -259,7 +262,7 @@ public class GameScreen implements Screen {
                 gameMusic.pause();
                 isPaused = true;
                 previousScreen.dispose();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic));
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic, activeVList));
                 dispose(); // dispose of current GameScreen
             }
         });

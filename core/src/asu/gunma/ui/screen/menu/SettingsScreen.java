@@ -171,10 +171,6 @@ public class SettingsScreen implements Screen {
         batch.begin();
         batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
         font.draw(batch, googleLoginMessage, 350, 200);
-        /*if(!googleLogoutMessage.equals(""))
-            font.draw(batch, googleLogoutMessage, 350, 200);
-        googleLoginMessage = speechGDX.googleLoginMessage();
-        googleLogoutMessage = speechGDX.googleLogoutMessage();*/
         batch.end();
 
         stage.act(delta); // optional to pass delta value
