@@ -14,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -196,10 +197,10 @@ public class AndroidLauncher extends AndroidApplication {
                     //TESTING
                     for(File f : googleFileList){
                         System.out.println("FILENAME: " + f.getName());
-                        System.out.println(f.getThumbnailLink());
+                        /*System.out.println(f.getThumbnailLink());
                         OutputStream outputStream = new ByteArrayOutputStream();
                         googleDriveService.files().export(f.getId(), "text/csv")
-                                .executeMediaAndDownloadTo(outputStream);
+                                .executeMediaAndDownloadTo(outputStream);*/
 
                     }
                     //openFilePicker();
@@ -260,6 +261,8 @@ public class AndroidLauncher extends AndroidApplication {
         initialize(new GunmaChan(callback, dbInterface), config);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(perms, permsRequestCode);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         androidDB = newVocabDb();
         instructorDb = newInstructorDb();
