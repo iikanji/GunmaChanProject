@@ -286,8 +286,8 @@ public class GameScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
-        this.livesDrawer.render();
         backgroundDrawer.render(this.isPaused, this.isGameOver);
+        this.livesDrawer.render();
 
         //batch.draw(background, 0, 0);
 
