@@ -19,7 +19,7 @@ public final class SqlHelper extends SQLiteOpenHelper {
     private static SqlHelper sInstance;
 
     // increment when the schema is changed
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "AppDb";
 
     public static synchronized SqlHelper getsInstance(Context context) {

@@ -37,7 +37,7 @@ public class TitleScreen implements Screen {
     private TextureAtlas atlas;
     private Skin skin;
     private Table table;
-    public static float masterVolume = 10;
+    public static float masterVolume = 0;
 
     private int testInt = 0;
 
@@ -136,6 +136,9 @@ public class TitleScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Going from TitleScreen to MainMenuScreen");
+                if(music != null) {
+                    music.pause();
+                }
                 game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, music));
             }
         });

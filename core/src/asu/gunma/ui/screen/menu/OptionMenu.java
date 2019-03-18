@@ -955,9 +955,11 @@ public class OptionMenu implements Screen {
         });
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                gameMusic.pause();
+                if (gameMusic != null){
+                    gameMusic.pause();
+                }
                 dispose(); // dispose of current GameScreen
-                game.setScreen(previousScreen);
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbInterface));
             }
         });
 

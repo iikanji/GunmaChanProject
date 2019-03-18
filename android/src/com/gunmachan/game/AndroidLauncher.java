@@ -409,6 +409,7 @@ public class AndroidLauncher extends AndroidApplication {
             System.out.println("ENG: " + element.getEngSpelling());
             System.out.println("Module: " + element.getModuleCategory());
             System.out.println("Correct Word: " + element.getCorrectWords());
+            System.out.println("Audio: " + element.getAudio());
         }
     }
 
