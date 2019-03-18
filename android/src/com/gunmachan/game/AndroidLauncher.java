@@ -240,7 +240,9 @@ public class AndroidLauncher extends AndroidApplication {
             }
 
             public String getWord() {
-                return sendWord;
+                String temp = sendWord;
+                sendWord = null;
+                return temp;
             }
         };
 

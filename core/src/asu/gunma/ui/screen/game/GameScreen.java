@@ -112,6 +112,9 @@ public class GameScreen implements Screen {
     String[] correctWordList;
 
     public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
+        String incomingWord = null;
+        boolean correct = false;
+        boolean win = false;
 
         this.game = game;
         this.speechGDX = speechGDX;
@@ -123,7 +126,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        gameMusic.play();
+       // gameMusic.play();
         this.correctDisplayTimer = 0;
         this.incorrectDisplayTimer = 0;
 
@@ -285,8 +288,8 @@ public class GameScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
-        this.livesDrawer.render();
         backgroundDrawer.render(this.isPaused, this.isGameOver);
+        this.livesDrawer.render();
 
         //batch.draw(background, 0, 0);
 
@@ -304,7 +307,10 @@ public class GameScreen implements Screen {
             //with all correct words then use grading functionality
 
             //Returns false if word is null(no word has been said), or if word is incorrect
-            if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
+            incomingWord = speechGDX.getWord();
+            correct = gradeSystem.grade(correctWordList, incomingWord);
+
+            if(correct){
                 // Start correct icon display
                 this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
 
@@ -321,9 +327,18 @@ public class GameScreen implements Screen {
                 //spliced correct words for grading
                 cWords = dbListWords.get(listCounter).getCorrectWords();
                 correctWordList = cWords.split("\\s*,\\s*");
-            } else {
+                incomingWord = null;
+            } else if(!correct && incomingWord != null){
                 // Start incorrect icon display
-                //this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
+                System.out.print("Word is Incorrect, incoming word is: ");
+                if(incomingWord != null) {
+                    System.out.println(incomingWord);
+                } else{
+                    System.out.println("null");
+                }
+                this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
+
+                incomingWord = null;
             }
 
             if (!this.isPaused) {
@@ -334,8 +349,15 @@ public class GameScreen implements Screen {
             this.walkOntoScreenFromRight(delta);
         } else {
             speechGDX.stopRecognition();
-            font2.draw(batch, "Game Over", 450, 380);
-            batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+
+            if(win) {
+                font2.draw(batch, "You Win!", 450, 380);
+               // batch.draw(supergunma, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+            }
+            else{
+                font2.draw(batch, "You Lose!", 450, 380);
+                batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+            }
         }
 
         if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
