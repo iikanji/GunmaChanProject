@@ -197,7 +197,7 @@ public class AndroidLauncher extends AndroidApplication {
                     for(File f : googleFileList){
                         System.out.println("FILENAME: " + f.getName());
                         System.out.println(f.getThumbnailLink());
-                        FileOutputStream outputStream = new ByteArrayOutputStream();
+                        OutputStream outputStream = new ByteArrayOutputStream();
                         googleDriveService.files().export(f.getId(), "text/csv")
                                 .executeMediaAndDownloadTo(outputStream);
 
