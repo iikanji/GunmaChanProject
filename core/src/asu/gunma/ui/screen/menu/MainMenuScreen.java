@@ -19,7 +19,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
 
+import java.util.ArrayList;
+
 import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.game.FlashcardScreen;
 import asu.gunma.ui.screen.game.GameScreen;
@@ -30,6 +33,7 @@ public class MainMenuScreen implements Screen {
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
     public Music gameMusic;
+    public ArrayList<VocabWord> activeVList;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -61,12 +65,13 @@ public class MainMenuScreen implements Screen {
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
-    public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
+    public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music, ArrayList<VocabWord> activeList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
         this.gameMusic.play();
+        this.activeVList = activeList;
     }
 
     public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback){
@@ -151,14 +156,14 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
-                game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen()));
+                game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
             }
         });
         buttonGameFirst.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
-                game.setScreen(new GameScreen(game, speechGDX, dbCallback, game.getScreen(), gameMusic));
+                game.setScreen(new GameScreen(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
 
             }
         });
@@ -167,7 +172,7 @@ public class MainMenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //testing sign in method when option menu is selected
                 gameMusic.pause();
-                game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), gameMusic));
+                game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
                 //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
             }
         });

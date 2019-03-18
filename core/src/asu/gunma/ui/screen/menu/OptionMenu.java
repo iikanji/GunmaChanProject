@@ -26,10 +26,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
@@ -52,9 +54,11 @@ public class OptionMenu implements Screen {
 
     //true = instructor, false = student
     private boolean verified = true;
-    private boolean active1 = true, active2 = true, active3 = true, active4 = true, active5 = true,
-            active6 = true, active7 = true, active8 = true, active9 = true, active10 = true,
-            active11 = true, active12 = true, active13 = true, active14 = true, active15 = true;
+    private boolean active1 = false, active2 = false, active3 = false, active4 = false, active5 = false,
+            active6 = false, active7 = false, active8 = false, active9 = false, active10 = false,
+            active11 = false, active12 = false, active13 = false, active14 = false, active15 = false;
+    public ArrayList<Boolean> activeList;
+    public ArrayList<VocabWord> activeVocabList;
     //temp bool until login system works
     private boolean login = false;
 
@@ -83,13 +87,14 @@ public class OptionMenu implements Screen {
     private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,
             custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
 
-    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music) {
+    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
-        this.gameMusic.play();
+        this.activeVocabList = arrayList;
+        gameMusic.play();
     }
 
     public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Music music){
@@ -151,21 +156,21 @@ public class OptionMenu implements Screen {
         // IMPORTANT: needs localization support
         // Make image buttons
         //use drawable to set image
-        buttonCustom1 = new TextButton("Alphabet", testSkin, "default");
-        buttonCustom2 = new TextButton("Colors-Shapes", testSkin, "default");
-        buttonCustom3 = new TextButton("Countries", testSkin, "default");
-        buttonCustom4 = new TextButton("Days-Months", testSkin, "default");
-        buttonCustom5 = new TextButton("Feelings", testSkin, "default");
-        buttonCustom6 = new TextButton("Fruits-Foods", testSkin, "default");
-        buttonCustom7 = new TextButton("Numbers", testSkin, "default");
-        buttonCustom8 = new TextButton("Places", testSkin, "default");
-        buttonCustom9 = new TextButton("Professions", testSkin, "default");
-        buttonCustom10 = new TextButton("Subjects", testSkin, "default");
-        buttonCustom11 = new TextButton("Time", testSkin, "default");
-        buttonCustom12 = new TextButton("x", testSkin, "default");
-        buttonCustom13 = new TextButton("x", testSkin, "default");
-        buttonCustom14 = new TextButton("x", testSkin, "default");
-        buttonCustom15 = new TextButton("x", testSkin, "default");
+        buttonCustom1 = new TextButton("Alphabet", testSkin, "small");
+        buttonCustom2 = new TextButton("Colors-Shapes", testSkin, "small");
+        buttonCustom3 = new TextButton("Countries", testSkin, "small");
+        buttonCustom4 = new TextButton("Days-Months", testSkin, "small");
+        buttonCustom5 = new TextButton("Feelings", testSkin, "small");
+        buttonCustom6 = new TextButton("Fruits-Foods", testSkin, "small");
+        buttonCustom7 = new TextButton("Numbers", testSkin, "small");
+        buttonCustom8 = new TextButton("Places", testSkin, "small");
+        buttonCustom9 = new TextButton("Professions", testSkin, "small");
+        buttonCustom10 = new TextButton("Subjects", testSkin, "small");
+        buttonCustom11 = new TextButton("Time", testSkin, "small");
+        buttonCustom12 = new TextButton("x", testSkin, "small");
+        buttonCustom13 = new TextButton("x", testSkin, "small");
+        buttonCustom14 = new TextButton("x", testSkin, "small");
+        buttonCustom15 = new TextButton("x", testSkin, "small");
 
         deleteCustomButton1 = new TextButton("X", testSkin, "default");
         deleteCustomButton2 = new TextButton("X", testSkin, "default");
@@ -200,7 +205,6 @@ public class OptionMenu implements Screen {
         buttonList.add(buttonCustom14);
         buttonList.add(buttonCustom15);
 
-
         deleteButtonList = new ArrayList<>();
         deleteButtonList.add(deleteCustomButton1);
         deleteButtonList.add(deleteCustomButton2);
@@ -229,6 +233,8 @@ public class OptionMenu implements Screen {
                 t.setVisible(false);
                 t.setDisabled(true);
         }
+
+        activeList = new ArrayList<>();
 
         backButton = new TextButton("Back", textButtonStyle);
         backButton.setPosition(20, 530, Align.left);
@@ -266,7 +272,7 @@ public class OptionMenu implements Screen {
             add it into one of these Listeners. Each of them correspond to
             one of the buttons on the screen in top-down order.
          */
-
+        List<VocabWord> dbVocab = dbInterface.getDbVocab();
         buttonCustom1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -277,10 +283,20 @@ public class OptionMenu implements Screen {
                         buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deactivateModule(buttonCustom1, 0);
                         active1 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(0).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         activateModule(buttonCustom1, 0);
                         active1 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(0).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -958,7 +974,7 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 previousScreen.dispose();
                 gameMusic.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbInterface, gameMusic));
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbInterface, gameMusic, activeVocabList));
                 dispose(); // dispose of current GameScreen
             }
         });
@@ -993,6 +1009,18 @@ public class OptionMenu implements Screen {
             count++;
         }
 
+        count = 0;
+        /*for(boolean b : activeList){
+            List<VocabWord> dbVocab = dbInterface.getDbVocab();
+            if(b){
+
+            }
+            count++;
+        }*/
+
+        for(VocabWord v : activeVocabList){
+            System.out.println(v.getEngSpelling());
+        }
         //scale buttons not table!
         //create active booleans for custom button
         //
@@ -1049,7 +1077,26 @@ public class OptionMenu implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
-        batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415, Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2, texture.getHeight()/2);
+        batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415,
+                Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2,
+                texture.getHeight()/2);
+        activeList.add(active1);
+        activeList.add(active2);
+        activeList.add(active3);
+        activeList.add(active4);
+        activeList.add(active5);
+        activeList.add(active6);
+        activeList.add(active7);
+        activeList.add(active8);
+        activeList.add(active8);
+        activeList.add(active9);
+        activeList.add(active10);
+        activeList.add(active11);
+        activeList.add(active12);
+        activeList.add(active13);
+        activeList.add(active14);
+        activeList.add(active15);
+
         batch.end();
 
         stage.act(delta); // optional to pass delta value

@@ -1,6 +1,7 @@
 package asu.gunma.ui.screen.menu;
 
 import asu.gunma.DatabaseInterface.DbInterface;
+import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
 import asu.gunma.ui.screen.menu.MainMenuScreen;
 
@@ -23,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.audio.Music;
 
+import java.util.ArrayList;
 
 
 public class TitleScreen implements Screen {
@@ -38,6 +40,7 @@ public class TitleScreen implements Screen {
     private Skin skin;
     private Table table;
     public static float masterVolume = 10;
+    public ArrayList<VocabWord> activeVList;
 
     private int testInt = 0;
 
@@ -63,15 +66,14 @@ public class TitleScreen implements Screen {
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
-    public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music) {
+    public TitleScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music, ArrayList<VocabWord> arrayList) {
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
-
         this.gameMusic = music;
         music.play();
-
+        this.activeVList = arrayList;
         //font file
         final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
         generator = new FreeTypeFontGenerator(Gdx.files.internal(FONT_PATH));
@@ -135,7 +137,7 @@ public class TitleScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Going from TitleScreen to MainMenuScreen");
                 gameMusic.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic));
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic, activeVList));
             }
         });
 
