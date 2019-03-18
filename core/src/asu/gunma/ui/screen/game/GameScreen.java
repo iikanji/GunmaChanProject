@@ -108,13 +108,14 @@ public class GameScreen implements Screen {
     boolean isPaused = false;
 
     private GradeSystem gradeSystem;
+    String incomingWord = null;
+    boolean correct = false;
+    boolean win = false;
     String cWords;
     String[] correctWordList;
 
     public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
-        String incomingWord = null;
-        boolean correct = false;
-        boolean win = false;
+       
 
         this.game = game;
         this.speechGDX = speechGDX;
