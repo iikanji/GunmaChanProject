@@ -83,6 +83,7 @@ public class FlashcardScreen implements Screen {
         this.dbCallback = dbCallback;
         this.previousScreen = previousScreen;
         this.vocabWordArrayList = arrayList;
+        if(this.music != null)
         this.music.play();
     }
 
@@ -273,6 +274,7 @@ public class FlashcardScreen implements Screen {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 previousScreen.dispose();
+                if(music != null)
                 music.pause();
                 game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
                 dispose(); // dispose of current FlashScreen
