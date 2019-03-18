@@ -1,6 +1,8 @@
 package asu.gunma.ui.screen.game;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -26,11 +28,24 @@ import com.badlogic.gdx.utils.Align;
 import asu.gunma.DatabaseInterface.*;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
+import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.Animator;
 import asu.gunma.ui.util.BackgroundDrawer;
 import asu.gunma.ui.util.GradeSystem;
+import asu.gunma.ui.util.lives.LivesDrawer;
 
 public class GameScreen implements Screen {
+    //size of round word list
+    private final int GAME_LIST_SIZE = 5;
+
+    private final int SCREEN_BOTTOM_ADJUST = 35;
+    private final int CORRECT_DISPLAY_DURATION = 80;
+    private final int INCORRECT_DISPLAY_DURATION = 80;
+
+    private TextButton testButton;
+    private int correctDisplayTimer;
+    private int incorrectDisplayTimer;
+
     DbInterface dbCallback;
     private Game game;
     private Music gameMusic;
@@ -43,6 +58,7 @@ public class GameScreen implements Screen {
     private int listCounter = 0;
     private String displayWord;
     private List<VocabWord> dbListWords;
+    public ArrayList<VocabWord> activeVList;
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -80,6 +96,8 @@ public class GameScreen implements Screen {
     private Texture gunmaFaintedSprite;
     private Texture onionIdleSprite;
     private Texture background;
+    private Texture correctSprite;
+    private Texture incorrectSprite;
 
     private GlyphLayout displayWordLayout;
     private int targetWidth = 400;
@@ -89,28 +107,39 @@ public class GameScreen implements Screen {
     private Animator gunmaWalkAnimation;
 
     private BackgroundDrawer backgroundDrawer;
+    private LivesDrawer livesDrawer;
 
     boolean isPaused = false;
 
     private GradeSystem gradeSystem;
+    String incomingWord = null;
+    boolean correct = false;
+    boolean win = false;
     String cWords;
     String[] correctWordList;
 
-    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous) {
+    ArrayList<Integer> gameVIndex;
+    ArrayList<VocabWord> gameWords;
+    Random rand = new Random();
+
+    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
+       
 
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.previousScreen = previous;
+        this.gameMusic = music;
+        this.activeVList = activeList;
     }
 
     @Override
     public void show() {
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
-        gameMusic.setLooping(false);
-        gameMusic.setVolume(masterVolume);
-        gameMusic.play();
-
+        gameVIndex = new ArrayList<>();
+        gameWords = new ArrayList<>();
+       // gameMusic.play();
+        this.correctDisplayTimer = 0;
+        this.incorrectDisplayTimer = 0;
 
         Gdx.gl.glClearColor(.8f, 1, 1, 1);
         stage = new Stage();
@@ -121,11 +150,16 @@ public class GameScreen implements Screen {
         //onionIdleSprite = new Texture("")
 
         background = new Texture("BG_temp.png");
-        backgroundDrawer = new BackgroundDrawer(this.batch);
+        backgroundDrawer = new BackgroundDrawer(this.batch, this.SCREEN_BOTTOM_ADJUST);
+        this.livesDrawer = new LivesDrawer(this.batch);
 
         // Animation initializations
         this.onionWalkAnimation = new Animator("onion_sheet.png", 4, 2, 0.1f);
         this.gunmaWalkAnimation = new Animator("gunma_sheet.png", 8, 1, 0.1f);
+
+        // Game feedback
+        this.correctSprite = new Texture("background/correct.png");
+        this.incorrectSprite = new Texture("background/incorrect.png");
 
         // Spawning variables
         this.enemyPosition = Gdx.graphics.getWidth();
@@ -151,12 +185,22 @@ public class GameScreen implements Screen {
         //font for other words
         parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
+        //Grab 10 random numbers from 0 -> activeWordList.size();
+        for(int i = 0; i < GAME_LIST_SIZE; i++) {
+            gameVIndex.add(rand.nextInt(activeVList.size() - 1));
+            //filter out duplicates
+        }
+
+        for(int i = 0; i < gameVIndex.size(); i++) {
+            gameWords.add(activeVList.get(gameVIndex.get(i)));
+        }
+
         //db list of vocab words
-        dbListWords = dbCallback.getDbVocab();
-        displayWord = dbListWords.get(listCounter).getEngSpelling();
+        //dbListWords = dbCallback.getDbVocab();
+        displayWord = gameWords.get(listCounter).getEngSpelling();
 
         //spliced correct words for grading
-        cWords = dbListWords.get(listCounter).getCorrectWords();
+        cWords = gameWords.get(listCounter).getCorrectWords();
         correctWordList = cWords.split("\\s*,\\s*");
 
         //setting font values
@@ -181,12 +225,24 @@ public class GameScreen implements Screen {
         textButtonStyle.fontColor = Color.BLACK;
 
         backButton = new TextButton("Back", textButtonStyle);
-        backButton.setPosition(Gdx.graphics.getWidth() - 100, Gdx.graphics.getHeight() - 50);
+        backButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
 
         pauseButton = new TextButton("Pause", textButtonStyle);
-        pauseButton.setPosition(25, 0);
+        pauseButton.setPosition(Gdx.graphics.getWidth() - 200, 0);
+
+        /*
+        testButton = new TextButton("Test", textButtonStyle);
+        testButton.setPosition(800, 200);
+
+        testButton.addListener(new ClickListener() {
+           @Override
+           public void clicked(InputEvent event, float x, float y) {
+               incorrectDisplayTimer = INCORRECT_DISPLAY_DURATION;
+           }
+        });
+        */
 
             /*
                 If you want to test functions with UI instead of with console,
@@ -205,14 +261,18 @@ public class GameScreen implements Screen {
                     } catch(Exception e) {
                         System.out.println(e);
                     }
-                    gameMusic.setVolume(masterVolume);
-                    gameMusic.play();
+
+                    if(gameMusic != null) {
+                        gameMusic.setVolume(masterVolume);
+                        gameMusic.play();
+                    }
                     isPaused = false;
                 }
 
                 else {
 
                     speechGDX.stopRecognition();
+                    if(gameMusic != null)
                     gameMusic.pause();
                     isPaused = true;
 
@@ -223,10 +283,12 @@ public class GameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.stopRecognition();
+                if(gameMusic != null)
                 gameMusic.pause();
                 isPaused = true;
+                previousScreen.dispose();
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic, activeVList));
                 dispose(); // dispose of current GameScreen
-                game.setScreen(previousScreen);
             }
         });
 
@@ -253,6 +315,8 @@ public class GameScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         backgroundDrawer.render(this.isPaused, this.isGameOver);
+        this.livesDrawer.render();
+
         //batch.draw(background, 0, 0);
 
         if (!isGameOver) {
@@ -260,44 +324,63 @@ public class GameScreen implements Screen {
             font.draw(batch, displayWordLayout, 325, 425);
 
             if (score >= 0){
-                font2.draw(batch, "Score: " + score, 850, 450);
+                //font2.draw(batch, "Score: " + score, 850, 30);
             }
 
-            font2.draw(batch, "Lives: " + lives, 25, 450);
+            //font2.draw(batch, "Lives: " + lives, 25, 30);
 
             //need to parse out correct words separating by comma and check
             //with all correct words then use grading functionality
 
-
             //Returns false if word is null(no word has been said), or if word is incorrect
-            if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
-                listCounter++;
-                displayWord = dbListWords.get(listCounter).getEngSpelling();
-                parameter.characters = displayWord;
-                parameter.size = 70;
-                parameter.color = Color.BLACK;
-                font = generator.generateFont(parameter);
-                displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
-                score = score + 1;
-                lives = lives + 1;
+            incomingWord = speechGDX.getWord();
+            correct = gradeSystem.grade(correctWordList, incomingWord);
 
-                //spliced correct words for grading
-                cWords = dbListWords.get(listCounter).getCorrectWords();
-                correctWordList = cWords.split("\\s*,\\s*");
+            if(correct){
+                // Start correct icon display
+                this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
+                listCounter++;
+                score = score + 1;
+
+                if(listCounter < GAME_LIST_SIZE) {
+                    displayWord = gameWords.get(listCounter).getEngSpelling();
+                    parameter.characters = displayWord;
+                    parameter.size = 70;
+                    parameter.color = Color.BLACK;
+                    font = generator.generateFont(parameter);
+                    displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
+                    cWords = gameWords.get(listCounter).getCorrectWords();
+                    correctWordList = cWords.split("\\s*,\\s*");
+                } else {
+                    isGameOver = true;
+                    win = true;
+                }
+            } else if(!correct && incomingWord != null){
+                // Start incorrect icon display
+                this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
             }
 
             if (!this.isPaused) {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(delta), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             } else {
-                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35);
+                batch.draw(this.gunmaWalkAnimation.getCurrentFrame(0), 90, 35 + this.SCREEN_BOTTOM_ADJUST);
             }
             this.walkOntoScreenFromRight(delta);
         } else {
             speechGDX.stopRecognition();
-            font2.draw(batch, "Game Over", 450, 380);
-            batch.draw(this.gunmaFaintedSprite, 70, 10);
+
+            if(win) {
+                font2.draw(batch, "You Win!", 450, 380);
+               // batch.draw(supergunma, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+            }
+            else{
+                font2.draw(batch, "You Lose!", 450, 380);
+                batch.draw(this.gunmaFaintedSprite, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+            }
         }
 
+        if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
+        if(incorrectDisplayTimer > 0) {this.incorrectAnswerGraphic();}
         batch.end();
 
         stage.act(delta); // optional to pass delta value
@@ -327,14 +410,23 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         font.dispose();
+        font2.dispose();
         background.dispose();
+        this.correctSprite.dispose();
+        this.incorrectSprite.dispose();
+
+
         this.backgroundDrawer.dispose();
+        this.livesDrawer.dispose();
         this.onionWalkAnimation.dispose();
         this.gunmaWalkAnimation.dispose();
         batch.dispose();
         stage.dispose();
-        gameMusic.stop();
-        gameMusic.dispose();
+        if(gameMusic!= null) {
+            gameMusic.stop();
+            gameMusic.dispose();
+        }
+
     }
 
     private void walkOntoScreenFromRight(float delta) {
@@ -342,16 +434,16 @@ public class GameScreen implements Screen {
             // This is a temporary fix. There's a more elegant solution that's less intensive I believe.
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(delta);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
-            this.enemyPosition -= 2;
+            this.enemyPosition -= 1.8;
             if (this.enemyPosition < 100) {
                 this.takeDamage();
             }
         } else {
             TextureRegion tmp = onionWalkAnimation.getCurrentFrame(0);
             tmp.flip(true, false);
-            batch.draw(tmp, this.enemyPosition, 40);
+            batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
         }
     }
@@ -359,6 +451,7 @@ public class GameScreen implements Screen {
     private void takeDamage() {
         this.enemyPosition = Gdx.graphics.getWidth();
         this.lives--;
+        this.livesDrawer.takeLife();
 
         if (this.lives == 0) {
             this.isGameOver = true;
@@ -368,5 +461,21 @@ public class GameScreen implements Screen {
     private void defeatEnemy() {
         this.enemyPosition = Gdx.graphics.getWidth();
         // However you want to change the current vocab would go here
+    }
+
+    private void correctAnswerGraphic() {
+        if (this.correctDisplayTimer == this.CORRECT_DISPLAY_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(this.correctSprite, Gdx.graphics.getWidth()/2-80, Gdx.graphics.getHeight()/4*3-140);
+        this.correctDisplayTimer--;
+    }
+
+    private void incorrectAnswerGraphic() {
+        if (this.incorrectDisplayTimer == this.INCORRECT_DISPLAY_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(this.incorrectSprite, Gdx.graphics.getWidth()/2-80, Gdx.graphics.getHeight()/4*3-140);
+        this.incorrectDisplayTimer--;
     }
 }

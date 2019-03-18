@@ -240,7 +240,9 @@ public class AndroidLauncher extends AndroidApplication {
             }
 
             public String getWord() {
-                return sendWord;
+                String temp = sendWord;
+                sendWord = null;
+                return temp;
             }
         };
 
@@ -257,7 +259,7 @@ public class AndroidLauncher extends AndroidApplication {
         androidDB = newVocabDb();
         instructorDb = newInstructorDb();
         test(androidDB);
-        androidDB.viewDb();
+        //androidDB.viewDb();
     }
 
     public void showResults(Bundle results) {
@@ -398,7 +400,7 @@ public class AndroidLauncher extends AndroidApplication {
             vDB.importCSV("Fruits-Foods.csv");
             vDB.importCSV("Professions.csv");
             vDB.importCSV("Places.csv");
-            vDB.importCSV("Time.csv");
+            //add time later when fixed
         } catch (Exception e) {
             System.out.println(e);
         }

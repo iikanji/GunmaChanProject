@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
@@ -44,6 +45,7 @@ public class FlashcardScreen implements Screen {
     private int listCounter = 0;
     private String displayWord;
     private List<VocabWord> dbListWords;
+    public ArrayList<VocabWord> vocabWordArrayList;
 
     private Stage stage;
     private Stage stage2;
@@ -64,7 +66,6 @@ public class FlashcardScreen implements Screen {
     private Texture greenCircle;
     private Texture redX;
 
-
     private Label backInstruction;
 
     String[] correctWordList;
@@ -76,21 +77,22 @@ public class FlashcardScreen implements Screen {
     private TextButton backButton;
     private TextButton buttonRecord;
     private TextButton speakButton;
+    /*
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
-    //private TextButton leftButton;
-    //private TextButton rightButton;
+    */
 
-
-    public FlashcardScreen (Game game, ActionResolver speechGDX,
-                            DbInterface dbCallback, Screen previous) {
+    public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
+                            DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.music = music;
         this.dbCallback = dbCallback;
-        this.previousScreen = previous;
-
+        this.previousScreen = previousScreen;
+        this.vocabWordArrayList = arrayList;
+        if(this.music != null)
+        this.music.play();
     }
 
     @Override
@@ -272,41 +274,24 @@ public class FlashcardScreen implements Screen {
 
         speakButton = new TextButton("Speak", textButtonStyle);
         speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
+        /*
+        prevButton = new TextButton("Previous", textButtonStyle);
+        prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
 
         flipButton = new TextButton("Flip", textButtonStyle);
         flipButton.setPosition(475, Gdx.graphics.getHeight() - 50);
 
         nextButton = new TextButton("Next", textButtonStyle);
-        nextButton.setPosition(900, 285);
-
-        prevButton = new TextButton("Previous", textButtonStyle);
-        prevButton.setPosition(40, 285);
-
-        /*
-        leftButton = new TextButton("Previous", leftArrow, "default");
-        leftButton.setPosition(40, 285);
-
-        rightButton = new TextButton("Next", rightArrow, "default");
-        rightButton.setPosition(900, 285);
+        nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
         */
-
-        speakButton.addListener(new ClickListener() {
-            public void clicked(InputEvent event, float x, float y) {
-
-                Gdx.files.internal(wordAudioFile);
-                System.out.print(Gdx.files.internal(wordAudioFile));
-                Music wordSound = Gdx.audio.newMusic(Gdx.files.internal("yellow01.mp3"));
-                wordSound.play();
-                wordSound.setLooping(false);
-            }
-
-        });
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                dispose(); // dispose of current FlashScreen
                 previousScreen.dispose();
+                if(music != null)
+                music.pause();
                 game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+                dispose(); // dispose of current FlashScreen
             }
         });
 
@@ -325,6 +310,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
+        /*
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -450,16 +436,15 @@ public class FlashcardScreen implements Screen {
                 }
             }
         });
+*/
+
 
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
         stage.addActor(speakButton);
-        stage.addActor(nextButton);
-        stage.addActor(prevButton);
-        stage.addActor(flipButton);
-        //stage.addActor(rightButton);
-        //stage.addActor(leftButton);
+        //stage.addActor(prevButton);
+        //stage.addActor(flipButton);
     }
 
     @Override
@@ -468,8 +453,13 @@ public class FlashcardScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
+        //batch.draw(index_card, 50, 150);
         font.draw(batch, displayWordLayout, 300, 350);
-        batch.draw(greenCircle, 425, 450, 50, 50);
+        //batch.draw(this.cabbage, 750, 40);
+        //batch.draw(this.happyneg, 800, 40);
+        //batch.draw(this.konjackun, 850, 40);
+        //batch.draw(negisan, 700, 20);
+        batch.draw(greenCircle, 425, 450,50, 50);
         batch.draw(redX, 525, 450, 50, 50);
 
         if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
