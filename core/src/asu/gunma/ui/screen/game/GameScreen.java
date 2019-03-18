@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -34,6 +35,9 @@ import asu.gunma.ui.util.GradeSystem;
 import asu.gunma.ui.util.lives.LivesDrawer;
 
 public class GameScreen implements Screen {
+    //size of round word list
+    private final int GAME_LIST_SIZE = 5;
+
     private final int SCREEN_BOTTOM_ADJUST = 35;
     private final int CORRECT_DISPLAY_DURATION = 80;
     private final int INCORRECT_DISPLAY_DURATION = 80;
@@ -114,6 +118,10 @@ public class GameScreen implements Screen {
     String cWords;
     String[] correctWordList;
 
+    ArrayList<Integer> gameVIndex;
+    ArrayList<VocabWord> gameWords;
+    Random rand = new Random();
+
     public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
        
 
@@ -127,6 +135,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        gameVIndex = new ArrayList<>();
+        gameWords = new ArrayList<>();
        // gameMusic.play();
         this.correctDisplayTimer = 0;
         this.incorrectDisplayTimer = 0;
@@ -175,12 +185,22 @@ public class GameScreen implements Screen {
         //font for other words
         parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
+        //Grab 10 random numbers from 0 -> activeWordList.size();
+        for(int i = 0; i < GAME_LIST_SIZE; i++) {
+            gameVIndex.add(rand.nextInt(activeVList.size() - 1));
+            //filter out duplicates
+        }
+
+        for(int i = 0; i < gameVIndex.size(); i++) {
+            gameWords.add(activeVList.get(gameVIndex.get(i)));
+        }
+
         //db list of vocab words
-        dbListWords = dbCallback.getDbVocab();
-        displayWord = dbListWords.get(listCounter).getEngSpelling();
+        //dbListWords = dbCallback.getDbVocab();
+        displayWord = gameWords.get(listCounter).getEngSpelling();
 
         //spliced correct words for grading
-        cWords = dbListWords.get(listCounter).getCorrectWords();
+        cWords = gameWords.get(listCounter).getCorrectWords();
         correctWordList = cWords.split("\\s*,\\s*");
 
         //setting font values
@@ -241,14 +261,18 @@ public class GameScreen implements Screen {
                     } catch(Exception e) {
                         System.out.println(e);
                     }
-                    gameMusic.setVolume(masterVolume);
-                    gameMusic.play();
+
+                    if(gameMusic != null) {
+                        gameMusic.setVolume(masterVolume);
+                        gameMusic.play();
+                    }
                     isPaused = false;
                 }
 
                 else {
 
                     speechGDX.stopRecognition();
+                    if(gameMusic != null)
                     gameMusic.pause();
                     isPaused = true;
 
@@ -259,6 +283,7 @@ public class GameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.stopRecognition();
+                if(gameMusic != null)
                 gameMusic.pause();
                 isPaused = true;
                 previousScreen.dispose();
@@ -314,32 +339,25 @@ public class GameScreen implements Screen {
             if(correct){
                 // Start correct icon display
                 this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
-
                 listCounter++;
-                displayWord = dbListWords.get(listCounter).getEngSpelling();
-                parameter.characters = displayWord;
-                parameter.size = 70;
-                parameter.color = Color.BLACK;
-                font = generator.generateFont(parameter);
-                displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
                 score = score + 1;
-                // lives = lives + 1;
 
-                //spliced correct words for grading
-                cWords = dbListWords.get(listCounter).getCorrectWords();
-                correctWordList = cWords.split("\\s*,\\s*");
-                incomingWord = null;
+                if(listCounter < GAME_LIST_SIZE) {
+                    displayWord = gameWords.get(listCounter).getEngSpelling();
+                    parameter.characters = displayWord;
+                    parameter.size = 70;
+                    parameter.color = Color.BLACK;
+                    font = generator.generateFont(parameter);
+                    displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
+                    cWords = gameWords.get(listCounter).getCorrectWords();
+                    correctWordList = cWords.split("\\s*,\\s*");
+                } else {
+                    isGameOver = true;
+                    win = true;
+                }
             } else if(!correct && incomingWord != null){
                 // Start incorrect icon display
-                System.out.print("Word is Incorrect, incoming word is: ");
-                if(incomingWord != null) {
-                    System.out.println(incomingWord);
-                } else{
-                    System.out.println("null");
-                }
                 this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
-
-                incomingWord = null;
             }
 
             if (!this.isPaused) {
@@ -404,8 +422,11 @@ public class GameScreen implements Screen {
         this.gunmaWalkAnimation.dispose();
         batch.dispose();
         stage.dispose();
-        gameMusic.stop();
-        gameMusic.dispose();
+        if(gameMusic!= null) {
+            gameMusic.stop();
+            gameMusic.dispose();
+        }
+
     }
 
     private void walkOntoScreenFromRight(float delta) {

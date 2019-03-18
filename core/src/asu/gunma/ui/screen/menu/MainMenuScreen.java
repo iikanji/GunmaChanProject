@@ -70,7 +70,9 @@ public class MainMenuScreen implements Screen {
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
-        this.gameMusic.play();
+        if(gameMusic != null) {
+            gameMusic.play();
+        }
         this.activeVList = activeList;
     }
 
@@ -155,14 +157,18 @@ public class MainMenuScreen implements Screen {
         buttonFlashcard.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameMusic.pause();
+                if(gameMusic != null) {
+                    gameMusic.pause();
+                }
                 game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
             }
         });
         buttonGameFirst.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                gameMusic.pause();
+                if(gameMusic != null) {
+                    gameMusic.pause();
+                }
                 game.setScreen(new GameScreen(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
 
             }
@@ -171,7 +177,9 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //testing sign in method when option menu is selected
-                gameMusic.pause();
+                if(gameMusic != null) {
+                    gameMusic.pause();
+                }
                 game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
                 //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
             }
@@ -233,7 +241,9 @@ public class MainMenuScreen implements Screen {
         texture.dispose();
         batch.dispose();
         stage.dispose();
-        gameMusic.dispose();
+        if(gameMusic != null) {
+            gameMusic.dispose();
+        }
     }
 
 }
