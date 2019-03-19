@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
     String[] correctWordList;
 
     ArrayList<Integer> gameVIndex;
-    ArrayList<VocabWord> gameWords;
+    ArrayList<VocabWord> gameWords = new ArrayList<>();
     Random rand = new Random();
 
     public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {

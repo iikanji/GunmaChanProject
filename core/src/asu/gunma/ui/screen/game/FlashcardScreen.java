@@ -317,7 +317,7 @@ public class FlashcardScreen implements Screen {
                 previousScreen.dispose();
                 if(music != null)
                 music.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback));
+                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, music, vocabWordArrayList));
                 dispose(); // dispose of current FlashScreen
             }
         });

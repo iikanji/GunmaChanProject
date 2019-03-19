@@ -33,7 +33,7 @@ public class MainMenuScreen implements Screen {
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
     public Music gameMusic;
-    public ArrayList<VocabWord> activeVList;
+    public ArrayList<VocabWord> activeVList = new ArrayList<>();
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;

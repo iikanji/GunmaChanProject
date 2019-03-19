@@ -57,8 +57,8 @@ public class OptionMenu implements Screen {
     private boolean active1 = false, active2 = false, active3 = false, active4 = false, active5 = false,
             active6 = false, active7 = false, active8 = false, active9 = false, active10 = false,
             active11 = false, active12 = false, active13 = false, active14 = false, active15 = false;
-    public ArrayList<Boolean> activeList;
-    public ArrayList<VocabWord> activeVocabList;
+    public ArrayList<Boolean> activeList = new ArrayList<>();
+    public ArrayList<VocabWord> activeVocabList = new ArrayList<>();
     //temp bool until login system works
     private boolean login = false;
 
