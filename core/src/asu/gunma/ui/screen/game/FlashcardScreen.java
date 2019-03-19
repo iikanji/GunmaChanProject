@@ -86,11 +86,11 @@ public class FlashcardScreen implements Screen {
     private TextButton speakButton;
 
 
-    /*
+
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
-    */
+
 
     public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
                             DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
@@ -284,7 +284,7 @@ public class FlashcardScreen implements Screen {
         speakButton = new TextButton("Speak", textButtonStyle);
         speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
 
-        /*
+
         prevButton = new TextButton("Previous", textButtonStyle);
         prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
 
@@ -310,7 +310,7 @@ public class FlashcardScreen implements Screen {
 
         nextButton = new TextButton("Next", textButtonStyle);
         nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
-        */
+
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -335,7 +335,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
-        /*
+
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -461,7 +461,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
-*/
+
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
