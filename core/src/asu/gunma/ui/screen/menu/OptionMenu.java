@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.Align;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.speech.ActionResolver;
@@ -899,34 +900,34 @@ public class OptionMenu implements Screen {
         newButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-
+                //BEST OPTION IS TO CHANGE THE TABLE TO A SCROLLPANE
                 ArrayList<File> fileList = speechGDX.googleDriveAccess();
-
-                fileTable = new Table();
-                Dialog fileDialog = new Dialog("Add File", testSkin);
-                for(int i = 0; i < fileList.size(); i++) {
+                fileTable = new Table(testSkin);
+                Dialog fileDialog = new Dialog("Select File To Upload", testSkin);
+                fileDialog.setPosition(400, 300, Align.center);
+                fileDialog.setMovable(false);
+                fileDialog.getTitleLabel().setAlignment(Align.center);
+                TextButton cancelButton = new TextButton("Cancel", testSkin, "small");
+                for (int i = 0; i < fileList.size(); i++) {
                     File currentFile = fileList.get(i);
-                    if(currentFile.exists()) {
+                    if (currentFile.exists()) {
                         String filename = currentFile.getName();
-                        String[] filenameSplit = filename.split(".");
-                        Label fileNameLabel = new Label(filenameSplit[0], new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
-                        Label fileExtensionLabel = new Label(".csv", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
-                        fileNameLabel.setAlignment(Align.left);
-                        fileNameLabel.setColor(Color.BLACK);
-                        fileExtensionLabel.setAlignment(Align.right);
-                        fileExtensionLabel.setColor(Color.BLACK);
+                        String filenameSplit = filename.split("\\.")[0];
+                        System.out.println(filenameSplit);
+                        Label fileNameLabel = new Label(filenameSplit + "         ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
+                        Label fileExtensionLabel = new Label("csv" + "        ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
                         TextButton temp = new TextButton("SELECT", testSkin, "small");
                         temp.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
-                                System.out.println("I HAVE SELECTED " + filename);
+                                System.out.println("I HAVE SELECTED " + filenameSplit);
                                 //importCSV(currentFile) to dbInterface, call it on currentCSVFILE if not null
                                 dbInterface.importCSVFile(currentFile.getName());
                                 currentFile.delete();
                                 fileDialog.hide();
                                 for (int i = 0; i < buttonList.size(); i++) {
                                     if (buttonList.get(i).getText().toString().equals("x")) {
-                                        buttonList.get(i).setText(filenameSplit[0]);
+                                        buttonList.get(i).setText(filenameSplit);
                                         buttonList.get(i).setVisible(true);
                                         buttonList.get(i).setDisabled(false);
                                         if (table.getRows() < 5) {
@@ -941,24 +942,31 @@ public class OptionMenu implements Screen {
                                 }
                             }
                         });
-                        fileTable.add(fileNameLabel);
-                        fileTable.add(fileExtensionLabel);
-                        fileTable.add(temp);
+                        fileTable.add(fileNameLabel).center();
+                        fileTable.add(fileExtensionLabel).center();
+                        fileTable.add("");
+                        fileTable.add(temp).setActorHeight(0.6f);
                         fileTable.row();
-                    }else{
-                        System.out.println("ERROR FILE DOES NOT EXIST!");
-                    }
 
-                    if(!currentFile.exists()){
-                        System.out.println("FILE DELETED SUCCESSFULLY!");
+                    } else {
+                        System.out.println("ERROR FILE DOES NOT EXIST!");
                     }
                 }
 
-                fileDialog.setPosition(400, 300, Align.center);
-                fileDialog.setMovable(false);
-                fileDialog.getContentTable().add(fileTable);
-                fileDialog.show(stage);
+                cancelButton.addListener(new ClickListener(){
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        fileDialog.hide();
+                    }
+                });
 
+                /*fileTable.add("");
+                fileTable.add("");
+                fileTable.add(cancelButton).setActorHeight(0.6f);*/
+                fileTable.debug();
+                fileDialog.getContentTable().add(fileTable).top().fill();
+                fileDialog.add(cancelButton).bottom().right().setActorHeight(0.6f);
+                fileDialog.show(stage);
                 //Google Drive API
             }
         });
@@ -1083,7 +1091,13 @@ public class OptionMenu implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
-        batch.draw(texture, Gdx.graphics.getWidth() / 2 - texture.getWidth() / 4 + 415, Gdx.graphics.getHeight() / 4 - texture.getHeight() / 2 + 400, texture.getWidth() / 2, texture.getHeight() / 2);
+        batch.draw(texture, Gdx.graphics.getWidth() / 2 - texture.getWidth() / 4 + 415, Gdx.graphics.getHeight() / 4 - texture.getHeight() / 2 + 400,
+                texture.getWidth() / 2, texture.getHeight() / 2);
+        /*if (speechGDX.getVerificationBool()) {
+            verified = true;
+        } else {
+            verified = false;
+        }*/
         batch.end();
 
         stage.act(delta); // optional to pass delta value

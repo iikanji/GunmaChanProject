@@ -234,7 +234,9 @@ public final class VocabDb {
         FileInputStream inStream = null;
 
         try {
-            File csvInDocDirectory = new File("/storage/emulated/0/Documents/" + fileName);
+            File path = Environment.getExternalStorageDirectory();
+            File csvInDocDirectory = new File(path, fileName);
+            path.mkdirs();
             inStream = new FileInputStream(csvInDocDirectory);
             //inStream = Gdx.files.internal(fileName).read();
         } catch (Exception e) {

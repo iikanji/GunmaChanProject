@@ -78,10 +78,12 @@ public class AndroidLauncher extends AndroidApplication {
     public View decorView;
     public int uiOptions;
     private AndroidApplicationConfiguration config;
+
     private Intent signInIntent;
     private GoogleSignInOptions gso;
     private Scope googleDriveScope;
     private GoogleSignInClient mGoogleSignInClient;
+    private Boolean verificationBool = false;
     private String googleLoginMessage = "";
     private static final int RC_SIGN_IN = 100;
     private static final int RC_SIGN_OUT = 101;
@@ -270,6 +272,10 @@ public class AndroidLauncher extends AndroidApplication {
             public String getWord() {
                 return sendWord;
             }
+
+            public Boolean getVerificationBool(){
+                return verificationBool;
+            }
         };
 
         dbInterface = new DbInterface() {
@@ -333,7 +339,7 @@ public class AndroidLauncher extends AndroidApplication {
                         loggedInInstructor.setInstructorFName(account.getGivenName());
                         loggedInInstructor.setInstructorLName(account.getFamilyName());
                         loggedInInstructor.setInstructorEmail(account.getEmail());
-                        loggedInInstructor.setInstructorID(parseEmailId(account.getEmail()));
+                        loggedInInstructor.setInstructorID(parseEmailId(account.getEmail())[0]);
                         instructorDb.dbInsertInstructor(loggedInInstructor);
                     } else {
                         System.out.println("INSTRUCTOR ALREADY EXISTS");
@@ -348,6 +354,9 @@ public class AndroidLauncher extends AndroidApplication {
                         System.out.println(element.getInstructorEmail());
                     }
                     Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+                    if(parseEmailId(account.getEmail())[1].equals("edu-g.gsn.ed.jp")) {
+                        verificationBool = true;
+                    }
                 } else {
                     // Signed in failed.
                     System.out.println("Google Login Failed");
@@ -372,9 +381,6 @@ public class AndroidLauncher extends AndroidApplication {
                 openFileFromFilePicker(uri);
             }
         }
-        if(requestCode == REQUEST_PICKER){
-
-        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -387,8 +393,12 @@ public class AndroidLauncher extends AndroidApplication {
     @Override
     public void onPause() {
         super.onPause();
-        this.onResume();
         hideNavigationBar();
+        try {
+            mGoogleSignInClient.signOut();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -486,9 +496,9 @@ public class AndroidLauncher extends AndroidApplication {
         return account;
     }
 
-    public String parseEmailId(String input) {
+    public String[] parseEmailId(String input) {
         String[] fullname = input.split("@");
-        return fullname[0];
+        return fullname;
     }
     public String[] parseFile(String input) {
         return input.split(".");

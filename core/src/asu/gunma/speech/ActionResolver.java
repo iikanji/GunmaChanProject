@@ -13,4 +13,5 @@ public interface ActionResolver {
      void revokeAccess();
      public String googleLoginMessage();
      public String googleLogoutMessage();
+     public Boolean getVerificationBool();
 }
