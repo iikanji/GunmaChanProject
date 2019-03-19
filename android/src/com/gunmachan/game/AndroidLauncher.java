@@ -46,6 +46,8 @@ import com.google.api.services.drive.model.User;
 import com.gunmachan.SQLite.Instructor;
 import com.gunmachan.SQLite.InstructorDb;
 import com.gunmachan.SQLite.VocabDb;
+import com.vikramezhil.droidspeech.DroidSpeech;
+import com.vikramezhil.droidspeech.OnDSListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -97,6 +99,7 @@ public class AndroidLauncher extends AndroidApplication {
     public EditText mFileTitleEditText;
     public EditText mDocContentEditText;
     public ArrayList<java.io.File> csvFileList;
+    DroidSpeech droidSpeech;
 
     // add permission to hide navigation bar?
     // create button to exit to home screen under instructor menu
@@ -108,6 +111,43 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        droidSpeech = new DroidSpeech(this, null);
+
+        OnDSListener onDSListener = new OnDSListener() {
+            @Override
+            public void onDroidSpeechSupportedLanguages(String currentSpeechLanguage, List<String> supportedSpeechLanguages) {
+
+            }
+
+            @Override
+            public void onDroidSpeechRmsChanged(float rmsChangedValue) {
+
+            }
+
+            @Override
+            public void onDroidSpeechLiveResult(String liveSpeechResult) {
+
+            }
+
+            @Override
+            public void onDroidSpeechFinalResult(String finalSpeechResult) {
+                System.out.println("Recognized Word " + finalSpeechResult);
+                sendWord = finalSpeechResult;
+            }
+
+            @Override
+            public void onDroidSpeechClosedByUser() {
+
+            }
+
+            @Override
+            public void onDroidSpeechError(String errorMsg) {
+
+            }
+        };
+
+        droidSpeech.setOnDroidSpeechListener(onDSListener);
 
         hideNavigationBar();
         config = new AndroidApplicationConfiguration();
@@ -255,13 +295,49 @@ public class AndroidLauncher extends AndroidApplication {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            System.out.println("Start Recognition");
+                            droidSpeech.startDroidSpeechRecognition();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+
+            public void listenOnce() {
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                             intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
                             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
                             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en");
                             speechRecognizer.startListening(intent);
-                            System.out.println("End Recognition");
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            }
+            public void stopListeningOnce(){
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            speechRecognizer.stopListening();
+                        }
+                    });
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            }
+            public void stopRecognition() {
+                try {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            droidSpeech.closeDroidSpeechOperations();
                         }
                     });
                 } catch (Exception e) {
@@ -270,7 +346,9 @@ public class AndroidLauncher extends AndroidApplication {
             }
 
             public String getWord() {
-                return sendWord;
+                String temp = sendWord;
+                sendWord = null;
+                return temp;
             }
 
             public Boolean getVerificationBool(){
@@ -301,7 +379,7 @@ public class AndroidLauncher extends AndroidApplication {
         androidDB = newVocabDb();
         instructorDb = newInstructorDb();
         test(androidDB);
-        androidDB.viewDb();
+        //androidDB.viewDb();
     }
 
     public void showResults(Bundle results) {
@@ -453,7 +531,7 @@ public class AndroidLauncher extends AndroidApplication {
             vDB.importCSV("Fruits-Foods.csv");
             vDB.importCSV("Professions.csv");
             vDB.importCSV("Places.csv");
-            vDB.importCSV("Time.csv");
+            //add time later when fixed
         } catch (Exception e) {
             System.out.println(e);
         }
