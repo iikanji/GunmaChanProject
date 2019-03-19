@@ -32,6 +32,7 @@ public class SettingsScreen implements Screen {
 
     private Game game;
     private Music gameMusic;
+    public static float masterVolume = 5;
     private ActionResolver speechGDX;
     private DbInterface dbInterface;
     private AssetManager assetManager;
@@ -60,13 +61,16 @@ public class SettingsScreen implements Screen {
     private boolean signedIn = false;
 
 
-    public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
+    public SettingsScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen){
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
-        this.gameMusic.play();
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(masterVolume);
+        gameMusic.play();
     }
 
     @Override
@@ -150,9 +154,10 @@ public class SettingsScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                gameMusic.pause();
                 googleLoginMessage = "";
-                game.setScreen(previousScreen);
+                gameMusic.pause();
+                gameMusic.dispose();
+                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbInterface, previousScreen));
                 dispose(); // dispose of current GameScreen
             }
         });
@@ -184,11 +189,12 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void pause() {
-
+        gameMusic.pause();
     }
 
     @Override
     public void resume() {
+
 
     }
 

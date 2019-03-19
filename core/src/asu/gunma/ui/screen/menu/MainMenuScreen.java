@@ -33,7 +33,8 @@ public class MainMenuScreen implements Screen {
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
     public Music gameMusic;
-    public ArrayList<VocabWord> activeVList;
+    public static float masterVolume = 5;
+    public ArrayList<VocabWord> activeVList = new ArrayList<>();
 
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
@@ -65,21 +66,12 @@ public class MainMenuScreen implements Screen {
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
 
-    public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Music music, ArrayList<VocabWord> activeList) {
+    public MainMenuScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, ArrayList<VocabWord> activeList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
-        if(gameMusic != null) {
-            gameMusic.play();
-        }
         this.activeVList = activeList;
-    }
-
-    public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback){
-        this.game = game;
-        this.speechGDX = speechGDX;
-        this.dbCallback = dbCallback;
     }
 
     @Override
@@ -157,19 +149,21 @@ public class MainMenuScreen implements Screen {
         buttonFlashcard.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(gameMusic != null) {
-                    gameMusic.pause();
-                }
+                gameMusic.pause();
+                gameMusic.dispose();
+                //play flashcard music
+                //gameMusic = new Music
                 game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
             }
         });
         buttonGameFirst.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(gameMusic != null) {
-                    gameMusic.pause();
-                }
-                game.setScreen(new GameScreen(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
+                gameMusic.pause();
+                gameMusic.dispose();
+                //play GameFirst music
+                // gameMusic = new Music
+                game.setScreen(new GameScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
 
             }
         });
@@ -177,11 +171,11 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //testing sign in method when option menu is selected
-                if(gameMusic != null) {
-                    gameMusic.pause();
-                }
-                game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen(), gameMusic, activeVList));
-                //game.setScreen(new OptionMenu(game, speechGDX, dbCallback, game.getScreen()));
+                gameMusic.pause();
+                gameMusic.dispose();
+                //play OptionMenu music
+                //gameMusic = new Music
+                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbCallback, game.getScreen(),  activeVList));
             }
         });
 
@@ -222,7 +216,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void pause() {
-
+        gameMusic.pause();
     }
 
     @Override
@@ -241,9 +235,6 @@ public class MainMenuScreen implements Screen {
         texture.dispose();
         batch.dispose();
         stage.dispose();
-        if(gameMusic != null) {
-            gameMusic.dispose();
-        }
     }
 
 }
