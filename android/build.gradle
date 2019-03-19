@@ -35,6 +35,8 @@ android {
     }
     configurations.all {
         resolutionStrategy.force 'com.android.support:multidex:1.0.3'
+        exclude group: 'commons-logging', module: 'commons-logging'
+        exclude group: 'org.apache.httpcomponents'
     }
     buildTypes {
         release {
