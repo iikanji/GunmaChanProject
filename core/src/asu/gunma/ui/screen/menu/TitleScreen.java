@@ -172,7 +172,6 @@ public class TitleScreen implements Screen {
     @Override
     public void pause() {
         gameMusic.pause();
-
     }
 
     @Override
