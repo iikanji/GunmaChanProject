@@ -46,6 +46,7 @@ public class FlashcardScreen implements Screen {
     private String displayWord;
     private List<VocabWord> dbListWords;
     public ArrayList<VocabWord> vocabWordArrayList;
+  
     private final int CORRECT_GREENCIRCLE_DURATION = 80;
     private final int INCORRECT_REDX_DURATION = 80;
     private int correctDisplayTimer;
@@ -83,10 +84,13 @@ public class FlashcardScreen implements Screen {
     private TextButton backButton;
     private TextButton buttonRecord;
     private TextButton speakButton;
+
+
+    /*
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
-
+    */
 
     public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
                             DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
@@ -280,6 +284,10 @@ public class FlashcardScreen implements Screen {
         speakButton = new TextButton("Speak", textButtonStyle);
         speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
 
+        /*
+        prevButton = new TextButton("Previous", textButtonStyle);
+        prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
+
         flipButton = new TextButton("Flip", textButtonStyle);
         flipButton.setPosition(475, Gdx.graphics.getHeight() - 50);
 
@@ -299,6 +307,10 @@ public class FlashcardScreen implements Screen {
                 }
             }
         });
+
+        nextButton = new TextButton("Next", textButtonStyle);
+        nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
+        */
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -323,7 +335,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
-
+        /*
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -449,6 +461,7 @@ public class FlashcardScreen implements Screen {
             }
         });
 
+*/
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
@@ -456,6 +469,8 @@ public class FlashcardScreen implements Screen {
         stage.addActor(nextButton);
         stage.addActor(prevButton);
         stage.addActor(flipButton);
+        //stage.addActor(prevButton);
+        //stage.addActor(flipButton);
     }
 
     @Override
@@ -474,6 +489,18 @@ public class FlashcardScreen implements Screen {
 
             this.correctDisplayTimer = this.CORRECT_GREENCIRCLE_DURATION;
             /*
+
+        //batch.draw(index_card, 50, 150);
+        font.draw(batch, displayWordLayout, 300, 350);
+        //batch.draw(this.cabbage, 750, 40);
+        //batch.draw(this.happyneg, 800, 40);
+        //batch.draw(this.konjackun, 850, 40);
+        //batch.draw(negisan, 700, 20);
+        batch.draw(greenCircle, 425, 450,50, 50);
+        batch.draw(redX, 525, 450, 50, 50);
+
+        if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
+            listCounter++;
             displayWord = dbListWords.get(listCounter).getEngSpelling();
             parameter.characters = displayWord;
             parameter.size = 70;
