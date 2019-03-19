@@ -22,7 +22,7 @@ public class GunmaChan extends Game {
 	public Music background_music;
 	public ActionResolver speechGDX;
 	public DbInterface dbCallback;
-	private static float masterVolume = 10;
+	private static float masterVolume = 5;
 	private ArrayList<VocabWord> activeVocabList;
 
 		public GunmaChan() {}

@@ -33,6 +33,7 @@ public class MainMenuScreen implements Screen {
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
     public Music gameMusic;
+    public static float masterVolume = 5;
     public ArrayList<VocabWord> activeVList = new ArrayList<>();
 
     // Using these are unnecessary but will make our lives easier.
@@ -71,12 +72,6 @@ public class MainMenuScreen implements Screen {
         this.gameMusic = music;
         this.dbCallback = dbCallback;
         this.activeVList = activeList;
-    }
-
-    public MainMenuScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback){
-        this.game = game;
-        this.speechGDX = speechGDX;
-        this.dbCallback = dbCallback;
     }
 
     @Override
@@ -155,6 +150,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
+                gameMusic.dispose();
                 //play flashcard music
                 //gameMusic = new Music
                 game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
@@ -164,6 +160,7 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 gameMusic.pause();
+                gameMusic.dispose();
                 //play GameFirst music
                 // gameMusic = new Music
                 game.setScreen(new GameScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
@@ -175,6 +172,7 @@ public class MainMenuScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //testing sign in method when option menu is selected
                 gameMusic.pause();
+                gameMusic.dispose();
                 //play OptionMenu music
                 //gameMusic = new Music
                 game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbCallback, game.getScreen(),  activeVList));

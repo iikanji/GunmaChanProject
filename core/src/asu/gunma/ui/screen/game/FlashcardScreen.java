@@ -40,7 +40,8 @@ public class FlashcardScreen implements Screen {
     private GradeSystem gradeSystem;
     public DbInterface dbCallback;
     public Screen previousScreen;
-    public Music flashCardMusic;
+    public Music gameMusic;
+    public static float masterVolume = 5;
     public String wordAudioFile;
     private int listCounter = 0;
     private String displayWord;
@@ -85,8 +86,6 @@ public class FlashcardScreen implements Screen {
     private TextButton buttonRecord;
     private TextButton speakButton;
 
-
-
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
@@ -96,10 +95,14 @@ public class FlashcardScreen implements Screen {
                             DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
-        this.flashCardMusic = music;
+        this.gameMusic = music;
         this.dbCallback = dbCallback;
         this.previousScreen = previousScreen;
         this.vocabWordArrayList = arrayList;
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(masterVolume);
+        gameMusic.play();
     }
 
     @Override
@@ -312,7 +315,12 @@ public class FlashcardScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainMenuScreen(game, speechGDX, flashCardMusic, dbCallback, vocabWordArrayList));
+                gameMusic.dispose();
+                gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+                gameMusic.setLooping(false);
+                gameMusic.setVolume(masterVolume);
+                gameMusic.play();
+                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbCallback, vocabWordArrayList));
                 previousScreen.dispose();
                 dispose(); // dispose of current FlashScreen
             }

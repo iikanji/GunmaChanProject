@@ -40,6 +40,7 @@ public class OptionMenu implements Screen {
 
     private Game game;
     private Music gameMusic;
+    public static float masterVolume = 5;
     private ActionResolver speechGDX;
     private DbInterface dbInterface;
     private AssetManager assetManager;
@@ -94,14 +95,23 @@ public class OptionMenu implements Screen {
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.activeVocabList = arrayList;
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(masterVolume);
+        gameMusic.play();
     }
 
-    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Music music){
+    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen) {
         this.game = game;
         this.speechGDX = speechGDX;
-        this.dbInterface = dbInterface;
         this.gameMusic = music;
-  }
+        this.dbInterface = dbInterface;
+        this.previousScreen = previousScreen;
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(masterVolume);
+        gameMusic.play();
+    }
 
     @Override
     public void show() {
@@ -962,14 +972,22 @@ public class OptionMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("Going from OptionsScreen to SettingsScreen");
+                gameMusic.pause();
+                gameMusic.dispose();
                 // need option to enable navigation bar
                 game.setScreen(new SettingsScreen(game, speechGDX, gameMusic, dbInterface, game.getScreen()));
             }
         });
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                previousScreen.dispose();
+                gameMusic.pause();
+                gameMusic.dispose();
+                gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+                gameMusic.setLooping(false);
+                gameMusic.setVolume(masterVolume);
+                gameMusic.play();
                 game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbInterface, activeVocabList));
+                previousScreen.dispose();
                 dispose(); // dispose of current GameScreen
             }
         });

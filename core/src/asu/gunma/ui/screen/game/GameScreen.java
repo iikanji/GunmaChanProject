@@ -49,7 +49,7 @@ public class GameScreen implements Screen {
     DbInterface dbCallback;
     private Game game;
     private Music gameMusic;
-    public static float masterVolume = 0;
+    public static float masterVolume = 5;
     public ActionResolver speechGDX;
     private Screen previousScreen;
 
@@ -129,6 +129,10 @@ public class GameScreen implements Screen {
         this.previousScreen = previous;
         this.gameMusic = music;
         this.activeVList = activeList;
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+        gameMusic.setLooping(false);
+        gameMusic.setVolume(masterVolume);
+        gameMusic.play();
     }
 
     @Override
@@ -282,8 +286,13 @@ public class GameScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.stopRecognition();
                 isPaused = true;
-                previousScreen.dispose();
+                gameMusic.dispose();
+                gameMusic = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
+                gameMusic.setLooping(false);
+                gameMusic.setVolume(masterVolume);
+                gameMusic.play();
                 game.setScreen(new MainMenuScreen(game, speechGDX,  gameMusic, dbCallback,activeVList));
+                previousScreen.dispose();
                 dispose(); // dispose of current GameScreen
             }
         });
