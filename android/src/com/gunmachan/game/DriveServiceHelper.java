@@ -128,7 +128,7 @@ public class DriveServiceHelper {
     public Intent createFilePickerIntent() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("image/png");
+        intent.setType("text/csv");
 
         return intent;
     }

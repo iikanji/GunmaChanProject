@@ -56,6 +56,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.transform.stream.StreamResult;
+
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.GunmaChan;
@@ -84,6 +86,7 @@ public class AndroidLauncher extends AndroidApplication {
     private static final int RC_SIGN_IN = 100;
     private static final int RC_SIGN_OUT = 101;
     private static final int REQUEST_CODE_OPEN_DOCUMENT = 102;
+    private static final int REQUEST_PICKER = 103;
     private String googleSignOutMessage = "";
     private GoogleSignInAccount account;
 
@@ -91,6 +94,7 @@ public class AndroidLauncher extends AndroidApplication {
     private String mOpenFileId;
     public EditText mFileTitleEditText;
     public EditText mDocContentEditText;
+    public ArrayList<java.io.File> csvFileList;
 
     // add permission to hide navigation bar?
     // create button to exit to home screen under instructor menu
@@ -130,7 +134,6 @@ public class AndroidLauncher extends AndroidApplication {
         gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("423723200587-i62dqi74dmheebmv2uqb55n12har4i2m.apps.googleusercontent.com")
                 .requestEmail()
-                .requestScopes(googleDriveScope)
                 .build();
         //creating sign in object with options specified by gso
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -175,8 +178,9 @@ public class AndroidLauncher extends AndroidApplication {
                 }
             }
 
-            public void googleDriveAccess() {
+            public ArrayList<java.io.File> googleDriveAccess() {
                 try {
+                    csvFileList = new ArrayList<>();
                     GoogleAccountCredential credential =
                             GoogleAccountCredential.usingOAuth2(
                                     getApplicationContext(), Collections.singleton(DriveScopes.DRIVE_FILE));
@@ -194,26 +198,42 @@ public class AndroidLauncher extends AndroidApplication {
                     //query();
                     FileList googleFiles = googleDriveService.files().list().setSpaces("drive").execute();
                     List<File> googleFileList = googleFiles.getFiles();
+                    /*Intent pickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    pickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                    pickerIntent.setType("text/csv");*/
                     //TESTING
                     for(File f : googleFileList){
-                        System.out.println("FILENAME: " + f.getName());
-                        /*System.out.println(f.getThumbnailLink());
-                        OutputStream outputStream = new ByteArrayOutputStream();
-                        googleDriveService.files().export(f.getId(), "text/csv")
-                                .executeMediaAndDownloadTo(outputStream);*/
-
+                        if(f.getMimeType().equals("text/csv")) {
+                            try {
+                                System.out.println("FILENAME: " + f.getName());
+                                System.out.println("EXTENSION: " + "csv");
+                                System.out.println("MIME: " + f.getMimeType());
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                googleDriveService.files().get(f.getId())
+                                    .executeMediaAndDownloadTo(byteArrayOutputStream);
+                                java.io.File csvFile = new java.io.File(android.os.Environment.getExternalStorageDirectory(), f.getName());
+                                OutputStream outputStream = new FileOutputStream(csvFile, false);
+                                byteArrayOutputStream.writeTo(outputStream);
+                                byteArrayOutputStream.close();
+                                outputStream.close();
+                                System.out.println("PATH: " + csvFile.getAbsolutePath());
+                                csvFileList.add(csvFile);
+                            }catch(Exception e){
+                                System.out.println(e);
+                            }
+                        }
                     }
+
+                    //startActivityForResult(pickerIntent, REQUEST_PICKER);
                     //openFilePicker();
-                    /*System.out.println(mFileTitleEditText.getText().toString());
-                    System.out.println(mDocContentEditText.getText().toString());*/
                 } catch (Exception e) {
                     if(e instanceof UserRecoverableAuthIOException) {
                         Intent intent = ((UserRecoverableAuthIOException)e).getIntent();
                         startActivityForResult(intent, REQUEST_CODE_OPEN_DOCUMENT);
-                        openFilePicker();
                     }
                     System.out.println(e);
                 }
+                return csvFileList;
             }
 
             public ArrayList<String> androidLoginInfo() {
@@ -255,6 +275,14 @@ public class AndroidLauncher extends AndroidApplication {
         dbInterface = new DbInterface() {
             public List<VocabWord> getDbVocab() {
                 return androidDB.viewDb();
+            }
+            public void importCSVFile(String filename){
+                try {
+                    androidDB.importExternalCSV(filename);
+                }
+                catch(Exception e){
+                    System.out.println(e);
+                }
             }
         };
 
@@ -343,6 +371,9 @@ public class AndroidLauncher extends AndroidApplication {
             if (uri != null) {
                 openFileFromFilePicker(uri);
             }
+        }
+        if(requestCode == REQUEST_PICKER){
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -458,6 +489,9 @@ public class AndroidLauncher extends AndroidApplication {
     public String parseEmailId(String input) {
         String[] fullname = input.split("@");
         return fullname[0];
+    }
+    public String[] parseFile(String input) {
+        return input.split(".");
     }
 
     /**
