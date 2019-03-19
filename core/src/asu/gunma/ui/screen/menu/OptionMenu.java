@@ -87,14 +87,13 @@ public class OptionMenu implements Screen {
     private Label custom1Heading, custom2Heading,custom3Heading,custom4Heading,custom5Heading,
             custom6Heading,custom7Heading,custom8Heading,custom9Heading,custom10Heading;
 
-    public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music, ArrayList<VocabWord> arrayList) {
+    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
+        this.gameMusic = music;
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
-        this.gameMusic = music;
         this.activeVocabList = arrayList;
-        gameMusic.play();
     }
 
     public OptionMenu(Game game, ActionResolver speechGDX, DbInterface dbInterface, Music music){
@@ -964,17 +963,13 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y){
                 System.out.println("Going from OptionsScreen to SettingsScreen");
                 // need option to enable navigation bar
-                if(verified) {
-                    gameMusic.pause();
-                    game.setScreen(new SettingsScreen(game, speechGDX, dbInterface, game.getScreen(), gameMusic));
-                }
+                game.setScreen(new SettingsScreen(game, speechGDX, gameMusic, dbInterface, game.getScreen()));
             }
         });
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 previousScreen.dispose();
-                gameMusic.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbInterface, gameMusic, activeVocabList));
+                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbInterface, activeVocabList));
                 dispose(); // dispose of current GameScreen
             }
         });

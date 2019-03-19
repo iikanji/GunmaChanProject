@@ -40,7 +40,7 @@ public class FlashcardScreen implements Screen {
     private GradeSystem gradeSystem;
     public DbInterface dbCallback;
     public Screen previousScreen;
-    public Music music;
+    public Music flashCardMusic;
     public String wordAudioFile;
     private int listCounter = 0;
     private String displayWord;
@@ -96,12 +96,10 @@ public class FlashcardScreen implements Screen {
                             DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
         this.game = game;
         this.speechGDX = speechGDX;
-        this.music = music;
+        this.flashCardMusic = music;
         this.dbCallback = dbCallback;
         this.previousScreen = previousScreen;
         this.vocabWordArrayList = arrayList;
-        if(this.music != null)
-        this.music.play();
     }
 
     @Override
@@ -314,10 +312,8 @@ public class FlashcardScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainMenuScreen(game, speechGDX, flashCardMusic, dbCallback, vocabWordArrayList));
                 previousScreen.dispose();
-                if(music != null)
-                music.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, music, vocabWordArrayList));
                 dispose(); // dispose of current FlashScreen
             }
         });
@@ -469,8 +465,6 @@ public class FlashcardScreen implements Screen {
         stage.addActor(nextButton);
         stage.addActor(prevButton);
         stage.addActor(flipButton);
-        //stage.addActor(prevButton);
-        //stage.addActor(flipButton);
     }
 
     @Override

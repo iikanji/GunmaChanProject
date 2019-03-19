@@ -60,13 +60,12 @@ public class SettingsScreen implements Screen {
     private boolean signedIn = false;
 
 
-    public SettingsScreen(Game game, ActionResolver speechGDX, DbInterface dbInterface, Screen previousScreen, Music music){
+    public SettingsScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen){
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
         this.gameMusic = music;
-        this.gameMusic.play();
     }
 
     @Override
@@ -150,7 +149,6 @@ public class SettingsScreen implements Screen {
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                gameMusic.pause();
                 googleLoginMessage = "";
                 game.setScreen(previousScreen);
                 dispose(); // dispose of current GameScreen

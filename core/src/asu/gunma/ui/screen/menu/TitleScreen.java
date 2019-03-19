@@ -33,7 +33,7 @@ public class TitleScreen implements Screen {
     private Game game;
     public ActionResolver speechGDX;
     public DbInterface dbCallback;
-    private Music gameMusic;
+    public Music gameMusic;
     // Using these are unnecessary but will make our lives easier.
     private Stage stage;
     private TextureAtlas atlas;
@@ -72,7 +72,6 @@ public class TitleScreen implements Screen {
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.gameMusic = music;
-        music.play();
         this.activeVList = arrayList;
         //font file
         final String FONT_PATH = "irohamaru-mikami-Regular.ttf";
@@ -136,8 +135,7 @@ public class TitleScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Going from TitleScreen to MainMenuScreen");
-                gameMusic.pause();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic, activeVList));
+                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbCallback, activeVList));
             }
         });
 

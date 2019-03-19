@@ -122,9 +122,7 @@ public class GameScreen implements Screen {
     ArrayList<VocabWord> gameWords = new ArrayList<>();
     Random rand = new Random();
 
-    public GameScreen(Game game, ActionResolver speechGDX, DbInterface dbCallback, Screen previous, Music music, ArrayList<VocabWord> activeList) {
-       
-
+    public GameScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, Screen previous, ArrayList<VocabWord> activeList) {
         this.game = game;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
@@ -283,11 +281,9 @@ public class GameScreen implements Screen {
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 speechGDX.stopRecognition();
-                if(gameMusic != null)
-                gameMusic.pause();
                 isPaused = true;
                 previousScreen.dispose();
-                game.setScreen(new MainMenuScreen(game, speechGDX, dbCallback, gameMusic, activeVList));
+                game.setScreen(new MainMenuScreen(game, speechGDX,  gameMusic, dbCallback,activeVList));
                 dispose(); // dispose of current GameScreen
             }
         });
@@ -423,10 +419,6 @@ public class GameScreen implements Screen {
         this.gunmaWalkAnimation.dispose();
         batch.dispose();
         stage.dispose();
-        if(gameMusic!= null) {
-            gameMusic.stop();
-            gameMusic.dispose();
-        }
 
     }
 

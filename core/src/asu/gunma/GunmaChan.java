@@ -19,7 +19,7 @@ public class GunmaChan extends Game {
 	public static int WIDTH = 1024;
 	public static int HEIGHT = 600;
 	public static final String TITLE = "Gunma-chan Game";
-	private Music background_music;
+	public Music background_music;
 	public ActionResolver speechGDX;
 	public DbInterface dbCallback;
 	private static float masterVolume = 10;
@@ -41,8 +41,8 @@ public class GunmaChan extends Game {
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
 			background_music.setLooping(false);
 			background_music.setVolume(masterVolume);
+			background_music.play();
 			activeVocabList = new ArrayList<>();
-			//background_music.play();
 			List<VocabWord> dbVocab = dbCallback.getDbVocab();
 			activeVocabList.addAll(dbVocab);
 
@@ -61,8 +61,8 @@ public class GunmaChan extends Game {
 		@Override
 		public void dispose () {
 			// close database here
+			background_music.dispose();
 			super.dispose();
-
 		}
 
 		@Override
