@@ -959,7 +959,7 @@ public class OptionMenu implements Screen {
                         fileDialog.hide();
                     }
                 });
-                
+
                 //fileTable.debug();
                 fileDialog.getContentTable().add(fileTable).top().fill();
                 fileDialog.add(cancelButton).bottom().right().setActorHeight(0.6f);
