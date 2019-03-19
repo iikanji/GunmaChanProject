@@ -70,9 +70,7 @@ public class MainMenuScreen implements Screen {
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
-        if(gameMusic != null) {
-            gameMusic.play();
-        }
+        gameMusic.play();
         this.activeVList = activeList;
     }
 
