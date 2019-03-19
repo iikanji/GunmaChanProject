@@ -73,6 +73,7 @@ public class GunmaChan extends Game {
 		@Override
 		public void pause() {
 			super.pause();
+
 		}
 
 		@Override
