@@ -267,6 +267,7 @@ public class AndroidLauncher extends AndroidApplication {
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Toast.makeText(this, matches.get(0), Toast.LENGTH_LONG).show();
         sendWord = matches.get(0);
+        System.out.println("recognize word " + sendWord);
     }
 
     @Override

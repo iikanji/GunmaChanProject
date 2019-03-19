@@ -46,6 +46,10 @@ public class FlashcardScreen implements Screen {
     private String displayWord;
     private List<VocabWord> dbListWords;
     public ArrayList<VocabWord> vocabWordArrayList;
+    private final int CORRECT_GREENCIRCLE_DURATION = 80;
+    private final int INCORRECT_REDX_DURATION = 80;
+    private int correctDisplayTimer;
+    private int incorrectDisplayTimer;
 
     private Stage stage;
     private Stage stage2;
@@ -70,6 +74,8 @@ public class FlashcardScreen implements Screen {
 
     String[] correctWordList;
     String cWords;
+    String incomingWord;
+    Boolean correct = false;
 
     //private Skin leftArrow;
     //private Skin rightArrow;
@@ -274,21 +280,23 @@ public class FlashcardScreen implements Screen {
         speakButton = new TextButton("Speak", textButtonStyle);
         speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
 
-        prevButton = new TextButton("Previous", textButtonStyle);
-        prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
-
         flipButton = new TextButton("Flip", textButtonStyle);
         flipButton.setPosition(475, Gdx.graphics.getHeight() - 50);
 
+        prevButton = new TextButton("Previous", textButtonStyle);
+        prevButton.setPosition(50, 275);
+
         nextButton = new TextButton("Next", textButtonStyle);
-        nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
+        nextButton.setPosition(900, 275);
 
         speakButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.files.internal(wordAudioFile);
                 Music wordSound  =  Gdx.audio.newMusic(Gdx.files.internal(wordAudioFile));
-                wordSound.play();
-                wordSound.setLooping(false);
+                if(wordSound != null) {
+                    wordSound.play();
+                    wordSound.setLooping(false);
+                }
             }
         });
 
@@ -309,11 +317,9 @@ public class FlashcardScreen implements Screen {
                 // but I can't think of a good variable name for it to not be backwards
                 try {
                     speechGDX.listenOnce();
-
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-
             }
         });
 
@@ -359,12 +365,9 @@ public class FlashcardScreen implements Screen {
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
                     wordAudioFile = dbListWords.get(listCounter).getAudio();
-                    System.out.print(wordAudioFile);
-                    if(wordAudioFile == null)
-                    {
-                        System.out.print("hello");
-                    }
                 }
+                cWords = dbListWords.get(listCounter).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
             }
         });
 
@@ -415,6 +418,8 @@ public class FlashcardScreen implements Screen {
                     wordAudioFile = dbListWords.get(listCounter).getAudio();
                     System.out.print(wordAudioFile);
                 }
+                cWords = dbListWords.get(listCounter).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
             }
         });
 
@@ -444,8 +449,6 @@ public class FlashcardScreen implements Screen {
             }
         });
 
-
-
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
@@ -462,23 +465,37 @@ public class FlashcardScreen implements Screen {
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
         font.draw(batch, displayWordLayout, 300, 350);
-        batch.draw(greenCircle, 425, 450,50, 50);
-        batch.draw(redX, 525, 450, 50, 50);
 
-        if(gradeSystem.grade(correctWordList, speechGDX.getWord())){
-            listCounter++;
+        incomingWord = speechGDX.getWord();
+        correct = gradeSystem.grade(correctWordList, incomingWord);
+
+        if(correct){
+            // Start correct icon display
+
+            this.correctDisplayTimer = this.CORRECT_GREENCIRCLE_DURATION;
+            /*
             displayWord = dbListWords.get(listCounter).getEngSpelling();
             parameter.characters = displayWord;
             parameter.size = 70;
             parameter.color = Color.BLACK;
             font = generator.generateFont(parameter);
             displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
-
-            //spliced correct words for grading
             cWords = dbListWords.get(listCounter).getCorrectWords();
             correctWordList = cWords.split("\\s*,\\s*");
+            */
+            System.out.println("Correct incoming word " + incomingWord);
+            incomingWord = null;
+
+        } else if(!correct && incomingWord != null){
+            // Start incorrect icon display
+
+            this.incorrectDisplayTimer = this.INCORRECT_REDX_DURATION;
+            System.out.println("Incorrect incoming words " + incomingWord);
+            incomingWord = null;
         }
 
+        if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
+        if(incorrectDisplayTimer > 0) {this.incorrectAnswerGraphic();}
         batch.end();
         stage.act(delta); // optional to pass delta value
         stage.draw();
@@ -489,6 +506,8 @@ public class FlashcardScreen implements Screen {
         font2.dispose();
         font.dispose();
         generator.dispose();
+        this.redX.dispose();
+        this.greenCircle.dispose();
         batch.dispose();
         stage.dispose();
         //rightArrow.dispose();
@@ -513,5 +532,21 @@ public class FlashcardScreen implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    private void correctAnswerGraphic() {
+        if (this.correctDisplayTimer == this.CORRECT_GREENCIRCLE_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(greenCircle, 425, 450,50, 50);
+        this.correctDisplayTimer--;
+    }
+
+    private void incorrectAnswerGraphic() {
+        if (this.incorrectDisplayTimer == this.INCORRECT_REDX_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(redX, 525, 450, 50, 50);
+        this.incorrectDisplayTimer--;
     }
 }
