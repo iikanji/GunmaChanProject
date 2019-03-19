@@ -1,5 +1,6 @@
 package asu.gunma.DbContainers;
 
+
 /**
  * The VocabWord class establishes a container that is used to define the
  * SQLite Table layout with a table name and corresponding column names.
@@ -16,6 +17,7 @@ public class VocabWord {
     public static final String COLUMN_ENG = "TargetVocabulary";
     public static final String COLUMN_MODULE = "Category";
     public static final String COLUMN_CORRECT_WORDS = "CorrectWords";
+    public static final String COLUMN_AUDIO = "Audio";
 
     public static final String SQLITE_CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -23,7 +25,8 @@ public class VocabWord {
                     COLUMN_KANA + " TEXT," +
                     COLUMN_ENG + " TEXT," +
                     COLUMN_MODULE + " TEXT," +
-                    COLUMN_CORRECT_WORDS + " TEXT" + ")";
+                    COLUMN_CORRECT_WORDS + " TEXT," +
+                    COLUMN_AUDIO + " TEXT" + ")";
 
     public static final String SQLITE_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -33,19 +36,20 @@ public class VocabWord {
     private String engSpelling;
     private String moduleCategory;
     private String correctWords;
+    private String audio;
 
     public VocabWord() {
     }
 
     public VocabWord(String kanjiSpelling, String kanaSpelling, String engSpelling,
-                     String moduleCategory, String correctWords) {
+                     String moduleCategory, String correctWords, String audio) {
         this.kanjiSpelling = kanjiSpelling;
         this.kanaSpelling = kanaSpelling;
         this.engSpelling = engSpelling;
         this.moduleCategory = moduleCategory;
         this.correctWords = correctWords;
+        this.audio = audio;
     }
-
 
     public String getKanjiSpelling() {
         return kanjiSpelling;
@@ -84,5 +88,11 @@ public class VocabWord {
     public void setCorrectWords(String correctWords) {
         this.correctWords = correctWords;
     }
+
+    public void setAudio(String audio) {
+        this.audio = audio;
+    }
+
+    public String getAudio() { return audio; }
 
 }
