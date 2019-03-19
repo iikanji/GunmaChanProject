@@ -341,6 +341,7 @@ public class GameScreen implements Screen {
                 this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
                 listCounter++;
                 score = score + 1;
+                this.defeatEnemy();
 
                 if(listCounter < GAME_LIST_SIZE) {
                     displayWord = gameWords.get(listCounter).getEngSpelling();
