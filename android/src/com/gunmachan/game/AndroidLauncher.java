@@ -387,6 +387,7 @@ public class AndroidLauncher extends AndroidApplication {
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Toast.makeText(this, matches.get(0), Toast.LENGTH_LONG).show();
         sendWord = matches.get(0);
+        System.out.println("recognize word " + sendWord);
     }
 
     @Override
@@ -542,6 +543,7 @@ public class AndroidLauncher extends AndroidApplication {
             System.out.println("ENG: " + element.getEngSpelling());
             System.out.println("Module: " + element.getModuleCategory());
             System.out.println("Correct Word: " + element.getCorrectWords());
+            System.out.println("Audio: " + element.getAudio());
         }
     }
 

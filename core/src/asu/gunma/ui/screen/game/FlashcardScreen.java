@@ -4,8 +4,10 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
@@ -29,6 +32,7 @@ import asu.gunma.ui.screen.menu.MainMenuScreen;
 import asu.gunma.ui.util.SimpleDirectionGestureDetector;
 import asu.gunma.ui.util.GradeSystem;
 
+
 public class FlashcardScreen implements Screen {
 
     private Game game;
@@ -37,10 +41,16 @@ public class FlashcardScreen implements Screen {
     public DbInterface dbCallback;
     public Screen previousScreen;
     public Music music;
+    public String wordAudioFile;
     private int listCounter = 0;
     private String displayWord;
     private List<VocabWord> dbListWords;
     public ArrayList<VocabWord> vocabWordArrayList;
+  
+    private final int CORRECT_GREENCIRCLE_DURATION = 80;
+    private final int INCORRECT_REDX_DURATION = 80;
+    private int correctDisplayTimer;
+    private int incorrectDisplayTimer;
 
     private Stage stage;
     private Stage stage2;
@@ -65,15 +75,22 @@ public class FlashcardScreen implements Screen {
 
     String[] correctWordList;
     String cWords;
+    String incomingWord;
+    Boolean correct = false;
+
+    //private Skin leftArrow;
+    //private Skin rightArrow;
 
     private TextButton backButton;
     private TextButton buttonRecord;
     private TextButton speakButton;
-    /*
+
+
+
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
-    */
+
 
     public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
                             DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
@@ -94,6 +111,8 @@ public class FlashcardScreen implements Screen {
         batch = new SpriteBatch();
         Gdx.input.setInputProcessor(stage);
 
+        //leftArrow = new Skin(Gdx.files.internal("leftArrow.json"));
+        //rightArrow = new Skin(Gdx.files.internal("rightArrow.json"));
 
         /*cabbage = new Texture("cabbage1.png");
         happyneg = new Texture("happyneg.png");
@@ -135,6 +154,10 @@ public class FlashcardScreen implements Screen {
         cWords = dbListWords.get(listCounter).getCorrectWords();
         correctWordList = cWords.split("\\s*,\\s*");
         System.out.println(listCounter);
+
+        wordAudioFile = dbListWords.get(listCounter).getAudio();
+        System.out.print(wordAudioFile);
+
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         //textButtonStyle.up = skin.getDrawable("button.up");
@@ -260,16 +283,34 @@ public class FlashcardScreen implements Screen {
 
         speakButton = new TextButton("Speak", textButtonStyle);
         speakButton.setPosition(100 , Gdx.graphics.getHeight() - 550);
-        /*
+
+
         prevButton = new TextButton("Previous", textButtonStyle);
         prevButton.setPosition(Gdx.graphics.getWidth() - 300, 0);
 
         flipButton = new TextButton("Flip", textButtonStyle);
-        flipButton.setPosition(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight() - 50);
+        flipButton.setPosition(475, Gdx.graphics.getHeight() - 50);
+
+        prevButton = new TextButton("Previous", textButtonStyle);
+        prevButton.setPosition(50, 275);
+
+        nextButton = new TextButton("Next", textButtonStyle);
+        nextButton.setPosition(900, 275);
+
+        speakButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.files.internal(wordAudioFile);
+                Music wordSound  =  Gdx.audio.newMusic(Gdx.files.internal(wordAudioFile));
+                if(wordSound != null) {
+                    wordSound.play();
+                    wordSound.setLooping(false);
+                }
+            }
+        });
 
         nextButton = new TextButton("Next", textButtonStyle);
         nextButton.setPosition(Gdx.graphics.getWidth() - 100, 0);
-        */
+
 
         backButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -288,25 +329,24 @@ public class FlashcardScreen implements Screen {
                 // but I can't think of a good variable name for it to not be backwards
                 try {
                     speechGDX.listenOnce();
-
                 } catch (Exception e) {
                     System.out.println(e);
                 }
-
             }
         });
 
-        /*
+
         nextButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 if(listCounter < dbListWords.size() - 1) {
-                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+
+                    if(displayWord.equals(dbListWords.get(listCounter).getEngSpelling())){
                         listCounter = listCounter + 1;
                         displayWord = dbListWords.get(listCounter).getEngSpelling();
                         Gdx.gl.glClearColor(1, .8f, 1, 1);
                     }
-                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                    else if(displayWord.equals(dbListWords.get(listCounter).getKanjiSpelling())){
                         listCounter = listCounter + 1;
                         displayWord = dbListWords.get(listCounter).getKanjiSpelling();
                         Gdx.gl.glClearColor(.2f, 1, 1, 1);
@@ -317,13 +357,15 @@ public class FlashcardScreen implements Screen {
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
+                    wordAudioFile = dbListWords.get(listCounter).getAudio();
+                    System.out.print(wordAudioFile);
                 } else {
-                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+                    if(displayWord.equals(dbListWords.get(listCounter).getEngSpelling())){
                         listCounter = 0;
                         displayWord = dbListWords.get(listCounter).getEngSpelling();
                         Gdx.gl.glClearColor(1, .8f, 1, 1);
                     }
-                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                    else if(displayWord.equals(dbListWords.get(listCounter).getKanjiSpelling())){
                         listCounter = 0;
                         displayWord = dbListWords.get(listCounter).getKanjiSpelling();
                         Gdx.gl.glClearColor(.2f, 1, 1, 1);
@@ -334,7 +376,10 @@ public class FlashcardScreen implements Screen {
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
+                    wordAudioFile = dbListWords.get(listCounter).getAudio();
                 }
+                cWords = dbListWords.get(listCounter).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
             }
         });
 
@@ -343,12 +388,12 @@ public class FlashcardScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 if (listCounter > 0) {
 
-                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+                    if(displayWord.equals(dbListWords.get(listCounter).getEngSpelling())){
                         listCounter = listCounter - 1;
                         displayWord = dbListWords.get(listCounter).getEngSpelling();
                         Gdx.gl.glClearColor(1, .8f, 1, 1);
                     }
-                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                    else if(displayWord.equals(dbListWords.get(listCounter).getKanjiSpelling())){
                         listCounter = listCounter - 1;
                         displayWord = dbListWords.get(listCounter).getKanjiSpelling();
                         Gdx.gl.glClearColor(.2f, 1, 1, 1);
@@ -360,16 +405,17 @@ public class FlashcardScreen implements Screen {
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
+                    wordAudioFile = dbListWords.get(listCounter).getAudio();
+                    System.out.print(wordAudioFile);
                 }
-                // THIS EXITS THE FLASHCARD SCREEN BECAUSE A BUTTON DOES NOT WORK WHEN GESTURES
-                // ARE ACTIVE
+
                 else if(listCounter == 0){
-                    if(displayWord == dbListWords.get(listCounter).getEngSpelling()){
+                    if(displayWord.equals(dbListWords.get(listCounter).getEngSpelling())){
                         listCounter = dbListWords.size() - 1;
                         displayWord = dbListWords.get(listCounter).getEngSpelling();
                         Gdx.gl.glClearColor(1, .8f, 1, 1);
                     }
-                    else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()){
+                    else if(displayWord.equals(dbListWords.get(listCounter).getKanjiSpelling())){
                         listCounter = dbListWords.size() - 1;
                         displayWord = dbListWords.get(listCounter).getKanjiSpelling();
                         Gdx.gl.glClearColor(.2f, 1, 1, 1);
@@ -381,14 +427,18 @@ public class FlashcardScreen implements Screen {
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
+                    wordAudioFile = dbListWords.get(listCounter).getAudio();
+                    System.out.print(wordAudioFile);
                 }
+                cWords = dbListWords.get(listCounter).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
             }
         });
 
         flipButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if(displayWord == dbListWords.get(listCounter).getEngSpelling()) {
+                if(displayWord.equals(dbListWords.get(listCounter).getEngSpelling())){
                     displayWord = dbListWords.get(listCounter).getKanjiSpelling();
                     parameter.characters = displayWord;
                     parameter.size = 60;
@@ -398,7 +448,7 @@ public class FlashcardScreen implements Screen {
                     displayWordLayout.setText(font, displayWord, Color.BLACK,
                             targetWidth, Align.center, true);
                 }
-                else if(displayWord == dbListWords.get(listCounter).getKanjiSpelling()) {
+                else if(displayWord.equals(dbListWords.get(listCounter).getKanjiSpelling())){
                     displayWord = dbListWords.get(listCounter).getEngSpelling();
                     parameter.characters = displayWord;
                     parameter.size = 60;
@@ -410,13 +460,15 @@ public class FlashcardScreen implements Screen {
                 }
             }
         });
-*/
 
 
         stage.addActor(buttonRecord);
         //stage.addActor(backInstruction);
         stage.addActor(backButton);
         stage.addActor(speakButton);
+        stage.addActor(nextButton);
+        stage.addActor(prevButton);
+        stage.addActor(flipButton);
         //stage.addActor(prevButton);
         //stage.addActor(flipButton);
     }
@@ -427,6 +479,17 @@ public class FlashcardScreen implements Screen {
 
         // SpriteBatch is resource intensive, try to use it for only brief moments
         batch.begin();
+        font.draw(batch, displayWordLayout, 300, 350);
+
+        incomingWord = speechGDX.getWord();
+        correct = gradeSystem.grade(correctWordList, incomingWord);
+
+        if(correct){
+            // Start correct icon display
+
+            this.correctDisplayTimer = this.CORRECT_GREENCIRCLE_DURATION;
+            /*
+
         //batch.draw(index_card, 50, 150);
         font.draw(batch, displayWordLayout, 300, 350);
         //batch.draw(this.cabbage, 750, 40);
@@ -444,12 +507,22 @@ public class FlashcardScreen implements Screen {
             parameter.color = Color.BLACK;
             font = generator.generateFont(parameter);
             displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
-
-            //spliced correct words for grading
             cWords = dbListWords.get(listCounter).getCorrectWords();
             correctWordList = cWords.split("\\s*,\\s*");
+            */
+            System.out.println("Correct incoming word " + incomingWord);
+            incomingWord = null;
+
+        } else if(!correct && incomingWord != null){
+            // Start incorrect icon display
+
+            this.incorrectDisplayTimer = this.INCORRECT_REDX_DURATION;
+            System.out.println("Incorrect incoming words " + incomingWord);
+            incomingWord = null;
         }
 
+        if(correctDisplayTimer > 0) { this.correctAnswerGraphic();}
+        if(incorrectDisplayTimer > 0) {this.incorrectAnswerGraphic();}
         batch.end();
         stage.act(delta); // optional to pass delta value
         stage.draw();
@@ -460,8 +533,12 @@ public class FlashcardScreen implements Screen {
         font2.dispose();
         font.dispose();
         generator.dispose();
+        this.redX.dispose();
+        this.greenCircle.dispose();
         batch.dispose();
         stage.dispose();
+        //rightArrow.dispose();
+        //leftArrow.dispose();
     }
 
     @Override
@@ -482,5 +559,21 @@ public class FlashcardScreen implements Screen {
     @Override
     public void hide() {
 
+    }
+
+    private void correctAnswerGraphic() {
+        if (this.correctDisplayTimer == this.CORRECT_GREENCIRCLE_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(greenCircle, 425, 450,50, 50);
+        this.correctDisplayTimer--;
+    }
+
+    private void incorrectAnswerGraphic() {
+        if (this.incorrectDisplayTimer == this.INCORRECT_REDX_DURATION) {
+            // Play sound effect here
+        }
+        batch.draw(redX, 525, 450, 50, 50);
+        this.incorrectDisplayTimer--;
     }
 }

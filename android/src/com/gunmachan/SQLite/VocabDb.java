@@ -58,6 +58,7 @@ public final class VocabDb {
         contentValues.put(vWord.COLUMN_ENG, vWord.getEngSpelling());
         contentValues.put(vWord.COLUMN_MODULE, vWord.getModuleCategory());
         contentValues.put(vWord.COLUMN_CORRECT_WORDS, vWord.getCorrectWords());
+        contentValues.put(vWord.COLUMN_AUDIO, vWord.getAudio());
         long newRowId =
                 db.insert(vWord.TABLE_NAME, null, contentValues);
         db.close();
@@ -74,7 +75,7 @@ public final class VocabDb {
         SQLiteDatabase db = vDbHelper.getReadableDatabase();
         Cursor cursor = db.query(VocabWord.TABLE_NAME,
                 new String[]{VocabWord.COLUMN_KANJI, VocabWord.COLUMN_KANA,
-                        VocabWord.COLUMN_ENG, VocabWord.COLUMN_MODULE, VocabWord.COLUMN_CORRECT_WORDS},
+                        VocabWord.COLUMN_ENG, VocabWord.COLUMN_MODULE, VocabWord.COLUMN_CORRECT_WORDS,VocabWord.COLUMN_AUDIO},
                 VocabWord.COLUMN_ENG + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
         if (cursor != null)
@@ -85,7 +86,8 @@ public final class VocabDb {
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_KANA)),
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)),
                 cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_MODULE)),
-                cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_CORRECT_WORDS)));
+                cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_CORRECT_WORDS)),
+                cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_AUDIO)));
 
         cursor.close();
         return vocabWord;
@@ -112,6 +114,7 @@ public final class VocabDb {
                 vocabWord.setEngSpelling(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_ENG)));
                 vocabWord.setModuleCategory(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_MODULE)));
                 vocabWord.setCorrectWords(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_CORRECT_WORDS)));
+                vocabWord.setAudio(cursor.getString(cursor.getColumnIndex(VocabWord.COLUMN_AUDIO)));
                 vocabItems.add(vocabWord);
             } while (cursor.moveToNext());
         }
@@ -151,7 +154,8 @@ public final class VocabDb {
         contentValues.put(VocabWord.COLUMN_ENG, vWord.getEngSpelling());
         contentValues.put(VocabWord.COLUMN_MODULE, vWord.getModuleCategory());
         contentValues.put(VocabWord.COLUMN_CORRECT_WORDS, vWord.getCorrectWords());
-        //unfinished
+        contentValues.put(VocabWord.COLUMN_AUDIO, vWord.getAudio());
+
         return db.update(VocabWord.TABLE_NAME, contentValues, VocabWord.COLUMN_ENG + " =?",
                 new String[]{String.valueOf(vWord.getEngSpelling())});
     }
@@ -203,7 +207,7 @@ public final class VocabDb {
         try {
             while ((line = buffer.readLine()) != null) {
                 String[] columns = line.split(",");
-                if (columns.length > 11 || columns.length < 4) {
+                if (columns.length > 12 || columns.length < 4) {
                     Log.d("CSVParser", "Skipping Bad CSV Row");
                     continue;
                 }
@@ -213,13 +217,14 @@ public final class VocabDb {
                 contentValues.put(VocabWord.COLUMN_ENG, columns[2].trim());
                 contentValues.put(VocabWord.COLUMN_MODULE,
                         fileName.substring(0, fileName.lastIndexOf('.')));
-                for(int i = 3; i < columns.length-1; i++) {
+                for(int i = 3; i < columns.length-2; i++) {
                     if(columns[i] != "" && columns[i] != null){
                         correctWordsList += columns[i] + ",";
                     }
                 }
-                correctWordsList += columns[columns.length-1];
+                correctWordsList += columns[columns.length-2];
                 contentValues.put(VocabWord.COLUMN_CORRECT_WORDS, correctWordsList);
+                contentValues.put(VocabWord.COLUMN_AUDIO,columns[columns.length-1]);
                 db.insert(VocabWord.TABLE_NAME, null, contentValues);
                 correctWordsList = "";
             }
