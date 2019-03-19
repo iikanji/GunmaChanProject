@@ -11,8 +11,10 @@ public interface ActionResolver {
      String getWord();
      void signIn();
      void signOut();
+     public ArrayList<java.io.File> googleDriveAccess();
      ArrayList<String> androidLoginInfo();
      void revokeAccess();
      public String googleLoginMessage();
      public String googleLogoutMessage();
+     public Boolean getVerificationBool();
 }

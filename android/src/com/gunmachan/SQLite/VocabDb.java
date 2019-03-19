@@ -234,6 +234,53 @@ public final class VocabDb {
         db.setTransactionSuccessful();
         db.endTransaction();
     }
+    public void importExternalCSV(String fileName) throws IOException {
+        SQLiteDatabase db = vDbHelper.getWritableDatabase();
+        FileInputStream inStream = null;
+
+        try {
+            File path = Environment.getExternalStorageDirectory();
+            File csvInDocDirectory = new File(path, fileName);
+            path.mkdirs();
+            inStream = new FileInputStream(csvInDocDirectory);
+            //inStream = Gdx.files.internal(fileName).read();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(inStream));
+        String line = "";
+        buffer.readLine();
+        db.beginTransaction();
+        String correctWordsList = "";
+        try {
+            while ((line = buffer.readLine()) != null) {
+                String[] columns = line.split(",");
+                if (columns.length > 11 || columns.length < 4) {
+                    Log.d("CSVParser", "Skipping Bad CSV Row");
+                    continue;
+                }
+                ContentValues contentValues = new ContentValues(5);
+                contentValues.put(VocabWord.COLUMN_KANJI, columns[0].trim());
+                contentValues.put(VocabWord.COLUMN_KANA, columns[1].trim());
+                contentValues.put(VocabWord.COLUMN_ENG, columns[2].trim());
+                contentValues.put(VocabWord.COLUMN_MODULE,
+                        fileName.substring(0, fileName.lastIndexOf('.')));
+                for(int i = 3; i < columns.length-1; i++) {
+                    if(columns[i] != "" && columns[i] != null){
+                        correctWordsList += columns[i] + ",";
+                    }
+                }
+                correctWordsList += columns[columns.length-1];
+                contentValues.put(VocabWord.COLUMN_CORRECT_WORDS, correctWordsList);
+                db.insert(VocabWord.TABLE_NAME, null, contentValues);
+                correctWordsList = "";
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
+    }
 
     public void exportDB() {
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");

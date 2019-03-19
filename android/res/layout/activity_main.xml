@@ -9,4 +9,16 @@
         android:layout_height="42dp"
         android:layout_gravity="center"/>
 
+    <EditText
+        android:id="@+id/file_title_edittext"
+        android:layout_height="48dp"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true" />
+
+    <EditText
+        android:id="@+id/doc_content_edittext"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/file_title_edittext" />
+
 </LinearLayout>

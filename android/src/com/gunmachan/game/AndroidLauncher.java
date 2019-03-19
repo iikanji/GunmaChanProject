@@ -3,17 +3,20 @@ package com.gunmachan.game;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.Toast;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -28,18 +31,41 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+import com.google.api.services.drive.model.User;
 import com.gunmachan.SQLite.Instructor;
 import com.gunmachan.SQLite.InstructorDb;
 import com.gunmachan.SQLite.VocabDb;
 import com.vikramezhil.droidspeech.DroidSpeech;
 import com.vikramezhil.droidspeech.OnDSListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.xml.transform.stream.StreamResult;
+
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.GunmaChan;
 import asu.gunma.speech.ActionResolver;
+
+import static android.content.ContentValues.TAG;
 
 public class AndroidLauncher extends AndroidApplication {
 
@@ -54,13 +80,25 @@ public class AndroidLauncher extends AndroidApplication {
     public View decorView;
     public int uiOptions;
     private AndroidApplicationConfiguration config;
+
     private Intent signInIntent;
     private GoogleSignInOptions gso;
+    private Scope googleDriveScope;
     private GoogleSignInClient mGoogleSignInClient;
+    private Boolean verificationBool = false;
     private String googleLoginMessage = "";
     private static final int RC_SIGN_IN = 100;
     private static final int RC_SIGN_OUT = 101;
+    private static final int REQUEST_CODE_OPEN_DOCUMENT = 102;
+    private static final int REQUEST_PICKER = 103;
     private String googleSignOutMessage = "";
+    private GoogleSignInAccount account;
+
+    private DriveServiceHelper mDriveServiceHelper;
+    private String mOpenFileId;
+    public EditText mFileTitleEditText;
+    public EditText mDocContentEditText;
+    public ArrayList<java.io.File> csvFileList;
     DroidSpeech droidSpeech;
 
     // add permission to hide navigation bar?
@@ -129,8 +167,16 @@ public class AndroidLauncher extends AndroidApplication {
             }
         });
 
+        // Store the EditText boxes to be updated when files are opened/created/modified.
+        mFileTitleEditText = findViewById(R.id.file_title_edittext);
+        mDocContentEditText = findViewById(R.id.doc_content_edittext);
+
+        googleDriveScope = new Scope("https://www.googleapis.com/auth/drive");
         //DEFAULT_SIGN_IN will request user ID, email address, and profile
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken("423723200587-i62dqi74dmheebmv2uqb55n12har4i2m.apps.googleusercontent.com").requestEmail().build();
+        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken("423723200587-i62dqi74dmheebmv2uqb55n12har4i2m.apps.googleusercontent.com")
+                .requestEmail()
+                .build();
         //creating sign in object with options specified by gso
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         signInIntent = new Intent(mGoogleSignInClient.getSignInIntent());
@@ -142,7 +188,8 @@ public class AndroidLauncher extends AndroidApplication {
                 startActivityForResult(signInIntent, RC_SIGN_IN);
                 setResult(RESULT_OK, signInIntent);
             }
-            public String googleLoginMessage(){
+
+            public String googleLoginMessage() {
                 return googleLoginMessage;
             }
 
@@ -152,15 +199,16 @@ public class AndroidLauncher extends AndroidApplication {
                     mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
                             revokeAccess();
                         }
                     });
                 } catch (Exception e) {
-                    System.out.println(e.getStackTrace());
+                    System.out.println(e);
                 }
             }
-            public String googleLogoutMessage(){
+
+            public String googleLogoutMessage() {
                 return googleSignOutMessage;
             }
 
@@ -168,8 +216,66 @@ public class AndroidLauncher extends AndroidApplication {
                 try {
                     mGoogleSignInClient.revokeAccess();
                 } catch (Exception e) {
-                    System.out.println(e.getStackTrace());
+                    System.out.println(e);
                 }
+            }
+
+            public ArrayList<java.io.File> googleDriveAccess() {
+                try {
+                    csvFileList = new ArrayList<>();
+                    GoogleAccountCredential credential =
+                            GoogleAccountCredential.usingOAuth2(
+                                    getApplicationContext(), Collections.singleton(DriveScopes.DRIVE_FILE));
+                    credential.setSelectedAccount(account.getAccount());
+                    Drive googleDriveService =
+                            new Drive.Builder(
+                                    AndroidHttp.newCompatibleTransport(),
+                                    new GsonFactory(),
+                                    credential)
+                                    .setApplicationName("Drive API Migration")
+                                    .build();
+                    // The DriveServiceHelper encapsulates all REST API and SAF functionality.
+                    // Its instantiation is required before handling any onClick actions.
+                    mDriveServiceHelper = new DriveServiceHelper(googleDriveService);
+                    //query();
+                    FileList googleFiles = googleDriveService.files().list().setSpaces("drive").execute();
+                    List<File> googleFileList = googleFiles.getFiles();
+                    /*Intent pickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                    pickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
+                    pickerIntent.setType("text/csv");*/
+                    //TESTING
+                    for(File f : googleFileList){
+                        if(f.getMimeType().equals("text/csv")) {
+                            try {
+                                System.out.println("FILENAME: " + f.getName());
+                                System.out.println("EXTENSION: " + "csv");
+                                System.out.println("MIME: " + f.getMimeType());
+                                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                                googleDriveService.files().get(f.getId())
+                                    .executeMediaAndDownloadTo(byteArrayOutputStream);
+                                java.io.File csvFile = new java.io.File(android.os.Environment.getExternalStorageDirectory(), f.getName());
+                                OutputStream outputStream = new FileOutputStream(csvFile, false);
+                                byteArrayOutputStream.writeTo(outputStream);
+                                byteArrayOutputStream.close();
+                                outputStream.close();
+                                System.out.println("PATH: " + csvFile.getAbsolutePath());
+                                csvFileList.add(csvFile);
+                            }catch(Exception e){
+                                System.out.println(e);
+                            }
+                        }
+                    }
+
+                    //startActivityForResult(pickerIntent, REQUEST_PICKER);
+                    //openFilePicker();
+                } catch (Exception e) {
+                    if(e instanceof UserRecoverableAuthIOException) {
+                        Intent intent = ((UserRecoverableAuthIOException)e).getIntent();
+                        startActivityForResult(intent, REQUEST_CODE_OPEN_DOCUMENT);
+                    }
+                    System.out.println(e);
+                }
+                return csvFileList;
             }
 
             public ArrayList<String> androidLoginInfo() {
@@ -244,17 +350,31 @@ public class AndroidLauncher extends AndroidApplication {
                 sendWord = null;
                 return temp;
             }
+
+            public Boolean getVerificationBool(){
+                return verificationBool;
+            }
         };
 
         dbInterface = new DbInterface() {
             public List<VocabWord> getDbVocab() {
                 return androidDB.viewDb();
             }
+            public void importCSVFile(String filename){
+                try {
+                    androidDB.importExternalCSV(filename);
+                }
+                catch(Exception e){
+                    System.out.println(e);
+                }
+            }
         };
 
         initialize(new GunmaChan(callback, dbInterface), config);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(perms, permsRequestCode);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         androidDB = newVocabDb();
         instructorDb = newInstructorDb();
@@ -272,7 +392,6 @@ public class AndroidLauncher extends AndroidApplication {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SPEECH && resultCode == RESULT_OK) {
             // Get the spoken sentence..
             ArrayList<String> thingsYouSaid =
@@ -289,19 +408,17 @@ public class AndroidLauncher extends AndroidApplication {
                 if (googleSignInResult.isSuccess()) {
                     // Signed in successfully.
                     System.out.println("Google Login Success");
-                    googleLoginMessage = "Login Successful";
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    account = task.getResult(ApiException.class);
                     System.out.println(account.getDisplayName());
                     System.out.println(account.getEmail());
                     //parse out first, last name from display name
                     Instructor loggedInInstructor = new Instructor();
-                    //System.out.println(instructorDb.CheckIsDataAlreadyInDBorNot(account.getEmail()));
                     if (!instructorDb.CheckIsDataAlreadyInDBorNot(account.getEmail())) {
                         System.out.println("NOT IN DATABASE");
                         loggedInInstructor.setInstructorFName(account.getGivenName());
                         loggedInInstructor.setInstructorLName(account.getFamilyName());
                         loggedInInstructor.setInstructorEmail(account.getEmail());
-                        loggedInInstructor.setInstructorID(parseEmailId(account.getEmail()));
+                        loggedInInstructor.setInstructorID(parseEmailId(account.getEmail())[0]);
                         instructorDb.dbInsertInstructor(loggedInInstructor);
                     } else {
                         System.out.println("INSTRUCTOR ALREADY EXISTS");
@@ -315,25 +432,35 @@ public class AndroidLauncher extends AndroidApplication {
                         System.out.println(element.getInstructorID());
                         System.out.println(element.getInstructorEmail());
                     }
-                    Toast.makeText(getApplicationContext(),"Logged In",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Logged In", Toast.LENGTH_SHORT).show();
+                    if(parseEmailId(account.getEmail())[1].equals("edu-g.gsn.ed.jp")) {
+                        verificationBool = true;
+                    }
                 } else {
                     // Signed in failed.
                     System.out.println("Google Login Failed");
                     googleLoginMessage = "Login Failed";
                 }
-            }catch(ApiException e){
+            } catch (ApiException e) {
                 // The ApiException status code indicates the detailed failure reason.
                 // Please refer to the GoogleSignInStatusCodes class reference for more information.
-                System.out.println("Sign-In failed: " + e.getStackTrace());
+                System.out.println("Sign-In failed: " + e);
             }
         }
-        if(requestCode == RC_SIGN_OUT){
+        if (requestCode == RC_SIGN_OUT) {
             if (mGoogleSignInClient.signOut().isSuccessful()) {
                 googleSignOutMessage = "Logout Successful";
             } else {
                 googleSignOutMessage = "Logout Failed";
             }
         }
+        if (requestCode == REQUEST_CODE_OPEN_DOCUMENT) {
+            Uri uri = data.getData();
+            if (uri != null) {
+                openFileFromFilePicker(uri);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -345,8 +472,12 @@ public class AndroidLauncher extends AndroidApplication {
     @Override
     public void onPause() {
         super.onPause();
-        this.onResume();
         hideNavigationBar();
+        try {
+            mGoogleSignInClient.signOut();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -445,9 +576,143 @@ public class AndroidLauncher extends AndroidApplication {
         return account;
     }
 
-    public String parseEmailId(String input) {
+    public String[] parseEmailId(String input) {
         String[] fullname = input.split("@");
-        return fullname[0];
+        return fullname;
     }
+    public String[] parseFile(String input) {
+        return input.split(".");
+    }
+
+    /**
+     * Opens the Storage Access Framework file picker using {@link #REQUEST_CODE_OPEN_DOCUMENT}.
+     */
+    private void openFilePicker() {
+        if (mDriveServiceHelper != null) {
+            System.out.println("Opening file picker.");
+
+            Intent pickerIntent = mDriveServiceHelper.createFilePickerIntent();
+
+            // The result of the SAF Intent is handled in onActivityResult.
+            startActivityForResult(pickerIntent, REQUEST_CODE_OPEN_DOCUMENT);
+        }
+    }
+
+    /**
+     * Opens a file from its {@code uri} returned from the Storage Access Framework file picker
+     * initiated by {@link #openFilePicker()}.
+     */
+    private void openFileFromFilePicker(Uri uri) {
+        if (mDriveServiceHelper != null) {
+            System.out.println("Opening " + uri.getPath());
+
+            mDriveServiceHelper.openFileUsingStorageAccessFramework(getContentResolver(), uri)
+                    .addOnSuccessListener(nameAndContent -> {
+                        String name = nameAndContent.first;
+                        String content = nameAndContent.second;
+
+                        mFileTitleEditText.setText(name);
+                        mDocContentEditText.setText(content);
+
+                        // Files opened through SAF cannot be modified.
+                        setReadOnlyMode();
+                    })
+                    .addOnFailureListener(exception ->
+                            System.out.println("Unable to open file from picker."));
+        }
+    }
+
+    /**
+     * Creates a new file via the Drive REST API.
+     */
+    private void createFile() {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Creating a file.");
+
+            mDriveServiceHelper.createFile()
+                    .addOnSuccessListener(fileId -> readFile(fileId))
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't create file.", exception));
+        }
+    }
+
+    /**
+     * Retrieves the title and content of a file identified by {@code fileId} and populates the UI.
+     */
+    private void readFile(String fileId) {
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Reading file " + fileId);
+
+            mDriveServiceHelper.readFile(fileId)
+                    .addOnSuccessListener(nameAndContent -> {
+                        String name = nameAndContent.first;
+                        String content = nameAndContent.second;
+
+                        mFileTitleEditText.setText(name);
+                        mDocContentEditText.setText(content);
+
+                        setReadWriteMode(fileId);
+                    })
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Couldn't read file.", exception));
+        }
+    }
+
+    /**
+     * Saves the currently opened file created via {@link #createFile()} if one exists.
+     */
+    private void saveFile() {
+        if (mDriveServiceHelper != null && mOpenFileId != null) {
+            Log.d(TAG, "Saving " + mOpenFileId);
+
+            String fileName = mFileTitleEditText.getText().toString();
+            String fileContent = mDocContentEditText.getText().toString();
+
+            mDriveServiceHelper.saveFile(mOpenFileId, fileName, fileContent)
+                    .addOnFailureListener(exception ->
+                            Log.e(TAG, "Unable to save file via REST.", exception));
+        }
+    }
+
+    /**
+     * Queries the Drive REST API for files visible to this app and lists them in the content view.
+     */
+    private void query() {
+
+        if (mDriveServiceHelper != null) {
+            Log.d(TAG, "Querying for files.");
+            mDriveServiceHelper.queryFiles().addOnSuccessListener(fileList -> {
+                StringBuilder builder = new StringBuilder();
+                for (File file : fileList.getFiles()) {
+                    builder.append(file.getName()).append("\n");
+                }
+                String fileNames = builder.toString();
+
+                mFileTitleEditText.setText("File List");
+                mDocContentEditText.setText(fileNames);
+                setReadOnlyMode();
+            })
+                    .addOnFailureListener(UserRecoverableAuthIOException -> Log.e(TAG, "Unable to query files.", UserRecoverableAuthIOException));
+        }
+    }
+
+    /**
+     * Updates the UI to read-only mode.
+     */
+    private void setReadOnlyMode() {
+        mFileTitleEditText.setEnabled(false);
+        mDocContentEditText.setEnabled(false);
+        mOpenFileId = null;
+    }
+
+    /**
+     * Updates the UI to read/write mode on the document identified by {@code fileId}.
+     */
+    private void setReadWriteMode(String fileId) {
+        mFileTitleEditText.setEnabled(true);
+        mDocContentEditText.setEnabled(true);
+        mOpenFileId = fileId;
+    }
+
 }
 
