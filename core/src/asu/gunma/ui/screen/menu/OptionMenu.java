@@ -1129,7 +1129,7 @@ public class OptionMenu implements Screen {
 
     @Override
     public void resume() {
-        gameMusic.play();
+
     }
 
     @Override

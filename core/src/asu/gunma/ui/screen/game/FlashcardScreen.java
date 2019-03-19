@@ -549,7 +549,7 @@ public class FlashcardScreen implements Screen {
 
     @Override
     public void resume() {
-        gameMusic.play();
+
     }
 
     @Override

@@ -221,7 +221,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resume() {
-        gameMusic.play();
+
     }
 
     @Override

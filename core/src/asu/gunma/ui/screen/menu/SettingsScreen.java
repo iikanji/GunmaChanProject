@@ -194,7 +194,7 @@ public class SettingsScreen implements Screen {
 
     @Override
     public void resume() {
-        gameMusic.play();
+
 
     }
 
