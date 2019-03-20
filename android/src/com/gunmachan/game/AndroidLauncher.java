@@ -534,17 +534,17 @@ public class AndroidLauncher extends AndroidApplication {
             vDB.importCSV("Places.csv");
             //add time later when fixed
         } catch (Exception e) {
-            System.out.println(e);
+            //System.out.println(e);
         }
         List<VocabWord> currentDb = vDB.viewDb();
-        for (VocabWord element : currentDb) {
+       /* for (VocabWord element : currentDb) {
             System.out.println("KANJI: " + element.getKanjiSpelling());
             System.out.println("KANA: " + element.getKanaSpelling());
             System.out.println("ENG: " + element.getEngSpelling());
             System.out.println("Module: " + element.getModuleCategory());
             System.out.println("Correct Word: " + element.getCorrectWords());
             System.out.println("Audio: " + element.getAudio());
-        }
+        }*/
     }
 
     public VocabDb newVocabDb() {

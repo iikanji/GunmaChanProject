@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -65,9 +66,11 @@ public class MainMenuScreen implements Screen {
     FreeTypeFontGenerator generator;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     FreeTypeFontGenerator.FreeTypeFontParameter parameter2;
+    Preferences prefs;
 
-    public MainMenuScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, ArrayList<VocabWord> activeList) {
+    public MainMenuScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, ArrayList<VocabWord> activeList, Preferences prefs) {
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
@@ -153,7 +156,7 @@ public class MainMenuScreen implements Screen {
                 gameMusic.dispose();
                 //play flashcard music
                 //gameMusic = new Music
-                game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
+                game.setScreen(new FlashcardScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList, prefs));
             }
         });
         buttonGameFirst.addListener(new ClickListener() {
@@ -163,7 +166,7 @@ public class MainMenuScreen implements Screen {
                 gameMusic.dispose();
                 //play GameFirst music
                 // gameMusic = new Music
-                game.setScreen(new GameScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList));
+                game.setScreen(new GameScreen(game, speechGDX, gameMusic, dbCallback, game.getScreen(), activeVList, prefs));
 
             }
         });
@@ -175,7 +178,7 @@ public class MainMenuScreen implements Screen {
                 gameMusic.dispose();
                 //play OptionMenu music
                 //gameMusic = new Music
-                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbCallback, game.getScreen(),  activeVList));
+                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbCallback, game.getScreen(),  activeVList, prefs));
             }
         });
 
