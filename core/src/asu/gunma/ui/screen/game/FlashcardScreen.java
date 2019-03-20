@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -89,11 +90,13 @@ public class FlashcardScreen implements Screen {
     private TextButton nextButton;
     private TextButton prevButton;
     private TextButton flipButton;
+    public Preferences prefs;
 
 
     public FlashcardScreen (Game game, ActionResolver speechGDX, Music music,
-                            DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList) {
+                            DbInterface dbCallback, Screen previousScreen, ArrayList<VocabWord> arrayList, Preferences prefs) {
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbCallback = dbCallback;
@@ -314,7 +317,7 @@ public class FlashcardScreen implements Screen {
                 gameMusic.setLooping(false);
                 gameMusic.setVolume(masterVolume);
                 gameMusic.play();
-                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbCallback, vocabWordArrayList));
+                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbCallback, vocabWordArrayList, prefs));
                 previousScreen.dispose();
                 dispose(); // dispose of current FlashScreen
             }

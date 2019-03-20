@@ -2,6 +2,7 @@ package asu.gunma.ui.screen.menu;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -89,9 +90,11 @@ public class OptionMenu implements Screen {
 
     private ScrollPane fileSelectionPane;
     private Table fileTable;
+    public Preferences prefs;
 
-    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, ArrayList<VocabWord> arrayList) {
+    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, ArrayList<VocabWord> arrayList, Preferences prefs) {
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbInterface = dbInterface;
@@ -103,8 +106,9 @@ public class OptionMenu implements Screen {
         gameMusic.play();
     }
 
-    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen) {
+    public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, Preferences prefs) {
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.gameMusic = music;
         this.dbInterface = dbInterface;
@@ -286,10 +290,12 @@ public class OptionMenu implements Screen {
         buttonCustom1.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                System.out.println("Hit");
+                //System.out.println("Hit");
                 if (verified) {
                     if (active1) {
-                        System.out.println("Hit2");
+                        prefs.putBoolean("active1", false).flush();
+                        System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
+                        //System.out.println("Hit2");
                         buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deactivateModule(buttonCustom1, 0);
                         active1 = false;
@@ -299,6 +305,8 @@ public class OptionMenu implements Screen {
                             }
                         }
                     } else {
+                        prefs.putBoolean("active1", true).flush();
+                        System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
                         buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         activateModule(buttonCustom1, 0);
                         active1 = true;
@@ -319,9 +327,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active2) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active2", false).flush();
                         buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active2 = false;
                     } else {
+                        prefs.putBoolean("active2", true).flush();
                         buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active2 = true;
@@ -337,9 +347,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active3) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active3", false).flush();
                         buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active3 = false;
                     } else {
+                        prefs.putBoolean("active3", true).flush();
                         buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active3 = true;
@@ -355,9 +367,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active4) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active4", false).flush();
                         buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active4 = false;
                     } else {
+                        prefs.putBoolean("active4", true).flush();
                         buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active4 = true;
@@ -373,9 +387,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active5) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active5", false).flush();
                         buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active5 = false;
                     } else {
+                        prefs.putBoolean("active5", true).flush();
                         buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active5 = true;
@@ -391,9 +407,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active6) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active6", false).flush();
                         buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active6 = false;
                     } else {
+                        prefs.putBoolean("active6", true).flush();
                         buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active6 = true;
@@ -409,9 +427,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active7) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active7", false).flush();
                         buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active7 = false;
                     } else {
+                        prefs.putBoolean("active8", true).flush();
                         buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active7 = true;
@@ -427,9 +447,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active8) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active8", false).flush();
                         buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active8 = false;
                     } else {
+                        prefs.putBoolean("active9", true).flush();
                         buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active8 = true;
@@ -445,9 +467,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active9) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active9", false).flush();
                         buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active9 = false;
                     } else {
+                        prefs.putBoolean("active9", true).flush();
                         buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active9 = true;
@@ -463,9 +487,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active10) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active10", false).flush();
                         buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active10 = false;
                     } else {
+                        prefs.putBoolean("active10", true).flush();
                         buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active10 = true;
@@ -481,9 +507,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active11) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active11", false).flush();
                         buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active11 = false;
                     } else {
+                        prefs.putBoolean("active11", true).flush();
                         buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active11 = true;
@@ -499,9 +527,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active12) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active12", false).flush();
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active12 = false;
                     } else {
+                        prefs.putBoolean("active12", true).flush();
                         buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active12 = true;
@@ -517,9 +547,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active13) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active13", false).flush();
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active13 = false;
                     } else {
+                        prefs.putBoolean("active13", true).flush();
                         buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active13 = true;
@@ -535,9 +567,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active14) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active14", false).flush();
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active14 = false;
                     } else {
+                        prefs.putBoolean("active14", true).flush();
                         buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active14 = true;
@@ -578,9 +612,11 @@ public class OptionMenu implements Screen {
                 if (verified) {
                     if (active15) {
                         System.out.println("Hit2");
+                        prefs.putBoolean("active15", false).flush();
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active15 = false;
                     } else {
+                        prefs.putBoolean("active15", true).flush();
                         buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active15 = true;
@@ -1023,7 +1059,7 @@ public class OptionMenu implements Screen {
                 /*if (verified){
                     game.setScreen(new SettingsScreen(game, speechGDX, gameMusic, dbInterface, game.getScreen()));
                 }*/
-              game.setScreen(new SettingsScreen(game, speechGDX, gameMusic, dbInterface, game.getScreen()));
+              game.setScreen(new SettingsScreen(game, speechGDX, gameMusic, dbInterface, game.getScreen(), prefs));
             }
         });
         backButton.addListener(new ClickListener() {
@@ -1034,7 +1070,7 @@ public class OptionMenu implements Screen {
                 gameMusic.setLooping(false);
                 gameMusic.setVolume(masterVolume);
                 gameMusic.play();
-                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbInterface, activeVocabList));
+                game.setScreen(new MainMenuScreen(game, speechGDX, gameMusic, dbInterface, activeVocabList, prefs));
                 previousScreen.dispose();
                 dispose(); // dispose of current GameScreen
             }
@@ -1129,6 +1165,160 @@ public class OptionMenu implements Screen {
         stage.addActor(deleteButton);
         stage.addActor(settingsButton);
         stage.addActor(backButton);
+
+        //test
+        if(prefs.contains("active1")) {
+            System.out.println("Contains active1");
+            active1 = prefs.getBoolean("active1");
+        }
+
+        if(prefs.contains("active2"))
+        active2 = prefs.getBoolean("active2");
+
+        if(prefs.contains("active3"))
+        active3 = prefs.getBoolean("active3");
+
+        if(prefs.contains("active4"))
+        active4 = prefs.getBoolean("active4");
+
+        if(prefs.contains("active5"))
+        active5 = prefs.getBoolean("active5");
+
+        if(prefs.contains("active6"))
+        active6 = prefs.getBoolean("active6");
+
+        if(prefs.contains("active7"))
+        active7 = prefs.getBoolean("active7");
+
+        if(prefs.contains("active8"))
+        active8 = prefs.getBoolean("active8");
+
+        if(prefs.contains("active9"))
+        active9 = prefs.getBoolean("active9");
+
+        if(prefs.contains("active10"))
+        active10 = prefs.getBoolean("active10");
+
+        if(prefs.contains("active11"))
+        active11 = prefs.getBoolean("active11");
+
+        if(prefs.contains("active12"))
+        active12 = prefs.getBoolean("active12");
+
+        if(prefs.contains("active13"))
+        active13 = prefs.getBoolean("active13");
+
+        if(prefs.contains("active14"))
+        active14 = prefs.getBoolean("active14");
+
+        if(prefs.contains("active15"))
+        active15 = prefs.getBoolean("active15");
+
+        if (!active1) {
+            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom1, 0);
+        } else {
+            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom1, 0);
+        }
+        if (!active2) {
+            buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom2, 0);
+        } else {
+            buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom2, 0);
+        }
+        if (!active3) {
+            buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom3, 0);
+        } else {
+            buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom3, 0);
+        }
+        if (!active4) {
+            buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom4, 0);
+        } else {
+            buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom4, 0);
+        }
+        if (!active5) {
+            buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom5, 0);
+        } else {
+            buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom5, 0);
+        }
+        if (!active6) {
+            buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom6, 0);
+        } else {
+            buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom6, 0);
+        }
+        if (!active7) {
+            buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom7, 0);
+        } else {
+            buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom7, 0);
+        }
+        if (!active8) {
+            buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom8, 0);
+        } else {
+            buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom8, 0);
+        }
+        if (!active9) {
+            buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom9, 0);
+        } else {
+            buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom9, 0);
+        }
+        if (!active10) {
+            buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom10, 0);
+        } else {
+            buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom10, 0);
+        }
+        if (!active11) {
+            buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom11, 0);
+        } else {
+            buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom11, 0);
+        }
+        if (!active12) {
+            buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom12, 0);
+        } else {
+            buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom12, 0);
+        }
+        if (!active13) {
+            buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom13, 0);
+        } else {
+            buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom13, 0);
+        }
+        if (!active14) {
+            buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom14, 0);
+        } else {
+            buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom14, 0);
+        }
+        if (!active15) {
+            buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom15, 0);
+        } else {
+            buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom15, 0);
+        }
     }
 
     @Override

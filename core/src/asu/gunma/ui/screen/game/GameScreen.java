@@ -6,6 +6,7 @@ import java.util.Random;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -122,8 +123,11 @@ public class GameScreen implements Screen {
     ArrayList<VocabWord> gameWords = new ArrayList<>();
     Random rand = new Random();
 
-    public GameScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, Screen previous, ArrayList<VocabWord> activeList) {
+    Preferences prefs;
+
+    public GameScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbCallback, Screen previous, ArrayList<VocabWord> activeList, Preferences prefs) {
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.dbCallback = dbCallback;
         this.previousScreen = previous;
@@ -291,7 +295,7 @@ public class GameScreen implements Screen {
                 gameMusic.setLooping(false);
                 gameMusic.setVolume(masterVolume);
                 gameMusic.play();
-                game.setScreen(new MainMenuScreen(game, speechGDX,  gameMusic, dbCallback,activeVList));
+                game.setScreen(new MainMenuScreen(game, speechGDX,  gameMusic, dbCallback,activeVList, prefs));
                 previousScreen.dispose();
                 dispose(); // dispose of current GameScreen
             }
