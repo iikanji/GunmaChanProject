@@ -2,6 +2,7 @@ package asu.gunma;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class GunmaChan extends Game {
 	public DbInterface dbCallback;
 	private static float masterVolume = 5;
 	private ArrayList<VocabWord> activeVocabList;
+	public Preferences prefs;
 
 		public GunmaChan() {}
 		public GunmaChan(ActionResolver speechGDX, DbInterface dbCallback){
@@ -38,6 +40,7 @@ public class GunmaChan extends Game {
 
 		@Override
 		public void create() {
+			Preferences prefs = Gdx.app.getPreferences("MyPreferences");
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
 			background_music.setLooping(false);
 			background_music.setVolume(masterVolume);
@@ -46,11 +49,11 @@ public class GunmaChan extends Game {
 			List<VocabWord> dbVocab = dbCallback.getDbVocab();
 			activeVocabList.addAll(dbVocab);
 
-			System.out.println("ACTIVE WORD LIST");
+			//System.out.println("ACTIVE WORD LIST");
 			for(VocabWord v : activeVocabList){
-				System.out.println(v.getEngSpelling());
+				//System.out.println(v.getEngSpelling());
 			}
-			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music, activeVocabList));
+			this.setScreen(new TitleScreen(this, speechGDX, dbCallback, background_music, activeVocabList, prefs));
 		}
 
 		@Override

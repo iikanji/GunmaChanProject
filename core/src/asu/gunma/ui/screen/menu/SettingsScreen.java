@@ -3,6 +3,7 @@ package asu.gunma.ui.screen.menu;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
@@ -59,10 +60,11 @@ public class SettingsScreen implements Screen {
     private String googleLoginMessage = "";
     private String googleLogoutMessage = "";
     private boolean signedIn = false;
+    public Preferences prefs;
 
-
-    public SettingsScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen){
+    public SettingsScreen(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, Preferences prefs){
         this.game = game;
+        this.prefs = prefs;
         this.speechGDX = speechGDX;
         this.dbInterface = dbInterface;
         this.previousScreen = previousScreen;
@@ -157,7 +159,7 @@ public class SettingsScreen implements Screen {
                 googleLoginMessage = "";
                 gameMusic.pause();
                 gameMusic.dispose();
-                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbInterface, previousScreen));
+                game.setScreen(new OptionMenu(game, speechGDX, gameMusic, dbInterface, previousScreen, prefs));
                 dispose(); // dispose of current GameScreen
             }
         });
