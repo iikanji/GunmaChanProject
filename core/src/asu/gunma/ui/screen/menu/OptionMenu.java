@@ -61,14 +61,13 @@ public class OptionMenu implements Screen {
     public ArrayList<VocabWord> activeVocabList = new ArrayList<>();
     //temp bool until login system works
     private boolean login = false;
+    private boolean deleteButtonsVisible = false;
 
     private TextButton buttonCustom1, buttonCustom2, buttonCustom3, buttonCustom4, buttonCustom5, buttonCustom6,
             buttonCustom7, buttonCustom8, buttonCustom9, buttonCustom10, buttonCustom11, buttonCustom12,
             buttonCustom13, buttonCustom14, buttonCustom15;
 
-    private TextButton deleteCustomButton1, deleteCustomButton2, deleteCustomButton3, deleteCustomButton4,
-            deleteCustomButton5, deleteCustomButton6, deleteCustomButton7, deleteCustomButton8, deleteCustomButton9,
-            deleteCustomButton10, deleteCustomButton11, deleteCustomButton12, deleteCustomButton13, deleteCustomButton14,
+    private TextButton deleteCustomButton12, deleteCustomButton13, deleteCustomButton14,
             deleteCustomButton15;
 
     private TextButton newButton, deleteButton, settingsButton, backButton;
@@ -115,8 +114,12 @@ public class OptionMenu implements Screen {
         gameMusic.play();
     }
 
+    // need to delete words from database when a delete button is clicked
+    // delete buttons in wrong location
+
     @Override
     public void show() {
+        int count = 0;
         Gdx.gl.glClearColor(.8f, 1, 1, 1);
         stage = new Stage();
         batch = new SpriteBatch();
@@ -138,7 +141,7 @@ public class OptionMenu implements Screen {
         table3.setPosition(680, 275);
         table4.setPosition(285, 260);
         table5.setPosition(550, 260);
-        table6.setPosition(805, 260);
+        table6.setPosition(805, 210);
 
         font = new BitmapFont(Gdx.files.internal("font-export.fnt")); // needs a font file still
         font.setColor(Color.BLACK); // Does nothing at the moment
@@ -182,17 +185,6 @@ public class OptionMenu implements Screen {
         buttonCustom14 = new TextButton("x", testSkin, "small");
         buttonCustom15 = new TextButton("x", testSkin, "small");
 
-        deleteCustomButton1 = new TextButton("X", testSkin, "default");
-        deleteCustomButton2 = new TextButton("X", testSkin, "default");
-        deleteCustomButton3 = new TextButton("X", testSkin, "default");
-        deleteCustomButton4 = new TextButton("X", testSkin, "default");
-        deleteCustomButton5 = new TextButton("X", testSkin, "default");
-        deleteCustomButton6 = new TextButton("X", testSkin, "default");
-        deleteCustomButton7 = new TextButton("X", testSkin, "default");
-        deleteCustomButton8 = new TextButton("X", testSkin, "default");
-        deleteCustomButton9 = new TextButton("X", testSkin, "default");
-        deleteCustomButton10 = new TextButton("X", testSkin, "default");
-        deleteCustomButton11 = new TextButton("X", testSkin, "default");
         deleteCustomButton12 = new TextButton("X", testSkin, "default");
         deleteCustomButton13 = new TextButton("X", testSkin, "default");
         deleteCustomButton14 = new TextButton("X", testSkin, "default");
@@ -216,17 +208,6 @@ public class OptionMenu implements Screen {
         buttonList.add(buttonCustom15);
 
         deleteButtonList = new ArrayList<>();
-        deleteButtonList.add(deleteCustomButton1);
-        deleteButtonList.add(deleteCustomButton2);
-        deleteButtonList.add(deleteCustomButton3);
-        deleteButtonList.add(deleteCustomButton4);
-        deleteButtonList.add(deleteCustomButton5);
-        deleteButtonList.add(deleteCustomButton6);
-        deleteButtonList.add(deleteCustomButton7);
-        deleteButtonList.add(deleteCustomButton8);
-        deleteButtonList.add(deleteCustomButton9);
-        deleteButtonList.add(deleteCustomButton10);
-        deleteButtonList.add(deleteCustomButton11);
         deleteButtonList.add(deleteCustomButton12);
         deleteButtonList.add(deleteCustomButton13);
         deleteButtonList.add(deleteCustomButton14);
@@ -250,33 +231,7 @@ public class OptionMenu implements Screen {
         backButton.setPosition(20, 530, Align.left);
 
         Label.LabelStyle headingStyle = new Label.LabelStyle(font, Color.BLACK);
-/*
-        alphabetHeading = new Label("Alphabet", headingStyle);
-        alphabetHeading.setFontScale(2);
-        colorHeading = new Label("Colors", headingStyle);
-        colorHeading.setFontScale(2);
-        custom1Heading = new Label("Custom Set 1", headingStyle);
-        custom1Heading.setFontScale(2);
-        custom2Heading = new Label("Custom Set 2", headingStyle);
-        custom2Heading.setFontScale(2);
-        custom3Heading = new Label("Custom Set 3", headingStyle);
-        custom3Heading.setFontScale(2);
-        custom4Heading = new Label("Custom Set 4", headingStyle);
-        custom4Heading.setFontScale(2);
-        custom5Heading = new Label("Custom Set 5", headingStyle);
-        custom5Heading.setFontScale(2);
-        custom6Heading = new Label("Custom Set 6", headingStyle);
-        custom6Heading.setFontScale(2);
-        custom7Heading = new Label("Custom Set 7", headingStyle);
-        custom7Heading.setFontScale(2);
-        custom8Heading = new Label("Custom Set 8", headingStyle);
-        custom8Heading.setFontScale(2);
-        custom9Heading = new Label("Custom Set 9", headingStyle);
-        custom9Heading.setFontScale(2);
-        custom10Heading = new Label("Custom Set 10", headingStyle);
-        custom10Heading.setFontScale(2);
-        // Actually, should probably custom class this process
-*/
+
         /*
             If you want to test functions with UI instead of with console,
             add it into one of these Listeners. Each of them correspond to
@@ -321,10 +276,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active2 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(1).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active2 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(1).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -339,10 +304,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active3 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(2).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active3 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(2).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -357,10 +332,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active4 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(3).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active4 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(3).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -375,10 +360,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active5 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(4).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active5 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(4).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -393,10 +388,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active6 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(5).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active6 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(5).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -411,10 +416,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active7 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(6).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active7 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(6).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -429,10 +444,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active8 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(7).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active8 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(7).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -447,10 +472,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active9 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(8).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active9 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(8).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -465,10 +500,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active10 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(9).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active10 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(9).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -483,10 +528,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active11 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(10).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active11 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(10).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -501,10 +556,21 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active12 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
+
                     } else {
                         buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active12 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -519,10 +585,20 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active13 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active13 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
@@ -537,39 +613,24 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active14 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active14 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
         });
-
-        table.add(alphabetHeading);
-        table.row();
-        table.add(colorHeading);
-        table.row();
-        table.add(custom1Heading);
-        table.row();
-        table.add(custom2Heading);
-        table.row();
-        table.add(custom3Heading);
-        table.row();
-        table.add(custom4Heading);
-        table.row();
-        table.add(custom5Heading);
-        table.row();
-        table.add(custom6Heading);
-        table.row();
-        table.add(custom7Heading);
-        table.row();
-        table.add(custom8Heading);
-        table.row();
-        table.add(custom9Heading);
-        table.row();
-        table.add(custom10Heading);
-        table.row();
 
         buttonCustom15.addListener(new ClickListener() {
             @Override
@@ -580,249 +641,25 @@ public class OptionMenu implements Screen {
                         System.out.println("Hit2");
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active15 = false;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
+                                activeVocabList.remove(v);
+                            }
+                        }
                     } else {
                         buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
                         active15 = true;
+                        for(VocabWord v : dbVocab){
+                            if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
+                                activeVocabList.add(v);
+                            }
+                        }
                     }
                 }
             }
         });
 
-        deleteCustomButton1.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).file().exists()) {
-                    Gdx.files.local("/data/data/com.gunmachan.game/files/" + buttonCustom1.getText().toString()).delete();
-                    for (int i = 0; i < buttonList.size() - 1; i++) {
-                        buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                    }
-                    //delete out of database
-                    //loop through table looking for tuples that match module name
-                    //if match
-                    //  dbDeleteVocab
-                    for (int i = 0; i < buttonList.size(); i++) {
-                        if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                            buttonList.get(i).setVisible(false);
-                            buttonList.get(i).setDisabled(true);
-                            deleteButtonList.get(i).setVisible(false);
-                            deleteButtonList.get(i).setDisabled(true);
-                        }
-                    }
-                    for (TextButton t : deleteButtonList) {
-                        t.setVisible(false);
-                        t.setDisabled(true);
-                    }
-                } else {
-                    //make label to display this
-                    System.out.println("Error file does not exist");
-                }
-            }
-        });
-        deleteCustomButton2.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //Gdx.files.internal(buttonList.get(1).getText().toString() + ".csv").delete();
-                /*if(Gdx.files.internal("ColorsShapes.csv").exists()){
-                    System.out.println("ColorsShapes.csv");
-                }*/
-                for (int i = 1; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton3.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 2; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton4.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 3; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton5.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 4; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton6.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 5; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton7.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 6; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton8.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 7; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton9.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 8; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton10.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 9; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
-        deleteCustomButton11.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                for (int i = 10; i < buttonList.size() - 1; i++) {
-                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
-                }
-                for (int i = 0; i < buttonList.size(); i++) {
-                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
-                        buttonList.get(i).setVisible(false);
-                        buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
-                    }
-                }
-                for (TextButton t : deleteButtonList) {
-                    t.setVisible(false);
-                    t.setDisabled(true);
-                }
-            }
-        });
         deleteCustomButton12.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -833,14 +670,13 @@ public class OptionMenu implements Screen {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
                         buttonList.get(i).setVisible(false);
                         buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
                     }
                 }
                 for (TextButton t : deleteButtonList) {
                     t.setVisible(false);
                     t.setDisabled(true);
                 }
+                deleteButtonsVisible = false;
             }
         });
         deleteCustomButton13.addListener(new ClickListener() {
@@ -853,14 +689,13 @@ public class OptionMenu implements Screen {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
                         buttonList.get(i).setVisible(false);
                         buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
                     }
                 }
                 for (TextButton t : deleteButtonList) {
                     t.setVisible(false);
                     t.setDisabled(true);
                 }
+                deleteButtonsVisible = false;
             }
         });
         deleteCustomButton14.addListener(new ClickListener() {
@@ -873,14 +708,13 @@ public class OptionMenu implements Screen {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
                         buttonList.get(i).setVisible(false);
                         buttonList.get(i).setDisabled(true);
-                        deleteButtonList.get(i).setVisible(false);
-                        deleteButtonList.get(i).setDisabled(true);
                     }
                 }
                 for (TextButton t : deleteButtonList) {
                     t.setVisible(false);
                     t.setDisabled(true);
                 }
+                deleteButtonsVisible = false;
             }
         });
         deleteCustomButton15.addListener(new ClickListener() {
@@ -893,6 +727,7 @@ public class OptionMenu implements Screen {
                     t.setVisible(false);
                     t.setDisabled(true);
                 }
+                deleteButtonsVisible = false;
             }
         });
 
@@ -930,70 +765,79 @@ public class OptionMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //BEST OPTION IS TO CHANGE THE TABLE TO A SCROLLPANE
-                ArrayList<File> fileList = speechGDX.googleDriveAccess();
-                fileTable = new Table(testSkin);
-                Dialog fileDialog = new Dialog("Select File To Upload", testSkin);
-                fileDialog.setPosition(400, 300, Align.center);
-                fileDialog.setMovable(false);
-                fileDialog.getTitleLabel().setAlignment(Align.center);
-                TextButton cancelButton = new TextButton("Cancel", testSkin, "small");
-                for (int i = 0; i < fileList.size(); i++) {
-                    File currentFile = fileList.get(i);
-                    if (currentFile.exists()) {
-                        String filename = currentFile.getName();
-                        String filenameSplit = filename.split("\\.")[0];
-                        System.out.println(filenameSplit);
-                        Label fileNameLabel = new Label(filenameSplit + "         ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
-                        Label fileExtensionLabel = new Label("csv" + "        ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
-                        TextButton temp = new TextButton("SELECT", testSkin, "small");
-                        temp.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                System.out.println("I HAVE SELECTED " + filenameSplit);
-                                //importCSV(currentFile) to dbInterface, call it on currentCSVFILE if not null
-                                dbInterface.importCSVFile(currentFile.getName());
-                                currentFile.delete();
-                                fileDialog.hide();
-                                for (int i = 0; i < buttonList.size(); i++) {
-                                    if (buttonList.get(i).getText().toString().equals("x")) {
-                                        buttonList.get(i).setText(filenameSplit);
-                                        buttonList.get(i).setVisible(true);
-                                        buttonList.get(i).setDisabled(false);
-                                        if (table.getRows() < 5) {
-                                            table.addActor(buttonList.get(i));
-                                        } else if (table2.getRows() < 5) {
-                                            table2.addActor(buttonList.get(i));
-                                        } else if (table3.getRows() < 5) {
-                                            table3.addActor(buttonList.get(i));
+                if(verified) {
+                    ArrayList<File> fileList = speechGDX.googleDriveAccess();
+                    fileTable = new Table(testSkin);
+                    Dialog fileDialog = new Dialog("Select File To Upload", testSkin);
+                    fileDialog.setPosition(400, 300, Align.center);
+                    fileDialog.setMovable(false);
+                    fileDialog.getTitleLabel().setAlignment(Align.center);
+                    TextButton cancelButton = new TextButton("Cancel", testSkin, "small");
+                    for (int i = 0; i < fileList.size(); i++) {
+                        File currentFile = fileList.get(i);
+                        if (currentFile.exists()) {
+                            String filename = currentFile.getName();
+                            String filenameSplit = filename.split("\\.")[0];
+                            System.out.println(filenameSplit);
+                            Label fileNameLabel = new Label(filenameSplit + "         ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
+                            Label fileExtensionLabel = new Label("csv" + "        ", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("font-export.fnt")), Color.BLACK));
+                            TextButton temp = new TextButton("SELECT", testSkin, "small");
+                            temp.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    System.out.println("I HAVE SELECTED " + filenameSplit);
+                                    //importCSV(currentFile) to dbInterface, call it on currentCSVFILE if not null
+                                    dbInterface.importCSVFile(currentFile.getName());
+                                    currentFile.delete();
+                                    fileDialog.hide();
+                                    for (int i = 0; i < buttonList.size(); i++) {
+                                        if (buttonList.get(i).getText().toString().equals("x")) {
+                                            buttonList.get(i).setText(filenameSplit);
+                                            buttonList.get(i).setVisible(true);
+                                            buttonList.get(i).setDisabled(false);
+                                            if (table.getRows() < 5) {
+                                                table.addActor(buttonList.get(i));
+                                            } else if (table2.getRows() < 5) {
+                                                table2.addActor(buttonList.get(i));
+                                            } else if (table3.getRows() < 5) {
+                                                table3.addActor(buttonList.get(i));
+                                            }
+                                            break;
                                         }
-                                        break;
                                     }
+                                    for(int i = 11; i < buttonList.size(); i++){
+                                        if(deleteButtonsVisible){
+                                            deleteButtonList.get(i).setVisible(true);
+                                            deleteButtonList.get(i).setDisabled(false);
+                                        }
+                                    }
+
                                 }
-                            }
-                        });
-                        fileTable.add(fileNameLabel).center();
-                        fileTable.add(fileExtensionLabel).center();
-                        fileTable.add("");
-                        fileTable.add(temp).setActorHeight(0.6f);
-                        fileTable.row();
+                            });
+                            fileTable.add(fileNameLabel).center();
+                            fileTable.add(fileExtensionLabel).center();
+                            fileTable.add("");
+                            fileTable.add(temp).setActorHeight(0.6f);
+                            fileTable.row();
 
-                    } else {
-                        System.out.println("ERROR FILE DOES NOT EXIST!");
+                        } else {
+                            System.out.println("ERROR FILE DOES NOT EXIST!");
+                        }
                     }
+
+                    cancelButton.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            fileDialog.hide();
+                        }
+                    });
+
+                    //fileTable.debug();
+                    fileDialog.getContentTable().add(fileTable).top().fill();
+                    fileDialog.add(cancelButton).bottom().right().setActorHeight(0.6f);
+                    fileDialog.show(stage);
+                    //Google Drive API
                 }
-
-                cancelButton.addListener(new ClickListener(){
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        fileDialog.hide();
-                    }
-                });
-                
-                //fileTable.debug();
-                fileDialog.getContentTable().add(fileTable).top().fill();
-                fileDialog.add(cancelButton).bottom().right().setActorHeight(0.6f);
-                fileDialog.show(stage);
-                //Google Drive API
             }
         });
 
@@ -1002,10 +846,33 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //change this to if button in button list selected
                 //need to make it do something if the button is held down
-                for (int i = 0; i < deleteButtonList.size(); i++) {
-                    if (!buttonList.get(i).getText().toString().equals("x")) {
-                        deleteButtonList.get(i).setVisible(true);
-                        deleteButtonList.get(i).setDisabled(false);
+                if(verified) {
+                    if(!deleteButtonsVisible) {
+                        for (int i = 0; i < deleteButtonList.size(); i++) {
+                            if (!buttonList.get(i + 11).getText().toString().equals("x")) {
+                                deleteButtonList.get(i).setVisible(true);
+                                deleteButtonList.get(i).setDisabled(false);
+                                deleteButtonsVisible = true;
+                            }
+                        }
+                    }
+                    else{
+                        for (int i = 0; i < deleteButtonList.size(); i++) {
+                            if (!buttonList.get(i + 11).getText().toString().equals("x")) {
+                                deleteButtonList.get(i).setVisible(false);
+                                deleteButtonList.get(i).setDisabled(true);
+                                deleteButtonsVisible = false;
+                            }
+                        }
+                    }
+
+                    for(int i = 0; i < deleteButtonList.size(); i++){
+                        if(buttonList.get(i+11).getStyle() == testSkin.get("default", TextButton.TextButtonStyle.class)){
+                            deleteButtonList.get(i).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+                        }
+                        else if (buttonList.get(i+11).getStyle() == testSkin.get("small", TextButton.TextButtonStyle.class)){
+                            deleteButtonList.get(i).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+                        }
                     }
                 }
 
@@ -1040,7 +907,7 @@ public class OptionMenu implements Screen {
             }
         });
 
-        int count = 0;
+        count = 0;
         for (TextButton t : buttonList) {
             if (count < 5) {
                 table.add(t).padTop(15).padBottom(30);
@@ -1054,20 +921,9 @@ public class OptionMenu implements Screen {
             }
             count++;
         }
-
-        count = 0;
         for (TextButton t : deleteButtonList) {
-            if (count < 5) {
-                table4.add(t).padBottom(85);
-                table4.row();
-            } else if (count < 10 && count > 4) {
-                table5.add(t).padBottom(85);
-                table5.row();
-            } else if (count > 9 && count < 15) {
-                table6.add(t).padBottom(85);
-                table6.row();
-            }
-            count++;
+            table6.add(t).padBottom(85);
+            table6.row();
         }
 
         count = 0;
