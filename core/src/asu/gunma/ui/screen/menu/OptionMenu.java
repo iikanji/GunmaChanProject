@@ -1167,185 +1167,157 @@ public class OptionMenu implements Screen {
         stage.addActor(backButton);
 
         //test
-        if(prefs.contains("active1"))
-        active1 = prefs.getBoolean("active1");
+        if(prefs.contains("active1")) {
+            System.out.println("Contains active1");
+            active1 = prefs.getBoolean("active1");
+        }
 
         if(prefs.contains("active2"))
-        active1 = prefs.getBoolean("active2");
+        active2 = prefs.getBoolean("active2");
 
         if(prefs.contains("active3"))
-        active1 = prefs.getBoolean("active3");
+        active3 = prefs.getBoolean("active3");
 
         if(prefs.contains("active4"))
-        active1 = prefs.getBoolean("active4");
+        active4 = prefs.getBoolean("active4");
 
         if(prefs.contains("active5"))
-        active1 = prefs.getBoolean("active5");
+        active5 = prefs.getBoolean("active5");
 
         if(prefs.contains("active6"))
-        active1 = prefs.getBoolean("active6");
+        active6 = prefs.getBoolean("active6");
 
         if(prefs.contains("active7"))
-        active1 = prefs.getBoolean("active7");
+        active7 = prefs.getBoolean("active7");
 
         if(prefs.contains("active8"))
-        active1 = prefs.getBoolean("active8");
+        active8 = prefs.getBoolean("active8");
 
         if(prefs.contains("active9"))
-        active1 = prefs.getBoolean("active9");
+        active9 = prefs.getBoolean("active9");
 
         if(prefs.contains("active10"))
-        active1 = prefs.getBoolean("active10");
+        active10 = prefs.getBoolean("active10");
 
         if(prefs.contains("active11"))
-        active1 = prefs.getBoolean("active11");
+        active11 = prefs.getBoolean("active11");
 
         if(prefs.contains("active12"))
-        active1 = prefs.getBoolean("active12");
+        active12 = prefs.getBoolean("active12");
 
         if(prefs.contains("active13"))
-        active1 = prefs.getBoolean("active13");
+        active13 = prefs.getBoolean("active13");
 
         if(prefs.contains("active14"))
-        active1 = prefs.getBoolean("active14");
+        active14 = prefs.getBoolean("active14");
 
         if(prefs.contains("active15"))
-        active1 = prefs.getBoolean("active15");
+        active15 = prefs.getBoolean("active15");
 
         if (!active1) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
             buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom1, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
             buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom1, 0);
         }
         if (!active2) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom2, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom2, 0);
         }
         if (!active3) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom3, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom3, 0);
         }
         if (!active4) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom4, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom4, 0);
         }
         if (!active5) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom5, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom5, 0);
         }
         if (!active6) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom6, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom6, 0);
         }
         if (!active7) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom7, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom7, 0);
         }
         if (!active8) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom8, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom8, 0);
         }
         if (!active9) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom9, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom9, 0);
         }
         if (!active10) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom10, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom10, 0);
         }
         if (!active11) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom11, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom11, 0);
         }
         if (!active12) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom12, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom12, 0);
         }
         if (!active13) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom13, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom13, 0);
         }
         if (!active14) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom14, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom14, 0);
         }
         if (!active15) {
-            System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
-            deactivateModule(buttonCustom1, 0);
+            buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+            deactivateModule(buttonCustom15, 0);
         } else {
-            System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
-            buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-            activateModule(buttonCustom1, 0);
+            buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
+            activateModule(buttonCustom15, 0);
         }
     }
 
