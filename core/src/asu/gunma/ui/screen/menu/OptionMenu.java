@@ -141,7 +141,7 @@ public class OptionMenu implements Screen {
         table3.setPosition(680, 275);
         table4.setPosition(285, 260);
         table5.setPosition(550, 260);
-        table6.setPosition(805, 210);
+        table6.setPosition(805, 230);
 
         font = new BitmapFont(Gdx.files.internal("font-export.fnt")); // needs a font file still
         font.setColor(Color.BLACK); // Does nothing at the moment
@@ -555,6 +555,7 @@ public class OptionMenu implements Screen {
                     if (active12) {
                         System.out.println("Hit2");
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+                        deleteButtonList.get(0).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active12 = false;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
@@ -564,7 +565,7 @@ public class OptionMenu implements Screen {
 
                     } else {
                         buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-                        //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
+                        deleteButtonList.get(0).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         active12 = true;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
@@ -584,6 +585,7 @@ public class OptionMenu implements Screen {
                     if (active13) {
                         System.out.println("Hit2");
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+                        deleteButtonList.get(1).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active13 = false;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
@@ -592,7 +594,7 @@ public class OptionMenu implements Screen {
                         }
                     } else {
                         buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-                        //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
+                        deleteButtonList.get(1).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         active13 = true;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
@@ -612,6 +614,7 @@ public class OptionMenu implements Screen {
                     if (active14) {
                         System.out.println("Hit2");
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+                        deleteButtonList.get(2).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active14 = false;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
@@ -620,7 +623,7 @@ public class OptionMenu implements Screen {
                         }
                     } else {
                         buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-                        //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
+                        deleteButtonList.get(2).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         active14 = true;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
@@ -640,6 +643,7 @@ public class OptionMenu implements Screen {
                     if (active15) {
                         System.out.println("Hit2");
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
+                        deleteButtonList.get(3).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active15 = false;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
@@ -648,7 +652,7 @@ public class OptionMenu implements Screen {
                         }
                     } else {
                         buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
-                        //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
+                        deleteButtonList.get(3).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         active15 = true;
                         for(VocabWord v : dbVocab){
                             if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
@@ -665,6 +669,7 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 for (int i = 11; i < buttonList.size() - 1; i++) {
                     buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
+                    buttonList.get(i).setStyle(buttonList.get(i + 1).getStyle());
                 }
                 for (int i = 0; i < buttonList.size(); i++) {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
@@ -677,6 +682,12 @@ public class OptionMenu implements Screen {
                     t.setDisabled(true);
                 }
                 deleteButtonsVisible = false;
+                //need to add preference boolean
+                for(VocabWord v : dbVocab){
+                    if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
+                        activeVocabList.remove(v);
+                    }
+                }
             }
         });
         deleteCustomButton13.addListener(new ClickListener() {
@@ -684,6 +695,7 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 for (int i = 12; i < buttonList.size() - 1; i++) {
                     buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
+                    buttonList.get(i).setStyle(buttonList.get(i + 1).getStyle());
                 }
                 for (int i = 0; i < buttonList.size(); i++) {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
@@ -696,6 +708,12 @@ public class OptionMenu implements Screen {
                     t.setDisabled(true);
                 }
                 deleteButtonsVisible = false;
+                //need to add preference boolean
+                for(VocabWord v : dbVocab){
+                    if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
+                        activeVocabList.remove(v);
+                    }
+                }
             }
         });
         deleteCustomButton14.addListener(new ClickListener() {
@@ -703,6 +721,7 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 for (int i = 13; i < buttonList.size() - 1; i++) {
                     buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
+                    buttonList.get(i).setStyle(buttonList.get(i + 1).getStyle());
                 }
                 for (int i = 0; i < buttonList.size(); i++) {
                     if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
@@ -715,6 +734,12 @@ public class OptionMenu implements Screen {
                     t.setDisabled(true);
                 }
                 deleteButtonsVisible = false;
+                //need to add preference boolean
+                for(VocabWord v : dbVocab){
+                    if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
+                        activeVocabList.remove(v);
+                    }
+                }
             }
         });
         deleteCustomButton15.addListener(new ClickListener() {
@@ -728,6 +753,12 @@ public class OptionMenu implements Screen {
                     t.setDisabled(true);
                 }
                 deleteButtonsVisible = false;
+                //need to add preference boolean
+                for(VocabWord v : dbVocab){
+                    if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
+                        activeVocabList.remove(v);
+                    }
+                }
             }
         });
 
@@ -805,7 +836,7 @@ public class OptionMenu implements Screen {
                                             break;
                                         }
                                     }
-                                    for(int i = 11; i < buttonList.size(); i++){
+                                    for(int i = 0; i < deleteButtonList.size(); i++){
                                         if(deleteButtonsVisible){
                                             deleteButtonList.get(i).setVisible(true);
                                             deleteButtonList.get(i).setDisabled(false);
