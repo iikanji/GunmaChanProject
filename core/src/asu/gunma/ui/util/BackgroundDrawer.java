@@ -63,7 +63,7 @@ public class BackgroundDrawer {
     public void render(boolean isPaused, boolean isGameOver) {
         if (!isPaused && !isGameOver) {
             this.grassPosition -= 0.6;
-            this.mountainPosition -= 0.020;
+            this.mountainPosition -= 0.035;
             this.cloudA1Position -= 0.15;
             this.cloudA2Position -= 0.15;
             this.cloudB1Position -= 0.15;

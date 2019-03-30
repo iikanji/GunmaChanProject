@@ -1,5 +1,6 @@
 package asu.gunma.ui.util.lives;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,8 +14,8 @@ public class LivesDrawer {
     private Texture inactiveHeart;
 
     private final int X_POSITION_START = 10;
-    private final int Y_POSITION = 3;
-    private final int LIVES_START = 3;
+    private final int Y_POSITION = Gdx.graphics.getHeight() - 35;
+    private final int LIVES_START = 5;
 
     public LivesDrawer(SpriteBatch batch) {
         this.batch = batch;

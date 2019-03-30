@@ -40,8 +40,8 @@ public class GameScreen implements Screen {
     private final int GAME_LIST_SIZE = 5;
 
     private final int SCREEN_BOTTOM_ADJUST = 35;
-    private final int CORRECT_DISPLAY_DURATION = 80;
-    private final int INCORRECT_DISPLAY_DURATION = 80;
+    private final int CORRECT_DISPLAY_DURATION = 20;
+    private final int INCORRECT_DISPLAY_DURATION = 20;
 
     private TextButton testButton;
     private int correctDisplayTimer;
@@ -169,7 +169,7 @@ public class GameScreen implements Screen {
 
         // Spawning variables
         this.enemyPosition = Gdx.graphics.getWidth();
-        this.lives = 3;
+        this.lives = 5;
         this.isGameOver = false;
 
         Gdx.input.setInputProcessor(stage);
@@ -214,7 +214,7 @@ public class GameScreen implements Screen {
         parameter.size = 70;
         parameter.color = Color.BLACK;
         font = generator.generateFont(parameter);
-        parameter2.size = 35;
+        parameter2.size = 30;
         parameter2.color = Color.BLACK;
         font2 = generator.generateFont(parameter2);
 
@@ -333,7 +333,7 @@ public class GameScreen implements Screen {
             font.draw(batch, displayWordLayout, 325, 425);
 
             if (score >= 0){
-                //font2.draw(batch, "Score: " + score, 850, 30);
+                font2.draw(batch, "Score: " + score, 10, 35);
             }
 
             //font2.draw(batch, "Lives: " + lives, 25, 30);
@@ -442,7 +442,7 @@ public class GameScreen implements Screen {
             tmp.flip(true, false);
             batch.draw(tmp, this.enemyPosition, 40 + this.SCREEN_BOTTOM_ADJUST);
             tmp.flip(true, false);
-            this.enemyPosition -= 1.8;
+            this.enemyPosition -= 1.15;
             if (this.enemyPosition < 100) {
                 this.takeDamage();
             }
@@ -455,7 +455,7 @@ public class GameScreen implements Screen {
     }
 
     private void takeDamage() {
-        this.enemyPosition = Gdx.graphics.getWidth();
+        this.enemyPosition = Gdx.graphics.getWidth() + 50;
         this.lives--;
         this.livesDrawer.takeLife();
 
