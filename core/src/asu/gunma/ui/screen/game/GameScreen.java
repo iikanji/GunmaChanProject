@@ -336,7 +336,6 @@ public class GameScreen implements Screen {
             if(correct){
                 // Start correct icon display
                 this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
-                listCounter++;
                 score = score + 1;
                 this.defeatEnemy();
 
@@ -357,6 +356,16 @@ public class GameScreen implements Screen {
                     win = true;
                 }
             } else if(!correct && incomingWord != null){
+                //change word if incorrect
+                currentWordIndex = randomIndex(gameWords.size());
+                displayWord = gameWords.get(currentWordIndex).getEngSpelling();
+                parameter.characters = displayWord;
+                parameter.size = 70;
+                parameter.color = Color.BLACK;
+                font = generator.generateFont(parameter);
+                displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
+                cWords = gameWords.get(currentWordIndex).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
                 // Start incorrect icon display
                 this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
             }
