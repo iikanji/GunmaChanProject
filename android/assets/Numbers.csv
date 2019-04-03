@@ -1,6 +1,6 @@
 TargetVocabularyKanji,TargetVocabularyKana,TargetVocabulary,Correct01,Correct02,Correct03,Correct04,Correct05,Correct06,Correct07
 ゼロ,ゼロ,0,0,Zero,zero,,,,
-一,いち,1,1,One,one,Won,won,,
+一,いち,1,1,One,one,Won,won,Wan,wan
 二,に,2,2,Two,two,too,Too,To,to
 三,さん,3,3,Three,three,,,,
 四,よん,4,4,Four,four,For,for,,
@@ -8,7 +8,7 @@ TargetVocabularyKanji,TargetVocabularyKana,TargetVocabulary,Correct01,Correct02,
 六,ろく,6,6,Six,six,,,,
 七,なな,7,7,Seven,seven,,,,
 八,はち,8,8,Eight,eight,Ate,ate,,
-九,きゅう,9,9,Nine,nine,,,,
+九,きゅう,9,9,Nine,nine,nein,Nein,,
 十,じゅう,10,10,Ten,ten,,,,
 十一,じゅういち,11,11,Eleven,eleven,,,,
 十二,じゅうに,12,12,Twelve,twelve,,,,

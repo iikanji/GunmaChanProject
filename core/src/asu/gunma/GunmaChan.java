@@ -31,16 +31,125 @@ public class GunmaChan extends Game {
 		public GunmaChan(ActionResolver speechGDX, DbInterface dbCallback){
 			this.speechGDX = speechGDX;
 			this.dbCallback = dbCallback;
-
 		}
-		public GunmaChan(ActionResolver speechGDX) {
-			this.speechGDX = speechGDX;
-		}
-		public GunmaChan(DbInterface database){this.dbCallback = database;}
 
 		@Override
 		public void create() {
 			Preferences prefs = Gdx.app.getPreferences("MyPreferences");
+
+			//test
+			if(!prefs.contains("active1")) {
+				System.out.println("Contains active1");
+				prefs.putBoolean("active1", true);
+				for(VocabWord v : dbCallback.getDbVocab()){
+					if(v.getModuleCategory().equals("Alphabet")){
+						activeVocabList.add(v);
+					}
+				}
+			}
+			if(!prefs.contains("active2")) {
+				prefs.putBoolean("active2", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Colors-Shapes")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active3")) {
+				prefs.putBoolean("active3", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Countries")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active4")) {
+				prefs.putBoolean("active4", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Days-Months")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active5")) {
+				prefs.putBoolean("active5", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Feelings")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active6")) {
+				prefs.putBoolean("active6", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Fruits-Food")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active7")) {
+				prefs.putBoolean("active7", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Numbers")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active8")) {
+				prefs.putBoolean("active8", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Places")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active9")){
+				prefs.putBoolean("active9", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Professions")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+
+			if(!prefs.contains("active10")) {
+				prefs.putBoolean("active10", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Subjects")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active11")) {
+				prefs.putBoolean("active11", true);
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Time")) {
+						activeVocabList.add(v);
+					}
+				}
+			}
+
+			if(!prefs.contains("active12"))
+				prefs.putBoolean("active12", false);
+
+			if(!prefs.contains("active13"))
+				prefs.putBoolean("active13", false);
+
+			if(!prefs.contains("active14"))
+				prefs.putBoolean("active14", false);
+
+			if(!prefs.contains("active15"))
+				prefs.putBoolean("active15", false);
+
 			background_music = Gdx.audio.newMusic(Gdx.files.internal("IntroMusic.mp3"));
 			background_music.setLooping(false);
 			background_music.setVolume(masterVolume);

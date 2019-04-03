@@ -55,10 +55,9 @@ public class OptionMenu implements Screen {
 
     //true = instructor, false = student
     private boolean verified = true;
-    private boolean active1 = false, active2 = false, active3 = false, active4 = false, active5 = false,
-            active6 = false, active7 = false, active8 = false, active9 = false, active10 = false,
-            active11 = false, active12 = false, active13 = false, active14 = false, active15 = false;
-    public ArrayList<Boolean> activeList = new ArrayList<>();
+    private boolean active1 = true, active2 = true, active3 = true, active4 = true, active5 = true,
+            active6 = true, active7 = true, active8 = true, active9 = true, active10 = true,
+            active11 = true, active12 = false, active13 = false, active14 = false, active15 = false;
     public ArrayList<VocabWord> activeVocabList = new ArrayList<>();
     //temp bool until login system works
     private boolean login = false;
@@ -81,11 +80,6 @@ public class OptionMenu implements Screen {
 
     private SpriteBatch batch;
     private Texture texture;
-
-    private Label alphabetHeading;
-    private Label colorHeading;
-    private Label custom1Heading, custom2Heading, custom3Heading, custom4Heading, custom5Heading,
-            custom6Heading, custom7Heading, custom8Heading, custom9Heading, custom10Heading;
 
     private ScrollPane fileSelectionPane;
     private Table fileTable;
@@ -228,8 +222,6 @@ public class OptionMenu implements Screen {
             t.setVisible(false);
             t.setDisabled(true);
         }
-
-        activeList = new ArrayList<>();
 
         backButton = new TextButton("Back", textButtonStyle);
         backButton.setPosition(20, 530, Align.left);
@@ -994,13 +986,6 @@ public class OptionMenu implements Screen {
         }
 
         count = 0;
-        /*for(boolean b : activeList){
-            List<VocabWord> dbVocab = dbInterface.getDbVocab();
-            if(b){
-
-            }
-            count++;
-        }*/
 
         for(VocabWord v : activeVocabList){
             System.out.println(v.getEngSpelling());
@@ -1108,6 +1093,7 @@ public class OptionMenu implements Screen {
             buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom1, 0);
         }
+
         if (!active2) {
             buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom2, 0);
@@ -1115,6 +1101,7 @@ public class OptionMenu implements Screen {
             buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom2, 0);
         }
+
         if (!active3) {
             buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom3, 0);
@@ -1122,6 +1109,7 @@ public class OptionMenu implements Screen {
             buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom3, 0);
         }
+
         if (!active4) {
             buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom4, 0);
@@ -1129,6 +1117,7 @@ public class OptionMenu implements Screen {
             buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom4, 0);
         }
+
         if (!active5) {
             buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom5, 0);
@@ -1136,6 +1125,7 @@ public class OptionMenu implements Screen {
             buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom5, 0);
         }
+
         if (!active6) {
             buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom6, 0);
@@ -1143,6 +1133,7 @@ public class OptionMenu implements Screen {
             buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom6, 0);
         }
+
         if (!active7) {
             buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom7, 0);
@@ -1150,6 +1141,7 @@ public class OptionMenu implements Screen {
             buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom7, 0);
         }
+
         if (!active8) {
             buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom8, 0);
@@ -1157,6 +1149,7 @@ public class OptionMenu implements Screen {
             buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom8, 0);
         }
+
         if (!active9) {
             buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom9, 0);
@@ -1164,6 +1157,7 @@ public class OptionMenu implements Screen {
             buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom9, 0);
         }
+
         if (!active10) {
             buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom10, 0);
@@ -1171,6 +1165,7 @@ public class OptionMenu implements Screen {
             buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom10, 0);
         }
+
         if (!active11) {
             buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom11, 0);
@@ -1178,6 +1173,7 @@ public class OptionMenu implements Screen {
             buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom11, 0);
         }
+
         if (!active12) {
             buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom12, 0);
@@ -1185,6 +1181,7 @@ public class OptionMenu implements Screen {
             buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom12, 0);
         }
+
         if (!active13) {
             buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom13, 0);
@@ -1192,6 +1189,7 @@ public class OptionMenu implements Screen {
             buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom13, 0);
         }
+
         if (!active14) {
             buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom14, 0);
@@ -1199,12 +1197,18 @@ public class OptionMenu implements Screen {
             buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom14, 0);
         }
+
         if (!active15) {
             buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
             deactivateModule(buttonCustom15, 0);
         } else {
             buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom15, 0);
+            for(VocabWord v : dbVocab){
+                if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
+                    activeVocabList.add(v);
+                }
+            }
         }
     }
 
@@ -1222,22 +1226,6 @@ public class OptionMenu implements Screen {
         batch.draw(texture, Gdx.graphics.getWidth()/2 - texture.getWidth()/4 + 415,
                 Gdx.graphics.getHeight()/4 - texture.getHeight()/2 + 400, texture.getWidth()/2,
                 texture.getHeight()/2);
-        activeList.add(active1);
-        activeList.add(active2);
-        activeList.add(active3);
-        activeList.add(active4);
-        activeList.add(active5);
-        activeList.add(active6);
-        activeList.add(active7);
-        activeList.add(active8);
-        activeList.add(active8);
-        activeList.add(active9);
-        activeList.add(active10);
-        activeList.add(active11);
-        activeList.add(active12);
-        activeList.add(active13);
-        activeList.add(active14);
-        activeList.add(active15);
         batch.end();
 
         stage.act(delta); // optional to pass delta value
