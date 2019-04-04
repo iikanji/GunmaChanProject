@@ -37,7 +37,8 @@ import asu.gunma.ui.util.lives.LivesDrawer;
 
 public class GameScreen implements Screen {
     //size of round word list
-    private final int GAME_LIST_SIZE = 5;
+    private int GAME_LIST_SIZE;
+    private int currentWordIndex;
 
     private final int SCREEN_BOTTOM_ADJUST = 35;
     private final int CORRECT_DISPLAY_DURATION = 20;
@@ -119,7 +120,6 @@ public class GameScreen implements Screen {
     String cWords;
     String[] correctWordList;
 
-    ArrayList<Integer> gameVIndex;
     ArrayList<VocabWord> gameWords = new ArrayList<>();
     Random rand = new Random();
 
@@ -141,9 +141,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        gameVIndex = new ArrayList<>();
         gameWords = new ArrayList<>();
-       // gameMusic.play();
+        // gameMusic.play();
         this.correctDisplayTimer = 0;
         this.incorrectDisplayTimer = 0;
 
@@ -191,22 +190,21 @@ public class GameScreen implements Screen {
         //font for other words
         parameter2 = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
-        //Grab 10 random numbers from 0 -> activeWordList.size();
-        for(int i = 0; i < GAME_LIST_SIZE; i++) {
-            gameVIndex.add(rand.nextInt(activeVList.size() - 1));
-            //filter out duplicates
+        //Adds 2 of each active word into gameWords
+        for(int i = 0; i < activeVList.size(); i++) {
+            gameWords.add(activeVList.get(i));
+            gameWords.add(activeVList.get(i));
         }
 
-        for(int i = 0; i < gameVIndex.size(); i++) {
-            gameWords.add(activeVList.get(gameVIndex.get(i)));
-        }
+        GAME_LIST_SIZE = gameWords.size();
 
         //db list of vocab words
         //dbListWords = dbCallback.getDbVocab();
-        displayWord = gameWords.get(listCounter).getEngSpelling();
+        currentWordIndex = randomIndex(gameWords.size());
+        displayWord = gameWords.get(currentWordIndex).getEngSpelling();
 
         //spliced correct words for grading
-        cWords = gameWords.get(listCounter).getCorrectWords();
+        cWords = gameWords.get(currentWordIndex).getCorrectWords();
         correctWordList = cWords.split("\\s*,\\s*");
 
         //setting font values
@@ -238,18 +236,6 @@ public class GameScreen implements Screen {
         pauseButton = new TextButton("Pause", textButtonStyle);
         pauseButton.setPosition(Gdx.graphics.getWidth() - 200, 0);
 
-        /*
-        testButton = new TextButton("Test", textButtonStyle);
-        testButton.setPosition(800, 200);
-
-        testButton.addListener(new ClickListener() {
-           @Override
-           public void clicked(InputEvent event, float x, float y) {
-               incorrectDisplayTimer = INCORRECT_DISPLAY_DURATION;
-           }
-        });
-        */
-
             /*
                 If you want to test functions with UI instead of with console,
                 add it into one of these Listeners. Each of them correspond to
@@ -279,7 +265,7 @@ public class GameScreen implements Screen {
 
                     speechGDX.stopRecognition();
                     if(gameMusic != null)
-                    gameMusic.pause();
+                        gameMusic.pause();
                     isPaused = true;
 
                 }
@@ -328,13 +314,15 @@ public class GameScreen implements Screen {
 
         //batch.draw(background, 0, 0);
 
+        font2.draw(batch, "Correct " + score + "/" + GAME_LIST_SIZE, 10, 35);
+
         if (!isGameOver) {
 
             font.draw(batch, displayWordLayout, 325, 425);
 
-            if (score >= 0){
-                font2.draw(batch, "Score: " + score, 10, 35);
-            }
+          /*  if (score >= 0){
+                font2.draw(batch, "Correct " + score + "/" + gameWords.size(), 10, 35);
+            }*/
 
             //font2.draw(batch, "Lives: " + lives, 25, 30);
 
@@ -348,24 +336,36 @@ public class GameScreen implements Screen {
             if(correct){
                 // Start correct icon display
                 this.correctDisplayTimer = this.CORRECT_DISPLAY_DURATION;
-                listCounter++;
                 score = score + 1;
                 this.defeatEnemy();
 
-                if(listCounter < GAME_LIST_SIZE) {
-                    displayWord = gameWords.get(listCounter).getEngSpelling();
+                gameWords.remove(currentWordIndex);
+
+                if(gameWords.size() > 0) {
+                    currentWordIndex = randomIndex(gameWords.size());
+                    displayWord = gameWords.get(currentWordIndex).getEngSpelling();
                     parameter.characters = displayWord;
                     parameter.size = 70;
                     parameter.color = Color.BLACK;
                     font = generator.generateFont(parameter);
                     displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
-                    cWords = gameWords.get(listCounter).getCorrectWords();
+                    cWords = gameWords.get(currentWordIndex).getCorrectWords();
                     correctWordList = cWords.split("\\s*,\\s*");
                 } else {
                     isGameOver = true;
                     win = true;
                 }
             } else if(!correct && incomingWord != null){
+                //change word if incorrect
+                currentWordIndex = randomIndex(gameWords.size());
+                displayWord = gameWords.get(currentWordIndex).getEngSpelling();
+                parameter.characters = displayWord;
+                parameter.size = 70;
+                parameter.color = Color.BLACK;
+                font = generator.generateFont(parameter);
+                displayWordLayout.setText(font, displayWord, Color.BLACK, targetWidth, Align.center, true);
+                cWords = gameWords.get(currentWordIndex).getCorrectWords();
+                correctWordList = cWords.split("\\s*,\\s*");
                 // Start incorrect icon display
                 this.incorrectDisplayTimer = this.INCORRECT_DISPLAY_DURATION;
             }
@@ -381,7 +381,7 @@ public class GameScreen implements Screen {
 
             if(win) {
                 font2.draw(batch, "You Win!", 450, 380);
-               // batch.draw(supergunma, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
+                // batch.draw(supergunma, 70, 10 + this.SCREEN_BOTTOM_ADJUST);
             }
             else{
                 font2.draw(batch, "You Lose!", 450, 380);
@@ -483,5 +483,15 @@ public class GameScreen implements Screen {
         }
         batch.draw(this.incorrectSprite, Gdx.graphics.getWidth()/2-80, Gdx.graphics.getHeight()/4*3-140);
         this.incorrectDisplayTimer--;
+    }
+    private int randomIndex(int size) {
+
+        if(size == 1) {
+            return 0;
+        }
+
+        Random rand = new Random();
+        int randomInt = rand.nextInt(size - 1);
+        return randomInt;
     }
 }
