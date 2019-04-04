@@ -63,6 +63,7 @@ public class OptionMenu implements Screen {
     //temp bool until login system works
     private boolean login = false;
     private boolean deleteButtonsVisible = false;
+    private int activeLimit = 10;
 
     private TextButton buttonCustom1, buttonCustom2, buttonCustom3, buttonCustom4, buttonCustom5, buttonCustom6,
             buttonCustom7, buttonCustom8, buttonCustom9, buttonCustom10, buttonCustom11, buttonCustom12,
@@ -246,7 +247,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 //System.out.println("Hit");
                 if (verified) {
-                    if (active1) {
+                    if (active1 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active1", false).flush();
                         System.out.println("Active 1(true) is set to -> " + prefs.getBoolean("active1"));
                         //System.out.println("Hit2");
@@ -260,7 +269,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active1){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active1", true).flush();
                         System.out.println("Active 1(false) is set to -> " + prefs.getBoolean("active1"));
                         buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
@@ -281,7 +298,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active2) {
+                    if (active2 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active2", false).flush();
                         buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -292,7 +317,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active2){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active2", true).flush();
                         buttonCustom2.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -312,7 +345,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active3) {
+                    if (active3 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active3", false).flush();
                         buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -323,7 +364,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active3){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active3", true).flush();
                         buttonCustom3.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -343,7 +392,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active4) {
+                    if (active4 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active4", false).flush();
                         buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -354,7 +411,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active4){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active4", true).flush();
                         buttonCustom4.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -374,7 +439,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active5) {
+                    if (active5 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active5", false).flush();
                         buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -385,7 +458,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active5){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active5", true).flush();
                         buttonCustom5.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -405,7 +486,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active6) {
+                    if (active6 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active6", false).flush();
                         buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -416,7 +505,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active6){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active6", true).flush();
                         buttonCustom6.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -436,7 +533,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active7) {
+                    if (active7 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active7", false).flush();
                         buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -447,7 +552,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active7){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active8", true).flush();
                         buttonCustom7.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -467,7 +580,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active8) {
+                    if (active8 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active8", false).flush();
                         buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -478,7 +599,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active8) {
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active9", true).flush();
                         buttonCustom8.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -498,7 +627,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active9) {
+                    if (active9 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active9", false).flush();
                         buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -509,7 +646,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active9){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active9", true).flush();
                         buttonCustom9.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -529,7 +674,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active10) {
+                    if (active10 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active10", false).flush();
                         buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -540,7 +693,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active10){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active10", true).flush();
                         buttonCustom10.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -560,7 +721,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active11) {
+                    if (active11 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active11", false).flush();
                         buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -571,7 +740,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active11){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active11", true).flush();
                         buttonCustom11.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         //buttonCustom1.setStyle(testSkin.get(Button.ButtonStyle.class));
@@ -591,7 +768,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active12) {
+                    if (active12 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active12", false).flush();
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -604,7 +789,15 @@ public class OptionMenu implements Screen {
                             }
                         }
 
-                    } else {
+                    } else if(!active12){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active12", true).flush();
                         buttonCustom12.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(0).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
@@ -624,7 +817,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active13) {
+                    if (active13 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active13", false).flush();
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -636,7 +837,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if (!active13){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active13", true).flush();
                         buttonCustom13.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(1).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
@@ -656,7 +865,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active14) {
+                    if (active14 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active14", false).flush();
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -668,7 +885,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active14){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active14", true).flush();
                         buttonCustom14.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(2).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
@@ -688,7 +913,15 @@ public class OptionMenu implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 System.out.println("Hit");
                 if (verified) {
-                    if (active15) {
+                    if (active15 && activeLimit > 1) {
+                        activeLimit = activeLimit - 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         System.out.println("Hit2");
                         prefs.putBoolean("active15", false).flush();
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
@@ -700,7 +933,15 @@ public class OptionMenu implements Screen {
                                 activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
-                    } else {
+                    } else if(!active15){
+                        activeLimit = activeLimit + 1;
+                        if(prefs.contains("activeLimit")){
+                            prefs.remove("activeLimit");
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
+                        else if(!prefs.contains("activeLimit")){
+                            prefs.putInteger("activeLimit", activeLimit).flush();
+                        }
                         prefs.putBoolean("active15", true).flush();
                         buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(3).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
@@ -1090,6 +1331,10 @@ public class OptionMenu implements Screen {
         stage.addActor(deleteButton);
         stage.addActor(settingsButton);
         stage.addActor(backButton);
+
+        if(prefs.contains("activeLimit")){
+            activeLimit = prefs.getInteger("activeLimit");
+        }
 
         //test
         if(prefs.contains("active1")) {
