@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
@@ -80,6 +82,7 @@ public class AndroidLauncher extends AndroidApplication {
     public View decorView;
     public int uiOptions;
     private AndroidApplicationConfiguration config;
+    public SharedPreferences preferences;
 
     private Intent signInIntent;
     private GoogleSignInOptions gso;
@@ -110,6 +113,7 @@ public class AndroidLauncher extends AndroidApplication {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getPreferences("initialState");
         setContentView(R.layout.activity_main);
 
         droidSpeech = new DroidSpeech(this, null);
@@ -368,6 +372,9 @@ public class AndroidLauncher extends AndroidApplication {
                     System.out.println(e);
                 }
             }
+            public void importALLCSV(){
+                test(androidDB);
+            }
         };
 
         initialize(new GunmaChan(callback, dbInterface), config);
@@ -378,7 +385,10 @@ public class AndroidLauncher extends AndroidApplication {
         }
         androidDB = newVocabDb();
         instructorDb = newInstructorDb();
-        test(androidDB);
+
+          //  test(androidDB);
+
+
         //androidDB.viewDb();
     }
 
@@ -528,15 +538,19 @@ public class AndroidLauncher extends AndroidApplication {
 
     public void test(VocabDb vDB) {
         try {
-            vDB.importCSV("Numbers.csv");
+            //
+            //  CHECK THAT THIS IS ONLY DONE ONCE WHEN CLOSING AND REOPENING THE APP
+            //
             vDB.importCSV("Colors-Shapes.csv");
             vDB.importCSV("Countries.csv");
             vDB.importCSV("Days-Months.csv");
             vDB.importCSV("Feelings.csv");
-            vDB.importCSV("Subjects.csv");
             vDB.importCSV("Fruits-Foods.csv");
-            vDB.importCSV("Professions.csv");
+            vDB.importCSV("Numbers.csv");
             vDB.importCSV("Places.csv");
+            vDB.importCSV("Professions.csv");
+            vDB.importCSV("Subjects.csv");
+            vDB.importCSV("Time.csv");
             //add time later when fixed
         } catch (Exception e) {
             //System.out.println(e);

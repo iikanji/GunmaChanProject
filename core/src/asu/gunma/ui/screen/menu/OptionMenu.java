@@ -31,6 +31,7 @@ import asu.gunma.speech.ActionResolver;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import asu.gunma.DatabaseInterface.DbInterface;
@@ -116,6 +117,9 @@ public class OptionMenu implements Screen {
     // need to delete words from database when a delete button is clicked
     // delete buttons in wrong location
 
+
+    //CREATE COUNTER THAT CONTROLS IF THE MODULE IS THE LAST ONE ACTIVE
+    //AND PREVENT IT FROM BEING DEACTIVATED IF TRUE
     @Override
     public void show() {
         int count = 0;
@@ -249,9 +253,11 @@ public class OptionMenu implements Screen {
                         buttonCustom1.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deactivateModule(buttonCustom1, 0);
                         active1 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(0).getText().toString())){
-                                activeVocabList.remove(v);
+                        System.out.println("*********REMOVING VOCAB********");
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(0).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -260,9 +266,9 @@ public class OptionMenu implements Screen {
                         buttonCustom1.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         activateModule(buttonCustom1, 0);
                         active1 = true;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(0).getText().toString())){
-                                activeVocabList.add(v);
+                        for(int i = 0; i < dbVocab.size(); i++){
+                            if(dbVocab.get(i).getModuleCategory().equals(buttonList.get(0).getText().toString())){
+                                activeVocabList.add(dbVocab.get(i));
                             }
                         }
                     }
@@ -280,9 +286,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active2", false).flush();
                         buttonCustom2.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active2 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(1).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(1).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -310,9 +317,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active3", false).flush();
                         buttonCustom3.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active3 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(2).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(2).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -340,9 +348,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active4", false).flush();
                         buttonCustom4.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active4 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(3).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(3).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -370,9 +379,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active5", false).flush();
                         buttonCustom5.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active5 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(4).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(4).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -400,9 +410,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active6", false).flush();
                         buttonCustom6.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active6 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(5).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(5).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -430,9 +441,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active7", false).flush();
                         buttonCustom7.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active7 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(6).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(6).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -460,9 +472,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active8", false).flush();
                         buttonCustom8.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active8 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(7).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(7).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -490,9 +503,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active9", false).flush();
                         buttonCustom9.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active9 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(8).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(8).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -520,9 +534,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active10", false).flush();
                         buttonCustom10.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active10 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(9).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(9).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -550,9 +565,10 @@ public class OptionMenu implements Screen {
                         prefs.putBoolean("active11", false).flush();
                         buttonCustom11.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active11 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(10).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(10).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -581,9 +597,10 @@ public class OptionMenu implements Screen {
                         buttonCustom12.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(0).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active12 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(11).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
 
@@ -613,9 +630,10 @@ public class OptionMenu implements Screen {
                         buttonCustom13.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(1).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active13 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(12).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -644,9 +662,10 @@ public class OptionMenu implements Screen {
                         buttonCustom14.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(2).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active14 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(13).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -675,9 +694,10 @@ public class OptionMenu implements Screen {
                         buttonCustom15.setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         deleteButtonList.get(3).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         active15 = false;
-                        for(VocabWord v : dbVocab){
-                            if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
-                                activeVocabList.remove(v);
+                        for(int i = activeVocabList.size()-1; i >= 0; i--){
+                            if(activeVocabList.get(i).getModuleCategory().equals(buttonList.get(14).getText().toString())){
+                                System.out.println(activeVocabList.get(i).getEngSpelling());
+                                activeVocabList.remove(activeVocabList.get(i));
                             }
                         }
                     } else {
@@ -714,7 +734,7 @@ public class OptionMenu implements Screen {
                 }
                 deleteButtonsVisible = false;
                 //need to add preference boolean
-                for(VocabWord v : dbVocab){
+                for(VocabWord v : activeVocabList){
                     if(v.getModuleCategory().equals(buttonList.get(10).getText().toString())){
                         activeVocabList.remove(v);
                     }
@@ -741,7 +761,7 @@ public class OptionMenu implements Screen {
                 }
                 deleteButtonsVisible = false;
                 //need to add preference boolean
-                for(VocabWord v : dbVocab){
+                for(VocabWord v : activeVocabList){
                     if(v.getModuleCategory().equals(buttonList.get(11).getText().toString())){
                         activeVocabList.remove(v);
                     }
@@ -767,7 +787,7 @@ public class OptionMenu implements Screen {
                 }
                 deleteButtonsVisible = false;
                 //need to add preference boolean
-                for(VocabWord v : dbVocab){
+                for(VocabWord v : activeVocabList){
                     if(v.getModuleCategory().equals(buttonList.get(12).getText().toString())){
                         activeVocabList.remove(v);
                     }
@@ -793,7 +813,7 @@ public class OptionMenu implements Screen {
                 }
                 deleteButtonsVisible = false;
                 //need to add preference boolean
-                for(VocabWord v : dbVocab){
+                for(VocabWord v : activeVocabList){
                     if(v.getModuleCategory().equals(buttonList.get(13).getText().toString())){
                         activeVocabList.remove(v);
                     }
@@ -812,7 +832,7 @@ public class OptionMenu implements Screen {
                 }
                 deleteButtonsVisible = false;
                 //need to add preference boolean
-                for(VocabWord v : dbVocab){
+                for(VocabWord v : activeVocabList){
                     if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
                         activeVocabList.remove(v);
                     }
@@ -1237,11 +1257,6 @@ public class OptionMenu implements Screen {
         } else {
             buttonCustom15.setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
             activateModule(buttonCustom15, 0);
-            for(VocabWord v : dbVocab){
-                if(v.getModuleCategory().equals(buttonList.get(14).getText().toString())){
-                    activeVocabList.add(v);
-                }
-            }
         }
     }
 
