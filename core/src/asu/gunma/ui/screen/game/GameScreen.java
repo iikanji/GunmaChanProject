@@ -419,12 +419,12 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        gameWords.clear();
         font.dispose();
         font2.dispose();
         background.dispose();
         this.correctSprite.dispose();
         this.incorrectSprite.dispose();
-
 
         this.backgroundDrawer.dispose();
         this.livesDrawer.dispose();
