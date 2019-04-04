@@ -1115,8 +1115,9 @@ public class OptionMenu implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //BEST OPTION IS TO CHANGE THE TABLE TO A SCROLLPANE
+                ArrayList<File> fileList;
                 if(verified) {
-                    ArrayList<File> fileList = speechGDX.googleDriveAccess();
+                    fileList = speechGDX.googleDriveAccess();
                     fileTable = new Table(testSkin);
                     Dialog fileDialog = new Dialog("Select File To Upload", testSkin);
                     fileDialog.setPosition(400, 300, Align.center);
@@ -1174,14 +1175,17 @@ public class OptionMenu implements Screen {
                             System.out.println("ERROR FILE DOES NOT EXIST!");
                         }
                     }
-
                     cancelButton.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             fileDialog.hide();
-                            if(currentFile.exists()){
-                                currentFile.delete();
+                            for(int i = 0; i < fileList.size(); i++){
+                                currentFile = fileList.get(i);
+                                if(currentFile != null){
+                                    currentFile.delete();
+                                }
                             }
+
                         }
                     });
 
