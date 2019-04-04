@@ -11,7 +11,6 @@ import java.util.List;
 import asu.gunma.DatabaseInterface.DbInterface;
 import asu.gunma.DbContainers.VocabWord;
 import asu.gunma.speech.ActionResolver;
-import asu.gunma.ui.util.SimpleDirectionGestureDetector;
 import asu.gunma.ui.screen.menu.TitleScreen;
 
 
@@ -36,21 +35,21 @@ public class GunmaChan extends Game {
 		@Override
 		public void create() {
 			Preferences prefs = Gdx.app.getPreferences("MyPreferences");
-
+			activeVocabList = new ArrayList<>();
 			//test
 			if(!prefs.contains("active1")) {
-				System.out.println("Contains active1");
 				prefs.putBoolean("active1", true);
-				for(VocabWord v : dbCallback.getDbVocab()){
-					if(v.getModuleCategory().equals("Alphabet")){
+				for (VocabWord v : dbCallback.getDbVocab()) {
+					if (v.getModuleCategory().equals("Colors-Shapes")) {
 						activeVocabList.add(v);
 					}
 				}
 			}
+
 			if(!prefs.contains("active2")) {
 				prefs.putBoolean("active2", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Colors-Shapes")) {
+					if (v.getModuleCategory().equals("Countries")) {
 						activeVocabList.add(v);
 					}
 				}
@@ -59,7 +58,7 @@ public class GunmaChan extends Game {
 			if(!prefs.contains("active3")) {
 				prefs.putBoolean("active3", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Countries")) {
+					if (v.getModuleCategory().equals("Days-Months")) {
 						activeVocabList.add(v);
 					}
 				}
@@ -68,7 +67,7 @@ public class GunmaChan extends Game {
 			if(!prefs.contains("active4")) {
 				prefs.putBoolean("active4", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Days-Months")) {
+					if (v.getModuleCategory().equals("Feelings")) {
 						activeVocabList.add(v);
 					}
 				}
@@ -77,7 +76,7 @@ public class GunmaChan extends Game {
 			if(!prefs.contains("active5")) {
 				prefs.putBoolean("active5", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Feelings")) {
+					if (v.getModuleCategory().equals("Fruits-Food")) {
 						activeVocabList.add(v);
 					}
 				}
@@ -86,7 +85,7 @@ public class GunmaChan extends Game {
 			if(!prefs.contains("active6")) {
 				prefs.putBoolean("active6", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Fruits-Food")) {
+					if (v.getModuleCategory().equals("Numbers")) {
 						activeVocabList.add(v);
 					}
 				}
@@ -95,23 +94,14 @@ public class GunmaChan extends Game {
 			if(!prefs.contains("active7")) {
 				prefs.putBoolean("active7", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
-					if (v.getModuleCategory().equals("Numbers")) {
-						activeVocabList.add(v);
-					}
-				}
-			}
-
-			if(!prefs.contains("active8")) {
-				prefs.putBoolean("active8", true);
-				for (VocabWord v : dbCallback.getDbVocab()) {
 					if (v.getModuleCategory().equals("Places")) {
 						activeVocabList.add(v);
 					}
 				}
 			}
 
-			if(!prefs.contains("active9")){
-				prefs.putBoolean("active9", true);
+			if(!prefs.contains("active8")){
+				prefs.putBoolean("active8", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
 					if (v.getModuleCategory().equals("Professions")) {
 						activeVocabList.add(v);
@@ -120,8 +110,8 @@ public class GunmaChan extends Game {
 			}
 
 
-			if(!prefs.contains("active10")) {
-				prefs.putBoolean("active10", true);
+			if(!prefs.contains("active9")) {
+				prefs.putBoolean("active9", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
 					if (v.getModuleCategory().equals("Subjects")) {
 						activeVocabList.add(v);
@@ -129,14 +119,16 @@ public class GunmaChan extends Game {
 				}
 			}
 
-			if(!prefs.contains("active11")) {
-				prefs.putBoolean("active11", true);
+			if(!prefs.contains("active10")) {
+				prefs.putBoolean("active10", true);
 				for (VocabWord v : dbCallback.getDbVocab()) {
 					if (v.getModuleCategory().equals("Time")) {
 						activeVocabList.add(v);
 					}
 				}
 			}
+			if(!prefs.contains("active11"))
+				prefs.putBoolean("active11", false);
 
 			if(!prefs.contains("active12"))
 				prefs.putBoolean("active12", false);
@@ -154,9 +146,9 @@ public class GunmaChan extends Game {
 			background_music.setLooping(false);
 			background_music.setVolume(masterVolume);
 			background_music.play();
-			activeVocabList = new ArrayList<>();
-			List<VocabWord> dbVocab = dbCallback.getDbVocab();
-			activeVocabList.addAll(dbVocab);
+
+			/*List<VocabWord> dbVocab = dbCallback.getDbVocab();
+			activeVocabList.addAll(dbVocab);*/
 
 			//System.out.println("ACTIVE WORD LIST");
 			for(VocabWord v : activeVocabList){

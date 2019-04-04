@@ -57,7 +57,7 @@ public class OptionMenu implements Screen {
     private boolean verified = true;
     private boolean active1 = true, active2 = true, active3 = true, active4 = true, active5 = true,
             active6 = true, active7 = true, active8 = true, active9 = true, active10 = true,
-            active11 = true, active12 = false, active13 = false, active14 = false, active15 = false;
+            active11 = false, active12 = false, active13 = false, active14 = false, active15 = false;
     public ArrayList<VocabWord> activeVocabList = new ArrayList<>();
     //temp bool until login system works
     private boolean login = false;
@@ -67,7 +67,7 @@ public class OptionMenu implements Screen {
             buttonCustom7, buttonCustom8, buttonCustom9, buttonCustom10, buttonCustom11, buttonCustom12,
             buttonCustom13, buttonCustom14, buttonCustom15;
 
-    private TextButton deleteCustomButton12, deleteCustomButton13, deleteCustomButton14,
+    private TextButton deleteCustomButton11, deleteCustomButton12, deleteCustomButton13, deleteCustomButton14,
             deleteCustomButton15;
 
     private TextButton newButton, deleteButton, settingsButton, backButton;
@@ -84,6 +84,7 @@ public class OptionMenu implements Screen {
     private ScrollPane fileSelectionPane;
     private Table fileTable;
     public Preferences prefs;
+    File currentFile = null;
 
     public OptionMenu(Game game, ActionResolver speechGDX, Music music, DbInterface dbInterface, Screen previousScreen, ArrayList<VocabWord> arrayList, Preferences prefs) {
         this.game = game;
@@ -167,22 +168,23 @@ public class OptionMenu implements Screen {
         // IMPORTANT: needs localization support
         // Make image buttons
         //use drawable to set image
-        buttonCustom1 = new TextButton("Alphabet", testSkin, "small");
-        buttonCustom2 = new TextButton("Colors-Shapes", testSkin, "small");
-        buttonCustom3 = new TextButton("Countries", testSkin, "small");
-        buttonCustom4 = new TextButton("Days-Months", testSkin, "small");
-        buttonCustom5 = new TextButton("Feelings", testSkin, "small");
-        buttonCustom6 = new TextButton("Fruits-Foods", testSkin, "small");
-        buttonCustom7 = new TextButton("Numbers", testSkin, "small");
-        buttonCustom8 = new TextButton("Places", testSkin, "small");
-        buttonCustom9 = new TextButton("Professions", testSkin, "small");
-        buttonCustom10 = new TextButton("Subjects", testSkin, "small");
-        buttonCustom11 = new TextButton("Time", testSkin, "small");
+        buttonCustom1 = new TextButton("Colors-Shapes", testSkin, "small");
+        buttonCustom2 = new TextButton("Countries", testSkin, "small");
+        buttonCustom3 = new TextButton("Days-Months", testSkin, "small");
+        buttonCustom4 = new TextButton("Feelings", testSkin, "small");
+        buttonCustom5 = new TextButton("Fruits-Foods", testSkin, "small");
+        buttonCustom6 = new TextButton("Numbers", testSkin, "small");
+        buttonCustom7 = new TextButton("Places", testSkin, "small");
+        buttonCustom8 = new TextButton("Professions", testSkin, "small");
+        buttonCustom9 = new TextButton("Subjects", testSkin, "small");
+        buttonCustom10 = new TextButton("Time", testSkin, "small");
+        buttonCustom11 = new TextButton("x", testSkin, "small");
         buttonCustom12 = new TextButton("x", testSkin, "small");
         buttonCustom13 = new TextButton("x", testSkin, "small");
         buttonCustom14 = new TextButton("x", testSkin, "small");
         buttonCustom15 = new TextButton("x", testSkin, "small");
 
+        deleteCustomButton11 = new TextButton("X", testSkin, "default");
         deleteCustomButton12 = new TextButton("X", testSkin, "default");
         deleteCustomButton13 = new TextButton("X", testSkin, "default");
         deleteCustomButton14 = new TextButton("X", testSkin, "default");
@@ -206,6 +208,7 @@ public class OptionMenu implements Screen {
         buttonList.add(buttonCustom15);
 
         deleteButtonList = new ArrayList<>();
+        deleteButtonList.add(deleteCustomButton11);
         deleteButtonList.add(deleteCustomButton12);
         deleteButtonList.add(deleteCustomButton13);
         deleteButtonList.add(deleteCustomButton14);
@@ -692,6 +695,33 @@ public class OptionMenu implements Screen {
             }
         });
 
+        deleteCustomButton11.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                for (int i = 10; i < buttonList.size() - 1; i++) {
+                    buttonList.get(i).setText(buttonList.get(i + 1).getText().toString());
+                    buttonList.get(i).setStyle(buttonList.get(i + 1).getStyle());
+                }
+                for (int i = 0; i < buttonList.size(); i++) {
+                    if (buttonList.get(i).getText().toString().equals("x") && buttonList.get(i).isVisible()) {
+                        buttonList.get(i).setVisible(false);
+                        buttonList.get(i).setDisabled(true);
+                    }
+                }
+                for (TextButton t : deleteButtonList) {
+                    t.setVisible(false);
+                    t.setDisabled(true);
+                }
+                deleteButtonsVisible = false;
+                //need to add preference boolean
+                for(VocabWord v : dbVocab){
+                    if(v.getModuleCategory().equals(buttonList.get(10).getText().toString())){
+                        activeVocabList.remove(v);
+                    }
+                }
+            }
+        });
+
         deleteCustomButton12.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -833,7 +863,7 @@ public class OptionMenu implements Screen {
                     fileDialog.getTitleLabel().setAlignment(Align.center);
                     TextButton cancelButton = new TextButton("Cancel", testSkin, "small");
                     for (int i = 0; i < fileList.size(); i++) {
-                        File currentFile = fileList.get(i);
+                        currentFile = fileList.get(i);
                         if (currentFile.exists()) {
                             String filename = currentFile.getName();
                             String filenameSplit = filename.split("\\.")[0];
@@ -888,6 +918,9 @@ public class OptionMenu implements Screen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             fileDialog.hide();
+                            if(currentFile.exists()){
+                                currentFile.delete();
+                            }
                         }
                     });
 
@@ -908,7 +941,7 @@ public class OptionMenu implements Screen {
                 if(verified) {
                     if(!deleteButtonsVisible) {
                         for (int i = 0; i < deleteButtonList.size(); i++) {
-                            if (!buttonList.get(i + 11).getText().toString().equals("x")) {
+                            if (!buttonList.get(i + 10).getText().toString().equals("x")) {
                                 deleteButtonList.get(i).setVisible(true);
                                 deleteButtonList.get(i).setDisabled(false);
                                 deleteButtonsVisible = true;
@@ -917,7 +950,7 @@ public class OptionMenu implements Screen {
                     }
                     else{
                         for (int i = 0; i < deleteButtonList.size(); i++) {
-                            if (!buttonList.get(i + 11).getText().toString().equals("x")) {
+                            if (!buttonList.get(i + 10).getText().toString().equals("x")) {
                                 deleteButtonList.get(i).setVisible(false);
                                 deleteButtonList.get(i).setDisabled(true);
                                 deleteButtonsVisible = false;
@@ -926,10 +959,10 @@ public class OptionMenu implements Screen {
                     }
 
                     for(int i = 0; i < deleteButtonList.size(); i++){
-                        if(buttonList.get(i+11).getStyle() == testSkin.get("default", TextButton.TextButtonStyle.class)){
+                        if(buttonList.get(i+10).getStyle() == testSkin.get("default", TextButton.TextButtonStyle.class)){
                             deleteButtonList.get(i).setStyle(testSkin.get("default", TextButton.TextButtonStyle.class));
                         }
-                        else if (buttonList.get(i+11).getStyle() == testSkin.get("small", TextButton.TextButtonStyle.class)){
+                        else if (buttonList.get(i+10).getStyle() == testSkin.get("small", TextButton.TextButtonStyle.class)){
                             deleteButtonList.get(i).setStyle(testSkin.get("small", TextButton.TextButtonStyle.class));
                         }
                     }

@@ -240,9 +240,9 @@ public class AndroidLauncher extends AndroidApplication {
                     //query();
                     FileList googleFiles = googleDriveService.files().list().setSpaces("drive").execute();
                     List<File> googleFileList = googleFiles.getFiles();
-                    /*Intent pickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                    pickerIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                    pickerIntent.setType("text/csv");*/
+                    for(File f : googleFileList){
+                        System.out.println(f.getName());
+                    }
                     //TESTING
                     for(File f : googleFileList){
                         if(f.getMimeType().equals("text/csv")) {
@@ -448,6 +448,11 @@ public class AndroidLauncher extends AndroidApplication {
             }
         }
         if (requestCode == RC_SIGN_OUT) {
+            if(!csvFileList.isEmpty()) {
+                for (java.io.File f : csvFileList) {
+                    csvFileList.remove(f);
+                }
+            }
             if (mGoogleSignInClient.signOut().isSuccessful()) {
                 googleSignOutMessage = "Logout Successful";
             } else {
